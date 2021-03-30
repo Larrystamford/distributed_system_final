@@ -29,7 +29,7 @@ public class Server {
                     System.out.println("request to view all facilities");
                     ViewAllFacilities.handleRequest(network, origin, database, query);
                     break;
-                case Constants.CHECK_FACILITIES_AVAILABILITY:
+                case Constants.FACILITY_AVAILABILITY:
                     System.out.println("request to check facilities availability");
                     FacilitiesAvailability.handleRequest(network, origin, database, query);
                     break;

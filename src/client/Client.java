@@ -36,7 +36,7 @@ public class Client {
                 case Constants.VIEW_ALL_FACILITIES:
                     ViewAllFacilities.createAndSendMessage(network);
                     break;
-                case Constants.CHECK_FACILITIES_AVAILABILITY:
+                case Constants.FACILITY_AVAILABILITY:
                     FacilitiesAvailability.createAndSendMessage(network, scanner);
                     break;
                 case Constants.BOOK_FACILITY:

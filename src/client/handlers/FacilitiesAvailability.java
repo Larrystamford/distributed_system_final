@@ -28,7 +28,7 @@ public class FacilitiesAvailability {
         getUserInputs(scanner, bookings);
 
         query = new ClientQuery();
-        query.setType(Constants.CHECK_FACILITIES_AVAILABILITY);
+        query.setType(Constants.FACILITY_AVAILABILITY);
         query.setBookings(bookings);
 
         int id = network.send(query);

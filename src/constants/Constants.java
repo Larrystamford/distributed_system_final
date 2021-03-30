@@ -18,7 +18,7 @@ public class Constants {
 
     // Service constant
     public static final int VIEW_ALL_FACILITIES = 1;
-    public static final int CHECK_FACILITIES_AVAILABILITY = 2;
+    public static final int FACILITY_AVAILABILITY = 2;
     public static final int BOOK_FACILITY = 3;
     public static final int CHANGE_BOOKING = 4;
     public static final int MONITOR_BOOKING = 5;
