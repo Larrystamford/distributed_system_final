@@ -1,5 +1,6 @@
 package client.handlers;
 
+import client.ClientUI;
 import utils.DateUtils;
 import utils.UserInputValidator;
 import constants.Constants;
@@ -34,7 +35,7 @@ public class OffsetBooking {
             if (response.getStatus() == 200) {
                 printChangeBookingSuccess(query, response);
             } else {
-                Constants.PrintErrorMessage(response);
+                ClientUI.PrintErrorMessage(response);
             }
         }, false, 5);
     }
@@ -43,16 +44,16 @@ public class OffsetBooking {
      * parses the users inputs and retrieves the user's booking offset
      */
     public static BookingInfo getUserInputs(Scanner scanner) {
-        System.out.println(Constants.SEPARATOR);
-        System.out.println(Constants.CHANGE_BOOKING_HEADER);
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.CHANGE_BOOKING_HEADER);
+        System.out.println(ClientUI.SEPARATOR);
 
         // Enter booking id
-        System.out.println(Constants.ENTER_UUID);
+        System.out.println(ClientUI.ENTER_UUID);
         String UUID = scanner.nextLine();
 
         // Enter advance or postpone choice
-        System.out.println(Constants.ADVANCE_OR_POSTPONE);
+        System.out.println(ClientUI.ADVANCE_OR_POSTPONE);
         String choice = scanner.nextLine();
         if (!UserInputValidator.isNumericAndWithinRange(choice, 1, 2)) {
             while (!UserInputValidator.isNumericAndWithinRange(choice, 1, 2)) {
@@ -62,7 +63,7 @@ public class OffsetBooking {
         }
 
         // Enter offset
-        System.out.println(Constants.ENTER_OFFSET);
+        System.out.println(ClientUI.ENTER_OFFSET);
         String[] date = scanner.nextLine().split(" ");
 
         if (date.length != 3 || !DateUtils.isValidDateTimeFormat(date[0], date[1], date[2])) {
@@ -97,7 +98,7 @@ public class OffsetBooking {
      * @param response - response from the server
      */
     public static void printChangeBookingSuccess(ClientQuery query, ServerResponse response) {
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
         System.out.println("Booking successfully changed");
         BookingInfo booking = response.getInfos().get(0);
         String UUID = booking.getUuid();
@@ -107,6 +108,6 @@ public class OffsetBooking {
         System.out.println("Booking ID: " + UUID);
         System.out.println("Start: " + newStart.toNiceString());
         System.out.println("End: " + newEnd.toNiceString());
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
     }
 }

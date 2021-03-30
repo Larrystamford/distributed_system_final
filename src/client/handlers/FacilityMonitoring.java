@@ -1,5 +1,6 @@
 package client.handlers;
 
+import client.ClientUI;
 import constants.Constants;
 import entity.BookingInfo;
 import entity.ClientQuery;
@@ -36,37 +37,37 @@ public class FacilityMonitoring {
             if (response.getStatus() == 200) {
                 printMonitoringResults(query, response);
             } else {
-                Constants.PrintErrorMessage(response);
+                ClientUI.PrintErrorMessage(response);
             }
         }, true, query.getMonitoringDuration());
 
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
         System.out.println("MONITORING COMPLETE");
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
     }
 
     public static void getUserInputs(Scanner scanner, List<BookingInfo> bookings, ClientQuery query) {
         BookingInfo booking = new BookingInfo();
 
-        System.out.println(Constants.SEPARATOR);
-        System.out.println(Constants.MONITOR_FACILITY_HEADER);
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.MONITOR_FACILITY_HEADER);
+        System.out.println(ClientUI.SEPARATOR);
 
         // Enter Facility Name
-        System.out.println(Constants.ENTER_FACILITIES_NAME);
+        System.out.println(ClientUI.ENTER_FACILITIES_NAME);
 
         String name = scanner.nextLine();
         while (name.length() == 0) {
-            System.out.println(Constants.ERR_INPUT);
+            System.out.println(ClientUI.ERR_INPUT);
             System.out.println();
-            System.out.print(Constants.ENTER_FACILITIES_NAME);
+            System.out.print(ClientUI.ENTER_FACILITIES_NAME);
             System.out.println();
 
             name = scanner.nextLine();
         }
 
         // Enter monitor duration
-        System.out.println(Constants.ENTER_MONITOR_DURATION);
+        System.out.println(ClientUI.ENTER_MONITOR_DURATION);
 
         String duration = scanner.nextLine();
         while (!UserInputValidator.isNumericAndWithinRange(duration, 0, (int) Double.POSITIVE_INFINITY)) {
@@ -86,7 +87,7 @@ public class FacilityMonitoring {
      * @param response - response from the server
      */
     public static void printMonitoringResults(ClientQuery query, ServerResponse response) {
-        Constants.PrintServerResponse();
+        ClientUI.PrintServerResponse();
         System.out.println("QUERY:");
 //        String format = "%-40s%s%n";
 //        System.out.printf(format, "Source:", query.getBooking().getName());

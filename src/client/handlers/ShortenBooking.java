@@ -1,5 +1,6 @@
 package client.handlers;
 
+import client.ClientUI;
 import utils.DateUtils;
 import utils.UserInputValidator;
 import constants.Constants;
@@ -34,7 +35,7 @@ public class ShortenBooking {
             if (response.getStatus() == 200) {
                 printChangeBookingSuccess(response);
             } else {
-                Constants.PrintErrorMessage(response);
+                ClientUI.PrintErrorMessage(response);
             }
         }, false, 5);
     }
@@ -43,17 +44,17 @@ public class ShortenBooking {
      * parses users inputs and returns the BookingInfo requested
      */
     public static BookingInfo getUserInputs(Scanner scanner) {
-        System.out.println(Constants.SEPARATOR);
-        System.out.println(Constants.SHORTEN_BOOKING_HEADER);
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.SHORTEN_BOOKING_HEADER);
+        System.out.println(ClientUI.SEPARATOR);
 
         // Enter booking id
-        System.out.println(Constants.ENTER_UUID);
+        System.out.println(ClientUI.ENTER_UUID);
         String UUID = scanner.nextLine();
 
         // Enter offset
-        System.out.println(Constants.SHORTEN_BOOKING_PROMPT);
-        System.out.println(Constants.ENTER_OFFSET);
+        System.out.println(ClientUI.SHORTEN_BOOKING_PROMPT);
+        System.out.println(ClientUI.ENTER_OFFSET);
         String[] date = scanner.nextLine().split(" ");
 
         if (date.length != 3 || !DateUtils.isValidDateTimeFormat(date[0], date[1], date[2])) {
@@ -82,7 +83,7 @@ public class ShortenBooking {
      * @param response - response from the server
      */
     public static void printChangeBookingSuccess(ServerResponse response) {
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
         System.out.println("Booking successfully changed");
         BookingInfo booking = response.getInfos().get(0);
         String UUID = booking.getUuid();
@@ -92,6 +93,6 @@ public class ShortenBooking {
         System.out.println("Booking ID: " + UUID);
         System.out.println("Start: " + newStart.toNiceString());
         System.out.println("End: " + newEnd.toNiceString());
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
     }
 }

@@ -1,5 +1,6 @@
 package server;
 
+import client.ClientUI;
 import constants.Constants;
 import entity.BookingInfo;
 import entity.ClientCallbackInfo;
@@ -63,7 +64,7 @@ public class ServerDB {
             System.out.println(booking.getName() + booking.getStartTime().toNiceString() + booking.getEndTime().toNiceString());
         }
 
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
         System.out.println("Monitor facilities list");
 
         monitorFacilityList.forEach((name, cInfoList) -> {
@@ -72,7 +73,7 @@ public class ServerDB {
             }
         });
 
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
 
         return bookingData;
     }
@@ -83,18 +84,6 @@ public class ServerDB {
             booking.setStartTime(start);
             booking.setEndTime(end);
         }
-    }
-
-    public BookingInfo deleteBooking(String UUID) {
-        BookingInfo deletedBooking = new BookingInfo();
-        for (BookingInfo booking : bookingData) {
-            if (booking.getUuid() != null && booking.getUuid().equals(UUID)) {
-                bookingData.remove(booking);
-                deletedBooking = booking;
-                break;
-            }
-        }
-        return deletedBooking;
     }
 
     // *** change this to hash map implementation
@@ -145,6 +134,7 @@ public class ServerDB {
 
     /**
      * registers a client for monitoring a facility's availability over the week
+     *
      * @param facilityName       - name of facility client is interested in monitoring
      * @param clientCallbackInfo - client's socket information
      */
@@ -165,6 +155,7 @@ public class ServerDB {
     /**
      * registers a client for monitoring a facility's availability for an occupied slot
      * and booking it should it become vacant
+     *
      * @param facilityName       - name of facility client is interested in monitoring
      * @param clientCallbackInfo - client's socket information
      */
