@@ -4,8 +4,8 @@ import client.handlers.*;
 import constants.Constants;
 import entity.ClientQuery;
 import network.*;
-import utils.ProgramArgumentsHelper;
 import org.apache.commons.cli.*;
+import utils.ProgramArgumentsHelper;
 
 import java.net.InetSocketAddress;
 import java.util.Scanner;
@@ -20,7 +20,7 @@ public class Client {
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        Constants.MainMenuSelectionMessage();
+        ClientUI.MainMenuSelectionMessage();
 
         int serviceType;
         String message = scanner.nextLine();
@@ -55,7 +55,7 @@ public class Client {
                     MonitorAndBookOnVacancy.createAndSendMessage(network, scanner);
                     break;
                 case Constants.SERVICE_EXIT:
-                    System.out.println(Constants.EXIT_MSG);
+                    System.out.println(ClientUI.EXIT_MSG);
                     break;
                 case 11:
                     // TODO - delete close to completion
@@ -66,18 +66,18 @@ public class Client {
                     int id = network.send(query);
                     network.receive(id, (response) -> {
                         if (response.getStatus() != 200) {
-                            Constants.PrintErrorMessage(response);
+                            ClientUI.PrintErrorMessage(response);
                         }
                     }, false, 5);
 
                 default:
-                    System.out.println(Constants.UNRECOGNIZE_SVC_MSG);
+                    System.out.println(ClientUI.UNRECOGNIZE_SVC_MSG);
                     System.out.println();
             }
 
         } catch (Exception e) {
-            System.out.println(Constants.SEPARATOR);
-            System.out.printf(Constants.ERR_MSG, e.getMessage());
+            System.out.println(ClientUI.SEPARATOR);
+            System.out.printf(ClientUI.ERR_MSG, e.getMessage());
         }
 
     }
@@ -122,9 +122,9 @@ public class Client {
             InetSocketAddress socketAddress = new InetSocketAddress(host, port);
             UDPCommunicator communicator = new PoorUDPCommunicator(socketAddress, failureRate);
 
-            System.out.print(Constants.SEPARATOR);
-            System.out.println(Constants.WELCOME_MSG);
-            System.out.println(Constants.SEPARATOR);
+            System.out.print(ClientUI.SEPARATOR);
+            System.out.println(ClientUI.WELCOME_MSG);
+            System.out.println(ClientUI.SEPARATOR);
 
             if (atLeastOnce) {
                 client = new Client(new AtLeastOnceNetwork(communicator));
@@ -142,11 +142,11 @@ public class Client {
             }
 
         } catch (Exception e) {
-            System.out.print(Constants.SEPARATOR);
-            System.out.print(Constants.ERR_MSG);
+            System.out.print(ClientUI.SEPARATOR);
+            System.out.print(ClientUI.ERR_MSG);
             e.printStackTrace();
-            System.out.println(Constants.EXIT_MSG);
-            System.out.println(Constants.SEPARATOR);
+            System.out.println(ClientUI.EXIT_MSG);
+            System.out.println(ClientUI.SEPARATOR);
         }
     }
 }

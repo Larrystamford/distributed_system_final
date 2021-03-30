@@ -59,7 +59,6 @@ public class Server {
                 case 11:
                     System.out.println("Get all bookings.");
                     database.getAllBookings();
-                    System.out.println(Constants.SEPARATOR);
                 default:
                     response = new ServerResponse(query.getId(), 404, null);
                     network.send(response, origin);

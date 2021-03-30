@@ -1,5 +1,6 @@
 package client.handlers;
 
+import client.ClientUI;
 import constants.Constants;
 import entity.BookingInfo;
 import entity.ClientQuery;
@@ -35,7 +36,7 @@ public class FacilitiesAvailability {
             if (response.getStatus() == 200) {
                 printFacilitiesAvailability(response);
             } else {
-                Constants.PrintErrorMessage(response);
+                ClientUI.PrintErrorMessage(response);
             }
         }, false, 5);
     }
@@ -48,19 +49,19 @@ public class FacilitiesAvailability {
     public static void getUserInputs(Scanner scanner, List<BookingInfo> bookings) {
         BookingInfo booking;
 
-        System.out.println(Constants.SEPARATOR);
-        System.out.println(Constants.FACILITIES_AVAILABILITY);
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.FACILITIES_AVAILABILITY);
+        System.out.println(ClientUI.SEPARATOR);
 
         // Enter Facility Name
-        System.out.print(Constants.ENTER_FACILITIES_NAME);
+        System.out.print(ClientUI.ENTER_FACILITIES_NAME);
         System.out.println();
 
         String name = scanner.nextLine();
         while (name.length() == 0) {
-            System.out.println(Constants.ERR_INPUT);
+            System.out.println(ClientUI.ERR_INPUT);
             System.out.println();
-            System.out.print(Constants.ENTER_FACILITIES_NAME);
+            System.out.print(ClientUI.ENTER_FACILITIES_NAME);
             System.out.println();
 
             name = scanner.nextLine();
@@ -69,15 +70,15 @@ public class FacilitiesAvailability {
         // Enter Interested Days
         boolean continueAdding = true;
         while (continueAdding) {
-            System.out.print(Constants.ENTER_DAYS);
+            System.out.print(ClientUI.ENTER_DAYS);
             System.out.println();
 
             String day = scanner.nextLine();
 
             while (day.length() == 0) {
-                System.out.println(Constants.ERR_INPUT);
+                System.out.println(ClientUI.ERR_INPUT);
                 System.out.println();
-                System.out.print(Constants.ENTER_DAYS);
+                System.out.print(ClientUI.ENTER_DAYS);
                 System.out.println();
 
                 name = scanner.nextLine();
@@ -88,9 +89,9 @@ public class FacilitiesAvailability {
             booking = new BookingInfo(name.toUpperCase(), d1, d2);
             bookings.add(booking);
 
-            System.out.println(Constants.CONTINUE_ENTER_DAYS);
-            System.out.println(Constants.YES_OPTION);
-            System.out.println(Constants.NO_OPTION);
+            System.out.println(ClientUI.CONTINUE_ENTER_DAYS);
+            System.out.println(ClientUI.YES_OPTION);
+            System.out.println(ClientUI.NO_OPTION);
 
             System.out.println();
             String continueAddingDays = scanner.nextLine();
@@ -108,7 +109,7 @@ public class FacilitiesAvailability {
      * @param response - response from the server
      */
     public static void printFacilitiesAvailability(ServerResponse response) {
-        Constants.PrintServerResponse();
+        ClientUI.PrintServerResponse();
         System.out.println("QUERY:");
 //        String format = "%-40s%s%n";
 //        System.out.printf(format, "Source:", query.getBooking().getName());

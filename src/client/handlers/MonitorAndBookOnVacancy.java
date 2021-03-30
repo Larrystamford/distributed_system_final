@@ -1,5 +1,6 @@
 package client.handlers;
 
+import client.ClientUI;
 import constants.Constants;
 import entity.BookingInfo;
 import entity.ClientQuery;
@@ -36,13 +37,13 @@ public class MonitorAndBookOnVacancy {
             if (response.getStatus() == 200) {
                 printMonitoringResults(response);
             } else {
-                Constants.PrintErrorMessage(response);
+                ClientUI.PrintErrorMessage(response);
             }
         }, false, query.getMonitoringDuration());
 
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
         System.out.println("MONITORING COMPLETE");
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
     }
 
     /**
@@ -51,77 +52,77 @@ public class MonitorAndBookOnVacancy {
      * @param bookings - BookingInfo list to be sent to the server
      */
     public static void getUserInputs(Scanner scanner, List<BookingInfo> bookings, ClientQuery query) {
-        System.out.println(Constants.SEPARATOR);
-        System.out.println(Constants.BOOK_ON_VACANCY_HEADER);
-        System.out.println(Constants.SEPARATOR);
+        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.BOOK_ON_VACANCY_HEADER);
+        System.out.println(ClientUI.SEPARATOR);
 
         // Enter Facility Name
-        System.out.println(Constants.ENTER_FACILITIES_NAME);
+        System.out.println(ClientUI.ENTER_FACILITIES_NAME);
 
         String name = scanner.nextLine();
         while (name.length() == 0) {
-            System.out.println(Constants.ERR_INPUT);
+            System.out.println(ClientUI.ERR_INPUT);
             System.out.println();
-            System.out.print(Constants.ENTER_FACILITIES_NAME);
+            System.out.print(ClientUI.ENTER_FACILITIES_NAME);
             System.out.println();
 
             name = scanner.nextLine();
         }
 
         // Enter Start Day
-        System.out.println(Constants.ENTER_START_DAY);
+        System.out.println(ClientUI.ENTER_START_DAY);
 
         String startDay = scanner.nextLine();
         while (startDay.length() == 0) {
-            System.out.println(Constants.ERR_INPUT);
+            System.out.println(ClientUI.ERR_INPUT);
             System.out.println();
-            System.out.print(Constants.ENTER_START_DAY);
+            System.out.print(ClientUI.ENTER_START_DAY);
             System.out.println();
 
             startDay = scanner.nextLine();
         }
 
         // Enter Start Time
-        System.out.println(Constants.ENTER_START_TIME);
+        System.out.println(ClientUI.ENTER_START_TIME);
 
         String startTime = scanner.nextLine();
         while (startTime.length() == 0) {
-            System.out.println(Constants.ERR_INPUT);
+            System.out.println(ClientUI.ERR_INPUT);
             System.out.println();
-            System.out.print(Constants.ENTER_START_TIME);
+            System.out.print(ClientUI.ENTER_START_TIME);
             System.out.println();
 
             startTime = scanner.nextLine();
         }
 
         // Enter End Day
-        System.out.println(Constants.ENTER_END_DAY);
+        System.out.println(ClientUI.ENTER_END_DAY);
 
         String endDay = scanner.nextLine();
         while (endDay.length() == 0) {
-            System.out.println(Constants.ERR_INPUT);
+            System.out.println(ClientUI.ERR_INPUT);
             System.out.println();
-            System.out.print(Constants.ENTER_END_DAY);
+            System.out.print(ClientUI.ENTER_END_DAY);
             System.out.println();
 
             endDay = scanner.nextLine();
         }
 
         // Enter End Time
-        System.out.println(Constants.ENTER_END_TIME);
+        System.out.println(ClientUI.ENTER_END_TIME);
 
         String endTime = scanner.nextLine();
         while (endTime.length() == 0) {
-            System.out.println(Constants.ERR_INPUT);
+            System.out.println(ClientUI.ERR_INPUT);
             System.out.println();
-            System.out.print(Constants.ENTER_END_TIME);
+            System.out.print(ClientUI.ENTER_END_TIME);
             System.out.println();
 
             endTime = scanner.nextLine();
         }
 
         // Enter Monitor Duration
-        System.out.println(Constants.ENTER_MONITOR_DURATION);
+        System.out.println(ClientUI.ENTER_MONITOR_DURATION);
 
         String duration = scanner.nextLine();
         while (!UserInputValidator.isNumericAndWithinRange(duration, 0, (int) Double.POSITIVE_INFINITY)) {
@@ -143,7 +144,7 @@ public class MonitorAndBookOnVacancy {
      * @param response - response from the server
      */
     public static void printMonitoringResults(ServerResponse response) {
-        Constants.PrintServerResponse();
+        ClientUI.PrintServerResponse();
         System.out.println("QUERY:");
 //        String format = "%-40s%s%n";
 //        System.out.printf(format, "Source:", query.getBooking().getName());
