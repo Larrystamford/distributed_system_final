@@ -1,12 +1,13 @@
 package remote_objects.Common;
 
-
-import marshal_handler.Marshaller;
+import marshal_handler.MarshalHandler;
+import marshal_handler.UnmarshalHandler;
 
 public class Marshal {
     int id;
+
     public byte[] marshall() {
-        return Marshaller.marshall(this);
+        return MarshalHandler.marshall(this);
     }
 
     public int getId() {
@@ -19,14 +20,10 @@ public class Marshal {
 
     public static Marshal unmarshall(byte[] raw) {
         try {
-            return (Marshal) Marshaller.unmarshall(raw);
+            return (Marshal) UnmarshalHandler.unmarshall(raw);
         } catch (ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public static <T extends Marshal> T unmarshall(byte[] raw, Class<T> clazz) {
-        return clazz.cast(unmarshall(raw));
     }
 }

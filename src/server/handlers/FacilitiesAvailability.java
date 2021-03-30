@@ -2,12 +2,12 @@
 
 package server.handlers;
 
-import remote_objects.Common.FacilityBooking;
+import remote_objects.Common.Booking;
 import remote_objects.Client.ClientQuery;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import network.Network;
-import server.ServerDB;
+import database.database;
 import utils.DateUtils;
 
 import java.net.InetSocketAddress;
@@ -19,16 +19,16 @@ import java.util.List;
 public class FacilitiesAvailability {
     private static ServerResponse response;
 
-    public static void handleRequest(Network network, InetSocketAddress origin, ServerDB database, ClientQuery query) {
-        List<FacilityBooking> bookings;
-        List<FacilityBooking> bookingsFiltered;
-        List<FacilityBooking> availableBookings = new ArrayList<FacilityBooking>();
+    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientQuery query) {
+        List<Booking> bookings;
+        List<Booking> bookingsFiltered;
+        List<Booking> availableBookings = new ArrayList<Booking>();
 
         bookings = query.getBookings();
-        boolean bookingNameExist = database.bookingNameExist(bookings.get(0).getName());
+        boolean facilityNameExist = database.facilityNameExist(bookings.get(0).getName());
 
-        if (bookingNameExist) {
-            for (FacilityBooking info : bookings) {
+        if (facilityNameExist) {
+            for (Booking info : bookings) {
                 String interestedName = info.getName();
 
                 int interestedDay = info.getStartTime().getDay();
@@ -44,16 +44,16 @@ public class FacilitiesAvailability {
         network.send(response, origin);
     }
 
-    public static List<FacilityBooking> getFreeBookingSlots(List<FacilityBooking> bookingsFiltered, String interestedName, int interestedDay) {
+    public static List<Booking> getFreeBookingSlots(List<Booking> bookingsFiltered, String interestedName, int interestedDay) {
         int secondsInADay = 86400;
-        List<FacilityBooking> freeBookings = new ArrayList<FacilityBooking>();
-        FacilityBooking booking;
+        List<Booking> freeBookings = new ArrayList<Booking>();
+        Booking booking;
 
         // whole day is available
         if (bookingsFiltered.isEmpty()) {
             DayAndTime d1 = new DayAndTime(interestedDay, 0, 0);
             DayAndTime d2 = new DayAndTime(interestedDay, 23, 59);
-            booking = new FacilityBooking(interestedName.toUpperCase(), d1, d2);
+            booking = new Booking(interestedName.toUpperCase(), d1, d2);
             freeBookings.add(booking);
 
             return freeBookings;
@@ -120,7 +120,7 @@ public class FacilitiesAvailability {
                     if (!(freeStartHour == freeEndHour && freeStartMinutes == freeEndMinutes)) {
                         d1 = new DayAndTime(interestedDay, freeStartHour, freeStartMinutes);
                         d2 = new DayAndTime(interestedDay, freeEndHour, freeEndMinutes);
-                        booking = new FacilityBooking(interestedName.toUpperCase(), d1, d2);
+                        booking = new Booking(interestedName.toUpperCase(), d1, d2);
                         freeBookings.add(booking);
                     }
 

@@ -25,7 +25,6 @@ public class UdpAgentWithFailures extends UdpAgent {
     }
 
     public void send(Marshal data, InetSocketAddress dest) {
-
         float limit = random.nextFloat();
         if (limit >= failProb) {
             super.send(data, dest);

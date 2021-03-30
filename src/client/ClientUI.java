@@ -74,7 +74,7 @@ public class ClientUI {
 
     // Details of UI
     public static void ServerSuccessStatus() {
-        System.out.println("\n=================================================");
+        System.out.println("\n==================================================");
         System.out.println("==================== Success =====================");
         System.out.println("==================================================");
     }
@@ -82,7 +82,7 @@ public class ClientUI {
 
     public static void ServerErrorUI(ServerResponse response) {
         System.out.println("\n=================================================");
-        System.out.println("=================== " + response.getStatus() + " ERROR ================");
+        System.out.println("=================== " + response.getStatus() + " ERROR ==================");
         System.out.println("=================================================");
         switch (response.getStatus()) {
             case 500:

@@ -15,15 +15,7 @@ public class AddressAndData {
         return origin;
     }
 
-    public void setOrigin(InetSocketAddress origin) {
-        this.origin = origin;
-    }
-
     public Marshal getData() {
         return data;
-    }
-
-    public void setData(Marshal data) {
-        this.data = data;
     }
 }

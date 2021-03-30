@@ -2,7 +2,7 @@ package client.handlers;
 
 import client.ClientUI;
 import utils.Constants;
-import remote_objects.Common.FacilityBooking;
+import remote_objects.Common.Booking;
 import remote_objects.Client.ClientQuery;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
@@ -14,16 +14,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MonitorAndBookOnVacancy {
-    /**
-     * creates and sends view all facilities query to the server then waits
-     * and handles the response. If no response is received before the timeout
-     * send timeout message to the client
-     *
-     * @param network - udp communicator
-     */
+
     public static void createAndSendMessage(Network network, Scanner scanner) {
         ClientQuery query;
-        List<FacilityBooking> bookings = new ArrayList<FacilityBooking>();
+        List<Booking> bookings = new ArrayList<Booking>();
 
         // get monitor duration
         query = new ClientQuery();
@@ -46,12 +40,7 @@ public class MonitorAndBookOnVacancy {
         System.out.println(ClientUI.LINE_SEPARATOR);
     }
 
-    /**
-     * parses the users inputs and retrieves the user's desired booking times and monitoring duration
-     *
-     * @param bookings - BookingInfo list to be sent to the server
-     */
-    public static void getUserInputs(Scanner scanner, List<FacilityBooking> bookings, ClientQuery query) {
+    public static void getUserInputs(Scanner scanner, List<Booking> bookings, ClientQuery query) {
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println(ClientUI.BOOK_ON_VACANCY_HEADER);
         System.out.println(ClientUI.LINE_SEPARATOR);
@@ -133,21 +122,14 @@ public class MonitorAndBookOnVacancy {
         System.out.println();
         DayAndTime d1 = new DayAndTime(Integer.parseInt(startDay), Integer.parseInt(startTime.substring(0, 2)), Integer.parseInt(startTime.substring(2, 4)));
         DayAndTime d2 = new DayAndTime(Integer.parseInt(endDay), Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(2, 4)));
-        FacilityBooking booking = new FacilityBooking(name.toUpperCase(), d1, d2);
+        Booking booking = new Booking(name.toUpperCase(), d1, d2);
         bookings.add(booking);
         query.setMonitoringDuration(Integer.parseInt(duration));
     }
 
-    /**
-     * parses the server response and prints the relevant information
-     *
-     * @param response - response from the server
-     */
     public static void printMonitoringResults(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
-        System.out.println("QUERY:");
-//        String format = "%-40s%s%n";
-//        System.out.printf(format, "Source:", query.getBooking().getName());
+
         System.out.println("=================================================");
         System.out.println("VACANCY FOUND");
         System.out.println("BOOKING MADE:");

@@ -1,10 +1,10 @@
 package server.handlers;
 
-import remote_objects.Common.FacilityBooking;
+import remote_objects.Common.Booking;
 import remote_objects.Client.ClientQuery;
 import remote_objects.Server.ServerResponse;
 import network.Network;
-import server.ServerDB;
+import database.database;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -12,9 +12,9 @@ import java.util.List;
 
 public class ViewAllFacilities {
     private static ServerResponse response;
-    private static List<FacilityBooking> bookings;
+    private static List<Booking> bookings;
 
-    public static void handleRequest(Network network, InetSocketAddress origin, ServerDB database, ClientQuery query) {
+    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientQuery query) {
         bookings = database.getAllBookings();
         if (bookings.isEmpty()) {
             response = new ServerResponse(query.getId(), 404, bookings);

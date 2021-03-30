@@ -73,16 +73,6 @@ public class UdpAgent {
         }
     }
 
-    public static String getIPaddress() {
-        String ret = null;
-        try {
-            ret = InetAddress.getLocalHost().getHostAddress();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ret;
-
-    }
 
     InetSocketAddress getServerSocket() {
         return serverSocket;

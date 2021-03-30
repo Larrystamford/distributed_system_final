@@ -1,6 +1,6 @@
 package server;
 
-import remote_objects.Common.FacilityBooking;
+import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OffsetBookingTest {
 
-    FacilityBooking booking;
-    List<FacilityBooking> bookingData;
+    Booking booking;
+    List<Booking> bookingData;
 
-    public static void populateDatabase(List<FacilityBooking> bookingData) {
+    public static void populateDatabase(List<Booking> bookingData) {
         // 10 hours after monday 12 am
         DayAndTime d1 = new DayAndTime(1, 10, 0);
         DayAndTime d2 = new DayAndTime(1, 12, 0);
@@ -31,10 +31,10 @@ class OffsetBookingTest {
         DayAndTime d7 = new DayAndTime(2, 2, 0);
         DayAndTime d8 = new DayAndTime(2, 3, 0);
 
-        bookingData.add(new FacilityBooking("TEST", d1, d2));
-        bookingData.add(new FacilityBooking("TEST", d3, d4));
-        bookingData.add(new FacilityBooking("TEST", d5, d6));
-        bookingData.add(new FacilityBooking("TEST", d7, d8));
+        bookingData.add(new Booking("TEST", d1, d2));
+        bookingData.add(new Booking("TEST", d3, d4));
+        bookingData.add(new Booking("TEST", d5, d6));
+        bookingData.add(new Booking("TEST", d7, d8));
     }
 
     @BeforeEach
@@ -47,7 +47,7 @@ class OffsetBookingTest {
     void validOffset_resolveOffsetTooEarly_shouldFail() {
         DayAndTime d1 = new DayAndTime(1, 10, 0);
         DayAndTime d2 = new DayAndTime(1, 12, 0);
-        booking = new FacilityBooking("TEST", d1, d2);
+        booking = new Booking("TEST", d1, d2);
         DayAndTime offset = new DayAndTime(-7, 0, 0);
         boolean valid = OffsetBooking.validOffset(booking, offset);
         assertFalse(valid);
@@ -57,7 +57,7 @@ class OffsetBookingTest {
     void validOffset_resolveOffsetEqualsMonday12AM_shouldPass() {
         DayAndTime d1 = new DayAndTime(1, 10, 0);
         DayAndTime d2 = new DayAndTime(1, 12, 0);
-        booking = new FacilityBooking("TEST", d1, d2);
+        booking = new Booking("TEST", d1, d2);
         DayAndTime offset = new DayAndTime(0, -10, 0);
         boolean valid = OffsetBooking.validOffset(booking, offset);
         assertTrue(valid);
@@ -67,7 +67,7 @@ class OffsetBookingTest {
     void validOffset_resolveOffsetEqualsMonday12AmMinus1Minute_shouldFail() {
         DayAndTime d1 = new DayAndTime(1, 10, 0);
         DayAndTime d2 = new DayAndTime(1, 12, 0);
-        booking = new FacilityBooking("TEST", d1, d2);
+        booking = new Booking("TEST", d1, d2);
         DayAndTime offset = new DayAndTime(0, -10, -1);
         boolean valid = OffsetBooking.validOffset(booking, offset);
         assertFalse(valid);

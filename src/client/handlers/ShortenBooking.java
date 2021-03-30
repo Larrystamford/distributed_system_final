@@ -3,7 +3,7 @@ package client.handlers;
 import client.ClientUI;
 import utils.DateUtils;
 import utils.Constants;
-import remote_objects.Common.FacilityBooking;
+import remote_objects.Common.Booking;
 import remote_objects.Client.ClientQuery;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
@@ -16,16 +16,9 @@ import java.util.Scanner;
 public class ShortenBooking {
     private static ClientQuery query;
 
-    /**
-     * creates and sends view all facilities query to the server then waits
-     * and handles the response. If no response is received before the timeout
-     * send timeout message to the client
-     *
-     * @param network - udp communicator
-     */
     public static void createAndSendMessage(Network network, Scanner scanner) {
-        FacilityBooking booking = getUserInputs(scanner);
-        List<FacilityBooking> payload = new ArrayList<>();
+        Booking booking = getUserInputs(scanner);
+        List<Booking> payload = new ArrayList<>();
         payload.add(booking);
 
         query = new ClientQuery(Constants.SHORTEN_BOOKING, payload);
@@ -39,10 +32,8 @@ public class ShortenBooking {
         }, false, 5);
     }
 
-    /**
-     * parses users inputs and returns the BookingInfo requested
-     */
-    public static FacilityBooking getUserInputs(Scanner scanner) {
+
+    public static Booking getUserInputs(Scanner scanner) {
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println(ClientUI.SHORTEN_BOOKING_HEADER);
         System.out.println(ClientUI.LINE_SEPARATOR);
@@ -69,22 +60,18 @@ public class ShortenBooking {
         System.out.println("Booking id: " + UUID);
         System.out.println("Offset: " + offset.toNiceString());
 
-        FacilityBooking payload = new FacilityBooking();
+        Booking payload = new Booking();
         payload.setUuid(UUID);
         payload.setOffset(offset);
 
         return payload;
     }
 
-    /**
-     * parses the server response and prints the relevant information
-     *
-     * @param response - response from the server
-     */
+
     public static void printChangeBookingSuccess(ServerResponse response) {
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("Booking successfully changed");
-        FacilityBooking booking = response.getInfos().get(0);
+        Booking booking = response.getInfos().get(0);
         String UUID = booking.getUuid();
         DayAndTime newStart = booking.getStartTime();
         DayAndTime newEnd = booking.getEndTime();

@@ -1,11 +1,11 @@
 package server.handlers;
 
-import remote_objects.Common.FacilityBooking;
+import remote_objects.Common.Booking;
 import remote_objects.Client.ClientQuery;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import network.Network;
-import server.ServerDB;
+import database.database;
 import utils.DateUtils;
 import utils.VacancyChecker;
 
@@ -17,21 +17,16 @@ public class OffsetBooking {
     private static DayAndTime newDayAndTimeEnd;
     private static DayAndTime newDayAndTimeStart;
 
-    /**
-     * @param network  - the udp communicator used
-     * @param origin   - client's ip address and port
-     * @param database - ServerDB
-     * @param query    - change booking query
-     */
-    public static void handleRequest(Network network, InetSocketAddress origin, ServerDB database, ClientQuery query) {
+
+    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientQuery query) {
         ServerResponse response;
-        FacilityBooking changeInfo = query.getBookings().get(0);
+        Booking changeInfo = query.getBookings().get(0);
         DayAndTime offset = changeInfo.getOffset();
         String UUID = changeInfo.getUuid();
 
-        List<FacilityBooking> res = new ArrayList<>();
+        List<Booking> res = new ArrayList<>();
 
-        FacilityBooking booking = database.returnBookingIfExists(UUID);
+        Booking booking = database.getBookingByUUID(UUID);
 
         if (booking != null) {
             if (!validOffset(booking, offset)) {
@@ -52,19 +47,11 @@ public class OffsetBooking {
     }
 
 
-    /**
-     * changes the start and end time of a booking by the offset if the change is valid
-     *
-     * @param booking  - booking object in question
-     * @param offset   - change in time slot desired by the user
-     * @param database - ServerDB database
-     * @return - new booking if change is valid otherwise null
-     */
-    public static FacilityBooking changeBooking(FacilityBooking booking, DayAndTime offset, ServerDB database) {
+    public static Booking changeBooking(Booking booking, DayAndTime offset, database database) {
         // remove current booking to check if new booking would cause conflicts
-        List<FacilityBooking> bookings = database.getBookingsByName(booking.getName());
+        List<Booking> bookings = database.getBookingsByName(booking.getName());
         for (int i = 0; i < bookings.size(); i++) {
-            FacilityBooking bInfo = bookings.get(i);
+            Booking bInfo = bookings.get(i);
             if (bInfo.getUuid().equals(booking.getUuid())) {
                 bookings.remove(bInfo);
                 break;
@@ -92,7 +79,7 @@ public class OffsetBooking {
      * @param offset  - offset by which the client wants to change the booking
      * @return
      */
-    public static boolean validOffset(FacilityBooking booking, DayAndTime offset) {
+    public static boolean validOffset(Booking booking, DayAndTime offset) {
         int newStartSecs = booking.getStartTime().getEquivalentSeconds() + offset.getEquivalentSeconds();
         int newEndSecs = booking.getEndTime().getEquivalentSeconds() + offset.getEquivalentSeconds();
 
