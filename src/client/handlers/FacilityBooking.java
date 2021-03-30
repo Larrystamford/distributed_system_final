@@ -1,6 +1,7 @@
 package client.handlers;
 
 import client.ClientUI;
+import remote_objects.Common.Booking;
 import utils.Constants;
 import remote_objects.Client.ClientQuery;
 import remote_objects.Common.DayAndTime;
@@ -12,16 +13,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class FacilityBooking {
-    /**
-     * creates and sends view all facilities query to the server then waits
-     * and handles the response. If no response is received before the timeout
-     * send timeout message to the client
-     *
-     * @param network - udp communicator
-     */
+
     public static void createAndSendMessage(Network network, Scanner scanner) {
         ClientQuery query;
-        List<remote_objects.Common.FacilityBooking> bookings = new ArrayList<remote_objects.Common.FacilityBooking>();
+        List<Booking> bookings = new ArrayList<Booking>();
 
         // appending bookings
         getUserInputs(scanner, bookings);
@@ -40,13 +35,8 @@ public class FacilityBooking {
         }, false, 5);
     }
 
-    /**
-     * parses the users inputs and retrieves the user's desired booking times
-     *
-     * @param bookings - BookingInfo list to be sent to the server
-     */
-    public static void getUserInputs(Scanner scanner, List<remote_objects.Common.FacilityBooking> bookings) {
-        remote_objects.Common.FacilityBooking booking;
+    public static void getUserInputs(Scanner scanner, List<Booking> bookings) {
+        Booking booking;
 
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println(ClientUI.BOOKING_FACILITY);
@@ -124,21 +114,13 @@ public class FacilityBooking {
 
         DayAndTime d1 = new DayAndTime(Integer.parseInt(startDay), Integer.parseInt(startTime.substring(0, 2)), Integer.parseInt(startTime.substring(2, 4)));
         DayAndTime d2 = new DayAndTime(Integer.parseInt(endDay), Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(2, 4)));
-        booking = new remote_objects.Common.FacilityBooking(name.toUpperCase(), d1, d2);
+        booking = new Booking(name.toUpperCase(), d1, d2);
         bookings.add(booking);
     }
 
-    /**
-     * parses the server response and prints the relevant information
-     *
-     * @param response - response from the server
-     */
     public static void printBookingResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
-        System.out.println("QUERY:");
-//        String format = "%-40s%s%n";
-//        System.out.printf(format, "Source:", query.getBooking().getName());
-        System.out.println("=================================================");
+
         System.out.println("Booking Successful:");
         System.out.println(response.getInfos().get(0).getName() + ": " + response.getInfos().get(0).getStartTime().toNiceString() + " - " + response.getInfos().get(0).getEndTime().toNiceString());
         System.out.println("Booking ID: " + response.getInfos().get(0).getUuid());

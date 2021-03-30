@@ -2,7 +2,7 @@ package client.handlers;
 
 import client.ClientUI;
 import utils.Constants;
-import remote_objects.Common.FacilityBooking;
+import remote_objects.Common.Booking;
 import remote_objects.Client.ClientQuery;
 import remote_objects.Server.ServerResponse;
 import network.Network;
@@ -14,16 +14,9 @@ import java.util.Scanner;
 
 public class FacilityMonitoring {
 
-    /**
-     * creates and sends view all facilities query to the server then waits
-     * and handles the response. If no response is received before the timeout
-     * send timeout message to the client
-     *
-     * @param network - udp communicator
-     */
     public static void createAndSendMessage(Network network, Scanner scanner) {
         ClientQuery query;
-        List<FacilityBooking> bookings = new ArrayList<FacilityBooking>();
+        List<Booking> bookings = new ArrayList<Booking>();
 
         // get monitor duration
         query = new ClientQuery();
@@ -46,8 +39,8 @@ public class FacilityMonitoring {
         System.out.println(ClientUI.LINE_SEPARATOR);
     }
 
-    public static void getUserInputs(Scanner scanner, List<FacilityBooking> bookings, ClientQuery query) {
-        FacilityBooking booking = new FacilityBooking();
+    public static void getUserInputs(Scanner scanner, List<Booking> bookings, ClientQuery query) {
+        Booking booking = new Booking();
 
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println(ClientUI.MONITOR_FACILITY_HEADER);
@@ -81,16 +74,9 @@ public class FacilityMonitoring {
         bookings.add(booking);
     }
 
-    /**
-     * parses the server response and prints the relevant information
-     *
-     * @param response - response from the server
-     */
     public static void printMonitoringResults(ClientQuery query, ServerResponse response) {
         ClientUI.ServerSuccessStatus();
-        System.out.println("QUERY:");
-//        String format = "%-40s%s%n";
-//        System.out.printf(format, "Source:", query.getBooking().getName());
+
         System.out.println("=================================================");
         System.out.println("NEW MONITORING UPDATE:\n");
         System.out.println(Constants.SERVICES_MAP.get(response.getType()));

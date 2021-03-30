@@ -15,7 +15,4 @@ public class Ack extends Marshal {
     public int getAckId() {
         return ackId;
     }
-    public void setAckId(int ackId) {
-        this.ackId = ackId;
-    }
 }

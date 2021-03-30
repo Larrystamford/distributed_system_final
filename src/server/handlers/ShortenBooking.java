@@ -1,11 +1,11 @@
 package server.handlers;
 
-import remote_objects.Common.FacilityBooking;
+import remote_objects.Common.Booking;
 import remote_objects.Client.ClientQuery;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import network.Network;
-import server.ServerDB;
+import database.database;
 import utils.DateUtils;
 
 import java.net.InetSocketAddress;
@@ -16,15 +16,15 @@ public class ShortenBooking {
     private static DayAndTime newDayAndTimeEnd;
     private static DayAndTime newDayAndTimeStart;
 
-    public static void handleRequest(Network network, InetSocketAddress origin, ServerDB database, ClientQuery query) {
+    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientQuery query) {
         ServerResponse response;
-        FacilityBooking changeInfo = query.getBookings().get(0);
+        Booking changeInfo = query.getBookings().get(0);
         DayAndTime offset = changeInfo.getOffset();
         String UUID = changeInfo.getUuid();
 
-        List<FacilityBooking> res = new ArrayList<>();
+        List<Booking> res = new ArrayList<>();
 
-        FacilityBooking booking = database.returnBookingIfExists(UUID);
+        Booking booking = database.getBookingByUUID(UUID);
         if (booking != null) {
             if (validOffset(booking, offset)) {
                 res.add(changeBooking(booking, database
@@ -43,14 +43,8 @@ public class ShortenBooking {
     }
 
 
-    /**
-     * reduces the end time of a booking by the offset if the change is valid
-     *
-     * @param booking  - booking object in question
-     * @param database - ServerDB database
-     * @return - new booking if change is valid otherwise null
-     */
-    public static FacilityBooking changeBooking(FacilityBooking booking, ServerDB database) {
+
+    public static Booking changeBooking(Booking booking, database database) {
         // to be returned to client
         booking.setEndTime(newDayAndTimeEnd);
 
@@ -59,7 +53,7 @@ public class ShortenBooking {
         return booking;
     }
 
-    public static boolean validOffset(FacilityBooking booking, DayAndTime offset) {
+    public static boolean validOffset(Booking booking, DayAndTime offset) {
         int newEndSecs = booking.getEndTime().getEquivalentSeconds() - offset.getEquivalentSeconds();
         newDayAndTimeEnd = DateUtils.convSecondsToDateTime(newEndSecs);
         return newDayAndTimeEnd != null && newDayAndTimeEnd.convSecs() > booking.getStartTime().convSecs();

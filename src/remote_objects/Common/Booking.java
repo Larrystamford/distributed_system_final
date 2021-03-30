@@ -3,20 +3,20 @@ package remote_objects.Common;
 import java.util.UUID;
 
 
-public class FacilityBooking implements Cloneable {
+public class Booking implements Cloneable {
     String name;
     String uuid;
     DayAndTime startTime;
     DayAndTime endTime;
     DayAndTime offset;
 
-    public FacilityBooking() {
+    public Booking() {
         this.uuid = UUID.randomUUID().toString();
     }
 
-    public FacilityBooking(String name,
-                           DayAndTime bookStart,
-                           DayAndTime bookEnd
+    public Booking(String name,
+                   DayAndTime bookStart,
+                   DayAndTime bookEnd
     ) {
         this.name = name;
         this.startTime = bookStart;
@@ -64,9 +64,9 @@ public class FacilityBooking implements Cloneable {
         this.offset = offset;
     }
 
-    public FacilityBooking clone() {
+    public Booking clone() {
         try {
-            return (FacilityBooking) super.clone();
+            return (Booking) super.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
             return null;

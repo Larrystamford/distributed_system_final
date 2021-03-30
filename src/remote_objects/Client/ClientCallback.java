@@ -21,23 +21,11 @@ public class ClientCallback {
         return queryId;
     }
 
-    public void setQueryId(int queryId) {
-        this.queryId = queryId;
-    }
-
     public SocketAddress getSocket() {
         return socket;
     }
 
-    public void setSocket(SocketAddress socket) {
-        this.socket = socket;
-    }
-
     public long getExpire() {
         return expire;
-    }
-
-    public void setExpire(long expire) {
-        this.expire = expire;
     }
 }

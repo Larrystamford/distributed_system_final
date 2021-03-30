@@ -12,9 +12,7 @@ public class AtMostOnceNetwork extends Network {
     public AtMostOnceNetwork(UdpAgent communicator) {
         super(communicator);
     }
-
     private ConcurrentMap<String, Long> received = new ConcurrentHashMap<>();
-    private final static Logger logger = LoggerFactory.getLogger(AtMostOnceNetwork.class);
 
     public boolean filterDuplicate(AddressAndData data) {
         String uniqueClientIdData = data.getOrigin().toString() + "-ID:" + data.getData().getId();
@@ -23,8 +21,7 @@ public class AtMostOnceNetwork extends Network {
             received.put(uniqueClientIdData, System.currentTimeMillis());
             return false;
         } else {
-            long lastReceived = received.get(uniqueClientIdData);
-            logger.info("Repeated Request Ignored: {}", data);
+            System.out.print("Repeated Request " + uniqueClientIdData + " is ignored.");
             return true;
         }
     }

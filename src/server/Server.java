@@ -1,17 +1,15 @@
 package server;
 
+import database.database;
 import utils.Constants;
 import remote_objects.Client.ClientCallback;
 import remote_objects.Server.ServerResponse;
 import network.*;
 import org.apache.commons.cli.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import server.handlers.*;
 
 public class Server {
     private Network network;
-    private static final Logger logger = LoggerFactory.getLogger(Server.class);
     ServerResponse response;
 
     public Server(Network network) {
@@ -19,9 +17,8 @@ public class Server {
     }
 
     public void run() {
-        System.out.println("Running Server...");
-        ServerDB database = new ServerDB();
-        System.out.println("Server Seeded...");
+        database database = new database();
+        System.out.println("Database Initialised ...");
 
         network.receive((origin, query) -> {
             switch (query.getType()) {
@@ -97,7 +94,6 @@ public class Server {
         options.addOption(opDebug);
 
         CommandLineParser parser = new DefaultParser();
-        HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd;
 
 
@@ -126,15 +122,9 @@ public class Server {
 
             if (atLeastOnce) {
                 server = new Server(new AtLeastOnceNetwork(communicator));
-                System.out.println("At least once network");
-            } else if (atMostOnce) {
-                server = new Server(new AtMostOnceNetwork(communicator));
-                System.out.println("At most once network");
             } else {
-                server = new Server(new AtLeastOnceNetwork(communicator));
-                System.out.println("Defaults to at least once network");
+                server = new Server(new AtMostOnceNetwork(communicator));
             }
-
 
             server.run();
         } catch (Exception e) {
