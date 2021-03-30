@@ -7,7 +7,7 @@ import network.*;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.VacancyChecker;
+import server.handlers.*;
 
 public class Server {
     private Network network;
@@ -27,20 +27,20 @@ public class Server {
             switch (query.getType()) {
                 case Constants.VIEW_ALL_FACILITIES:
                     System.out.println("request to view all facilities");
-                    HandleViewAllFacilities.handleRequest(network, origin, database, query);
+                    ViewAllFacilities.handleRequest(network, origin, database, query);
                     break;
                 case Constants.CHECK_FACILITIES_AVAILABILITY:
                     System.out.println("request to check facilities availability");
-                    HandleCheckFacilitiesAvailability.handleRequest(network, origin, database, query);
+                    FacilitiesAvailability.handleRequest(network, origin, database, query);
                     break;
 
                 case Constants.BOOK_FACILITY:
                     System.out.println("request to book facility");
-                    HandleBookFacility.handleRequest(network, origin, database, query);
+                    FacilityBooking.handleRequest(network, origin, database, query);
                     break;
 
                 case Constants.CHANGE_BOOKING:
-                    HandleChangeBooking.handleRequest(network, origin, database, query);
+                    OffsetBooking.handleRequest(network, origin, database, query);
                     break;
                 case Constants.MONITOR_BOOKING:
                     // we handle monitorAvailability(facility name, monitor interval) - callback
@@ -48,21 +48,13 @@ public class Server {
                     ClientCallbackInfo cInfo = new ClientCallbackInfo(query.getId(), origin, query.getMonitoringDuration());
                     database.registerMonitoring(query.getBookings().get(0).getName(), cInfo);
                     break;
-                case Constants.CANCEL_BOOKING:
-                    System.out.println("request to cancel booking");
-                    HandleCancelBooking.handleRequest(network, origin, database, query);
-                    break;
-                case Constants.EXTEND_BOOKING:
-                    System.out.println("request to extend booking");
-                    HandleExtendBooking.handleRequest(network, origin, database, query);
-                    break;
                 case Constants.SHORTEN_BOOKING:
                     System.out.println("request to shorten booking");
-                    HandleShortenBooking.handleRequest(network, origin, database, query);
+                    ShortenBooking.handleRequest(network, origin, database, query);
                     break;
                 case Constants.BOOK_ON_VACANCY:
                     System.out.println("request to book on vacancy");
-                    HandleBookOnVacancy.handleRequest(network, origin, database, query);
+                    MonitorAndBookOnVacancy.handleRequest(network, origin, database, query);
                     break;
                 case 11:
                     System.out.println("Get all bookings.");

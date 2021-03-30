@@ -1,5 +1,6 @@
 package client;
 
+import client.handlers.*;
 import constants.Constants;
 import entity.ClientQuery;
 import network.*;
@@ -33,31 +34,25 @@ public class Client {
         try {
             switch (serviceType) {
                 case Constants.VIEW_ALL_FACILITIES:
-                    HandleViewAllFacilities.createAndSendMessage(network);
+                    ViewAllFacilities.createAndSendMessage(network);
                     break;
                 case Constants.CHECK_FACILITIES_AVAILABILITY:
-                    HandleCheckFacilitiesAvailability.createAndSendMessage(network, scanner);
+                    FacilitiesAvailability.createAndSendMessage(network, scanner);
                     break;
                 case Constants.BOOK_FACILITY:
-                    HandleBookFacility.createAndSendMessage(network, scanner);
+                    FacilityBooking.createAndSendMessage(network, scanner);
                     break;
                 case Constants.CHANGE_BOOKING:
-                    HandleChangeBooking.createAndSendMessage(network, scanner);
+                    OffsetBooking.createAndSendMessage(network, scanner);
                     break;
                 case Constants.MONITOR_BOOKING:
-                    HandleMonitorFacility.createAndSendMessage(network, scanner);
-                    break;
-                case Constants.CANCEL_BOOKING:
-                    HandleCancelBooking.createAndSendMessage(network, scanner);
-                    break;
-                case Constants.EXTEND_BOOKING:
-                    HandleExtendBooking.createAndSendMessage(network, scanner);
+                    FacilityMonitoring.createAndSendMessage(network, scanner);
                     break;
                 case Constants.SHORTEN_BOOKING:
-                    HandleShortenBooking.createAndSendMessage(network, scanner);
+                    ShortenBooking.createAndSendMessage(network, scanner);
                     break;
                 case Constants.BOOK_ON_VACANCY:
-                    HandleBookOnVacancy.createAndSendMessage(network, scanner);
+                    MonitorAndBookOnVacancy.createAndSendMessage(network, scanner);
                     break;
                 case Constants.SERVICE_EXIT:
                     System.out.println(Constants.EXIT_MSG);
