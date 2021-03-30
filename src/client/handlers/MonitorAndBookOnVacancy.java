@@ -1,11 +1,11 @@
 package client.handlers;
 
 import client.ClientUI;
-import constants.Constants;
-import entity.BookingInfo;
-import entity.ClientQuery;
-import entity.DateTime;
-import entity.ServerResponse;
+import utils.Constants;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Common.DayAndTime;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 import utils.UserInputValidator;
 
@@ -23,13 +23,13 @@ public class MonitorAndBookOnVacancy {
      */
     public static void createAndSendMessage(Network network, Scanner scanner) {
         ClientQuery query;
-        List<BookingInfo> bookings = new ArrayList<BookingInfo>();
+        List<FacilityBooking> bookings = new ArrayList<FacilityBooking>();
 
         // get monitor duration
         query = new ClientQuery();
         getUserInputs(scanner, bookings, query);
 
-        query.setType(Constants.BOOK_ON_VACANCY);
+        query.setType(Constants.MONITOR_AND_BOOK_ON_AVAILABLE);
         query.setBookings(bookings);
 
         int id = network.send(query);
@@ -37,13 +37,13 @@ public class MonitorAndBookOnVacancy {
             if (response.getStatus() == 200) {
                 printMonitoringResults(response);
             } else {
-                ClientUI.PrintErrorMessage(response);
+                ClientUI.ServerErrorUI(response);
             }
         }, false, query.getMonitoringDuration());
 
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("MONITORING COMPLETE");
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
     }
 
     /**
@@ -51,17 +51,17 @@ public class MonitorAndBookOnVacancy {
      *
      * @param bookings - BookingInfo list to be sent to the server
      */
-    public static void getUserInputs(Scanner scanner, List<BookingInfo> bookings, ClientQuery query) {
-        System.out.println(ClientUI.SEPARATOR);
+    public static void getUserInputs(Scanner scanner, List<FacilityBooking> bookings, ClientQuery query) {
+        System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println(ClientUI.BOOK_ON_VACANCY_HEADER);
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
 
         // Enter Facility Name
         System.out.println(ClientUI.ENTER_FACILITIES_NAME);
 
         String name = scanner.nextLine();
         while (name.length() == 0) {
-            System.out.println(ClientUI.ERR_INPUT);
+            System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
             System.out.print(ClientUI.ENTER_FACILITIES_NAME);
             System.out.println();
@@ -74,7 +74,7 @@ public class MonitorAndBookOnVacancy {
 
         String startDay = scanner.nextLine();
         while (startDay.length() == 0) {
-            System.out.println(ClientUI.ERR_INPUT);
+            System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
             System.out.print(ClientUI.ENTER_START_DAY);
             System.out.println();
@@ -87,7 +87,7 @@ public class MonitorAndBookOnVacancy {
 
         String startTime = scanner.nextLine();
         while (startTime.length() == 0) {
-            System.out.println(ClientUI.ERR_INPUT);
+            System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
             System.out.print(ClientUI.ENTER_START_TIME);
             System.out.println();
@@ -100,7 +100,7 @@ public class MonitorAndBookOnVacancy {
 
         String endDay = scanner.nextLine();
         while (endDay.length() == 0) {
-            System.out.println(ClientUI.ERR_INPUT);
+            System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
             System.out.print(ClientUI.ENTER_END_DAY);
             System.out.println();
@@ -113,7 +113,7 @@ public class MonitorAndBookOnVacancy {
 
         String endTime = scanner.nextLine();
         while (endTime.length() == 0) {
-            System.out.println(ClientUI.ERR_INPUT);
+            System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
             System.out.print(ClientUI.ENTER_END_TIME);
             System.out.println();
@@ -131,9 +131,9 @@ public class MonitorAndBookOnVacancy {
         }
         // Create Potential Booking And Set Monitor Duration
         System.out.println();
-        DateTime d1 = new DateTime(Integer.parseInt(startDay), Integer.parseInt(startTime.substring(0, 2)), Integer.parseInt(startTime.substring(2, 4)));
-        DateTime d2 = new DateTime(Integer.parseInt(endDay), Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(2, 4)));
-        BookingInfo booking = new BookingInfo(name.toUpperCase(), d1, d2);
+        DayAndTime d1 = new DayAndTime(Integer.parseInt(startDay), Integer.parseInt(startTime.substring(0, 2)), Integer.parseInt(startTime.substring(2, 4)));
+        DayAndTime d2 = new DayAndTime(Integer.parseInt(endDay), Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(2, 4)));
+        FacilityBooking booking = new FacilityBooking(name.toUpperCase(), d1, d2);
         bookings.add(booking);
         query.setMonitoringDuration(Integer.parseInt(duration));
     }
@@ -144,7 +144,7 @@ public class MonitorAndBookOnVacancy {
      * @param response - response from the server
      */
     public static void printMonitoringResults(ServerResponse response) {
-        ClientUI.PrintServerResponse();
+        ClientUI.ServerSuccessStatus();
         System.out.println("QUERY:");
 //        String format = "%-40s%s%n";
 //        System.out.printf(format, "Source:", query.getBooking().getName());

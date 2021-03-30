@@ -1,8 +1,8 @@
 package server.handlers;
 
-import entity.BookingInfo;
-import entity.ClientQuery;
-import entity.ServerResponse;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 import server.ServerDB;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ViewAllFacilities {
     private static ServerResponse response;
-    private static List<BookingInfo> bookings;
+    private static List<FacilityBooking> bookings;
 
     public static void handleRequest(Network network, InetSocketAddress origin, ServerDB database, ClientQuery query) {
         bookings = database.getAllBookings();

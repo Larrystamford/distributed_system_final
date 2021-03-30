@@ -1,7 +1,7 @@
 package server.handlers;
 
-import entity.ClientCallbackInfo;
-import entity.ServerResponse;
+import remote_objects.Client.ClientCallback;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 import server.ServerDB;
 
@@ -12,11 +12,11 @@ public class FacilityMonitoring {
 
     public static void informRegisteredClients(Network network, ServerResponse res, int responseType) {
         String facilityName = res.getInfos().get(0).getName();
-        List<ClientCallbackInfo> addresses = ServerDB.getValidMonitorFacilityRequests(facilityName);
+        List<ClientCallback> addresses = ServerDB.getValidMonitorFacilityRequests(facilityName);
         if (addresses == null) {
             return;
         }
-        for (ClientCallbackInfo cInfo : addresses) {
+        for (ClientCallback cInfo : addresses) {
             ServerResponse callbackRes = res.clone();
             callbackRes.setType(responseType);
             callbackRes.setQueryId(cInfo.getQueryId());

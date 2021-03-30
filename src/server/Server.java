@@ -1,8 +1,8 @@
 package server;
 
-import constants.Constants;
-import entity.ClientCallbackInfo;
-import entity.ServerResponse;
+import utils.Constants;
+import remote_objects.Client.ClientCallback;
+import remote_objects.Server.ServerResponse;
 import network.*;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
@@ -34,25 +34,25 @@ public class Server {
                     FacilitiesAvailability.handleRequest(network, origin, database, query);
                     break;
 
-                case Constants.BOOK_FACILITY:
+                case Constants.FACILITY_BOOKING:
                     System.out.println("request to book facility");
                     FacilityBooking.handleRequest(network, origin, database, query);
                     break;
 
-                case Constants.CHANGE_BOOKING:
+                case Constants.OFFSET_BOOKING:
                     OffsetBooking.handleRequest(network, origin, database, query);
                     break;
-                case Constants.MONITOR_BOOKING:
+                case Constants.FACILITY_MONITORING:
                     // we handle monitorAvailability(facility name, monitor interval) - callback
                     System.out.println("request to monitor");
-                    ClientCallbackInfo cInfo = new ClientCallbackInfo(query.getId(), origin, query.getMonitoringDuration());
+                    ClientCallback cInfo = new ClientCallback(query.getId(), origin, query.getMonitoringDuration());
                     database.registerMonitoring(query.getBookings().get(0).getName(), cInfo);
                     break;
                 case Constants.SHORTEN_BOOKING:
                     System.out.println("request to shorten booking");
                     ShortenBooking.handleRequest(network, origin, database, query);
                     break;
-                case Constants.BOOK_ON_VACANCY:
+                case Constants.MONITOR_AND_BOOK_ON_AVAILABLE:
                     System.out.println("request to book on vacancy");
                     MonitorAndBookOnVacancy.handleRequest(network, origin, database, query);
                     break;
@@ -69,9 +69,6 @@ public class Server {
 
     public static void main(String[] args) {
         Options options = new Options();
-
-        Option opHost = new Option("h", "host", true, "Server host");
-        options.addOption(opHost);
 
         Option opPort = new Option("p", "port", true, "Server port");
         opPort.setRequired(true);
@@ -103,18 +100,13 @@ public class Server {
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd;
 
-        String host = Constants.DEFAULT_HOST;
-        int port = Constants.DEFAULT_PORT;
 
-        boolean atLeastOnce = false;
-        boolean atMostOnce = false;
         double failureRate = Constants.DEFAULT_FAILURE_RATE;
-        int timeout = Constants.DEFAULT_NO_TIMEOUT;
-        int maxTimeout = Constants.DEFAULT_MAX_TIMEOUT;
 
+        int port;
+        boolean atMostOnce, atLeastOnce;
         try {
             cmd = parser.parse(options, args);
-            host = cmd.getOptionValue("host");
             port = Integer.parseInt(cmd.getOptionValue("port"));
             if (cmd.hasOption("failurerate")) {
                 failureRate = Double.parseDouble(cmd.getOptionValue("failurerate"));
@@ -123,15 +115,14 @@ public class Server {
             atMostOnce = cmd.hasOption("atmost");
 
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
-            formatter.printHelp("UDPClient", options);
+            e.printStackTrace();
             System.exit(1);
             return;
         }
 
         try {
             Server server;
-            UDPCommunicator communicator = new PoorUDPCommunicator(port, failureRate);
+            UdpAgent communicator = new UdpAgentWithFailures(port, failureRate);
 
             if (atLeastOnce) {
                 server = new Server(new AtLeastOnceNetwork(communicator));

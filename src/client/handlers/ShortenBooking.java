@@ -2,12 +2,11 @@ package client.handlers;
 
 import client.ClientUI;
 import utils.DateUtils;
-import utils.UserInputValidator;
-import constants.Constants;
-import entity.BookingInfo;
-import entity.ClientQuery;
-import entity.DateTime;
-import entity.ServerResponse;
+import utils.Constants;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Common.DayAndTime;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 
 import java.util.ArrayList;
@@ -25,8 +24,8 @@ public class ShortenBooking {
      * @param network - udp communicator
      */
     public static void createAndSendMessage(Network network, Scanner scanner) {
-        BookingInfo booking = getUserInputs(scanner);
-        List<BookingInfo> payload = new ArrayList<>();
+        FacilityBooking booking = getUserInputs(scanner);
+        List<FacilityBooking> payload = new ArrayList<>();
         payload.add(booking);
 
         query = new ClientQuery(Constants.SHORTEN_BOOKING, payload);
@@ -35,7 +34,7 @@ public class ShortenBooking {
             if (response.getStatus() == 200) {
                 printChangeBookingSuccess(response);
             } else {
-                ClientUI.PrintErrorMessage(response);
+                ClientUI.ServerErrorUI(response);
             }
         }, false, 5);
     }
@@ -43,10 +42,10 @@ public class ShortenBooking {
     /**
      * parses users inputs and returns the BookingInfo requested
      */
-    public static BookingInfo getUserInputs(Scanner scanner) {
-        System.out.println(ClientUI.SEPARATOR);
+    public static FacilityBooking getUserInputs(Scanner scanner) {
+        System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println(ClientUI.SHORTEN_BOOKING_HEADER);
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
 
         // Enter booking id
         System.out.println(ClientUI.ENTER_UUID);
@@ -64,13 +63,13 @@ public class ShortenBooking {
             }
         }
 
-        DateTime offset = new DateTime(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
+        DayAndTime offset = new DayAndTime(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
 
         System.out.println("your information is as follows");
         System.out.println("Booking id: " + UUID);
         System.out.println("Offset: " + offset.toNiceString());
 
-        BookingInfo payload = new BookingInfo();
+        FacilityBooking payload = new FacilityBooking();
         payload.setUuid(UUID);
         payload.setOffset(offset);
 
@@ -83,16 +82,16 @@ public class ShortenBooking {
      * @param response - response from the server
      */
     public static void printChangeBookingSuccess(ServerResponse response) {
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("Booking successfully changed");
-        BookingInfo booking = response.getInfos().get(0);
+        FacilityBooking booking = response.getInfos().get(0);
         String UUID = booking.getUuid();
-        DateTime newStart = booking.getStartTime();
-        DateTime newEnd = booking.getEndTime();
+        DayAndTime newStart = booking.getStartTime();
+        DayAndTime newEnd = booking.getEndTime();
         System.out.println("New booking details:");
         System.out.println("Booking ID: " + UUID);
         System.out.println("Start: " + newStart.toNiceString());
         System.out.println("End: " + newEnd.toNiceString());
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
     }
 }

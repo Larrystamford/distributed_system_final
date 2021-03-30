@@ -1,10 +1,9 @@
 package client;
 
 import client.handlers.*;
-import constants.Constants;
-import entity.ClientQuery;
 import network.*;
 import org.apache.commons.cli.*;
+import utils.Constants;
 import utils.ProgramArgumentsHelper;
 
 import java.net.InetSocketAddress;
@@ -20,7 +19,7 @@ public class Client {
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        ClientUI.MainMenuSelectionMessage();
+        ClientUI.MenuMessage();
 
         int serviceType;
         String message = scanner.nextLine();
@@ -39,45 +38,32 @@ public class Client {
                 case Constants.FACILITY_AVAILABILITY:
                     FacilitiesAvailability.createAndSendMessage(network, scanner);
                     break;
-                case Constants.BOOK_FACILITY:
+                case Constants.FACILITY_BOOKING:
                     FacilityBooking.createAndSendMessage(network, scanner);
                     break;
-                case Constants.CHANGE_BOOKING:
+                case Constants.OFFSET_BOOKING:
                     OffsetBooking.createAndSendMessage(network, scanner);
                     break;
-                case Constants.MONITOR_BOOKING:
+                case Constants.FACILITY_MONITORING:
                     FacilityMonitoring.createAndSendMessage(network, scanner);
                     break;
                 case Constants.SHORTEN_BOOKING:
                     ShortenBooking.createAndSendMessage(network, scanner);
                     break;
-                case Constants.BOOK_ON_VACANCY:
+                case Constants.MONITOR_AND_BOOK_ON_AVAILABLE:
                     MonitorAndBookOnVacancy.createAndSendMessage(network, scanner);
                     break;
                 case Constants.SERVICE_EXIT:
-                    System.out.println(ClientUI.EXIT_MSG);
+                    System.out.println(ClientUI.EXIT_SYSTEM_MESSAGE);
                     break;
-                case 11:
-                    // TODO - delete close to completion
-                    // sanity check - prints all the current bookings
-                    ClientQuery query = new ClientQuery();
-                    query.setType(11);
-
-                    int id = network.send(query);
-                    network.receive(id, (response) -> {
-                        if (response.getStatus() != 200) {
-                            ClientUI.PrintErrorMessage(response);
-                        }
-                    }, false, 5);
-
                 default:
-                    System.out.println(ClientUI.UNRECOGNIZE_SVC_MSG);
+                    System.out.println(ClientUI.UNKNOWN_INPUT_MESSAGE);
                     System.out.println();
             }
 
         } catch (Exception e) {
-            System.out.println(ClientUI.SEPARATOR);
-            System.out.printf(ClientUI.ERR_MSG, e.getMessage());
+            System.out.println(ClientUI.LINE_SEPARATOR);
+            System.out.printf(ClientUI.ERROR_MESSAGE, e.getMessage());
         }
 
     }
@@ -120,33 +106,24 @@ public class Client {
         try {
             Client client;
             InetSocketAddress socketAddress = new InetSocketAddress(host, port);
-            UDPCommunicator communicator = new PoorUDPCommunicator(socketAddress, failureRate);
+            UdpAgent communicator = new UdpAgentWithFailures(socketAddress, failureRate);
 
-            System.out.print(ClientUI.SEPARATOR);
-            System.out.println(ClientUI.WELCOME_MSG);
-            System.out.println(ClientUI.SEPARATOR);
+            System.out.print(ClientUI.LINE_SEPARATOR);
+            System.out.println(ClientUI.STARTING_MESSAGE);
+            System.out.println(ClientUI.LINE_SEPARATOR);
 
-            if (atLeastOnce) {
-                client = new Client(new AtLeastOnceNetwork(communicator));
-                System.out.println("At least once network");
-            } else if (atMostOnce) {
-                client = new Client(new AtMostOnceNetwork(communicator));
-                System.out.println("At most once network");
-            } else {
-                client = new Client(new AtLeastOnceNetwork(communicator));
-                System.out.println("Defaults to at most once network");
-            }
+            client = new Client(new Network(communicator));
 
             while (true) {
                 client.run();
             }
 
         } catch (Exception e) {
-            System.out.print(ClientUI.SEPARATOR);
-            System.out.print(ClientUI.ERR_MSG);
+            System.out.print(ClientUI.LINE_SEPARATOR);
+            System.out.print(ClientUI.ERROR_MESSAGE);
             e.printStackTrace();
-            System.out.println(ClientUI.EXIT_MSG);
-            System.out.println(ClientUI.SEPARATOR);
+            System.out.println(ClientUI.EXIT_SYSTEM_MESSAGE);
+            System.out.println(ClientUI.LINE_SEPARATOR);
         }
     }
 }

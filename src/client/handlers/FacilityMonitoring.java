@@ -1,10 +1,10 @@
 package client.handlers;
 
 import client.ClientUI;
-import constants.Constants;
-import entity.BookingInfo;
-import entity.ClientQuery;
-import entity.ServerResponse;
+import utils.Constants;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 import utils.UserInputValidator;
 
@@ -23,13 +23,13 @@ public class FacilityMonitoring {
      */
     public static void createAndSendMessage(Network network, Scanner scanner) {
         ClientQuery query;
-        List<BookingInfo> bookings = new ArrayList<BookingInfo>();
+        List<FacilityBooking> bookings = new ArrayList<FacilityBooking>();
 
         // get monitor duration
         query = new ClientQuery();
         getUserInputs(scanner, bookings, query);
 
-        query.setType(Constants.MONITOR_BOOKING);
+        query.setType(Constants.FACILITY_MONITORING);
         query.setBookings(bookings);
 
         int id = network.send(query);
@@ -37,28 +37,28 @@ public class FacilityMonitoring {
             if (response.getStatus() == 200) {
                 printMonitoringResults(query, response);
             } else {
-                ClientUI.PrintErrorMessage(response);
+                ClientUI.ServerErrorUI(response);
             }
         }, true, query.getMonitoringDuration());
 
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("MONITORING COMPLETE");
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
     }
 
-    public static void getUserInputs(Scanner scanner, List<BookingInfo> bookings, ClientQuery query) {
-        BookingInfo booking = new BookingInfo();
+    public static void getUserInputs(Scanner scanner, List<FacilityBooking> bookings, ClientQuery query) {
+        FacilityBooking booking = new FacilityBooking();
 
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println(ClientUI.MONITOR_FACILITY_HEADER);
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
 
         // Enter Facility Name
         System.out.println(ClientUI.ENTER_FACILITIES_NAME);
 
         String name = scanner.nextLine();
         while (name.length() == 0) {
-            System.out.println(ClientUI.ERR_INPUT);
+            System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
             System.out.print(ClientUI.ENTER_FACILITIES_NAME);
             System.out.println();
@@ -87,7 +87,7 @@ public class FacilityMonitoring {
      * @param response - response from the server
      */
     public static void printMonitoringResults(ClientQuery query, ServerResponse response) {
-        ClientUI.PrintServerResponse();
+        ClientUI.ServerSuccessStatus();
         System.out.println("QUERY:");
 //        String format = "%-40s%s%n";
 //        System.out.printf(format, "Source:", query.getBooking().getName());
