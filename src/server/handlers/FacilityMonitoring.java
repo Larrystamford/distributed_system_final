@@ -1,9 +1,9 @@
 package server.handlers;
 
+import database.database;
+import network.Network;
 import remote_objects.Client.ClientCallback;
 import remote_objects.Server.ServerResponse;
-import network.Network;
-import database.database;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -19,7 +19,7 @@ public class FacilityMonitoring {
         for (ClientCallback cInfo : addresses) {
             ServerResponse callbackRes = res.clone();
             callbackRes.setType(responseType);
-            callbackRes.setQueryId(cInfo.getQueryId());
+            callbackRes.setRequestId(cInfo.getRequestId());
             network.send(callbackRes, (InetSocketAddress) cInfo.getSocket());
         }
     }

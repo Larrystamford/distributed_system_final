@@ -6,7 +6,7 @@ import remote_objects.Common.Booking;
 import java.util.List;
 
 public class ServerResponse extends Marshal implements Cloneable {
-    int queryId;
+    int requestId;
     int status;
     int type;
     List<Booking> infos;
@@ -15,19 +15,19 @@ public class ServerResponse extends Marshal implements Cloneable {
         super();
     }
 
-    public ServerResponse(int queryId, int status, List<Booking> infos) {
+    public ServerResponse(int requestId, int status, List<Booking> infos) {
         super();
-        this.queryId = queryId;
+        this.requestId = requestId;
         this.status = status;
         this.infos = infos;
     }
 
-    public int getQueryId() {
-        return queryId;
+    public int getRequestId() {
+        return requestId;
     }
 
-    public void setQueryId(int queryId) {
-        this.queryId = queryId;
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
     }
 
     public int getStatus() {

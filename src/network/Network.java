@@ -2,7 +2,7 @@ package network;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Common.Ack;
 import remote_objects.Common.AddressAndData;
 import remote_objects.Common.Marshal;
@@ -39,7 +39,7 @@ public class Network {
      */
     ConcurrentMap<Integer, Thread> acks = new ConcurrentHashMap<>();
 
-    BiConsumer<InetSocketAddress, ClientQuery> serverAction;
+    BiConsumer<InetSocketAddress, ClientRequest> serverAction;
 
     public Network(UdpAgent communicator) {
         this.communicator = communicator;
@@ -59,9 +59,9 @@ public class Network {
 
                 if (resp.getData() instanceof Ack) {
                     Ack ack = (Ack) resp.getData();
-                    Thread ackThread = acks.get(ack.getAckId());
+                    Thread ackThread = acks.get(ack.getId());
                     if (ackThread == null) continue; // Already acknowledged and interrupted
-                    acks.remove(ack.getAckId());
+                    acks.remove(ack.getId());
                     ackThread.interrupt(); // interrupt the client and server to stop sending messages
                 } else {
                     // client and server both sends back an ack
@@ -71,7 +71,7 @@ public class Network {
                         if (resp.getData() instanceof ServerResponse) {
                             ServerResponse serverResponse = (ServerResponse) resp.getData();
                             System.out.println(serverResponse);
-                            Consumer<ServerResponse> c = callbacks.get(serverResponse.getQueryId());
+                            Consumer<ServerResponse> c = callbacks.get(serverResponse.getRequestId());
                             System.out.println(c);
                             if (c == null) {
                                 continue; //Results were already displayed
@@ -79,13 +79,13 @@ public class Network {
                             // perform the operation in the client with this response as the argument
                             // and interrupt the receive thread in client (if not monitoring)
                             c.accept(serverResponse);
-                            if (threadsToBreak.containsKey(serverResponse.getQueryId())) {
-                                threadsToBreak.get(serverResponse.getQueryId()).interrupt();
+                            if (threadsToBreak.containsKey(serverResponse.getRequestId())) {
+                                threadsToBreak.get(serverResponse.getRequestId()).interrupt();
                             }
-                        } else if (resp.getData() instanceof ClientQuery) {
+                        } else if (resp.getData() instanceof ClientRequest) {
                             // this determines how many times the server is ran
-                            ClientQuery clientQuery = (ClientQuery) resp.getData();
-                            serverAction.accept(resp.getOrigin(), clientQuery);
+                            ClientRequest clientRequest = (ClientRequest) resp.getData();
+                            serverAction.accept(resp.getOrigin(), clientRequest);
                         }
                     }
                 }
@@ -95,13 +95,8 @@ public class Network {
     }
 
     void sendAck(int ackId, InetSocketAddress dest) {
-        Ack ack = new Ack(ackId); // the request / respond ID is the ackId
-
-        // luke - can we remove this?
-        int id = idGen.get();
-        ack.setId(id);
-        //
-
+        Ack ack = new Ack();
+        ack.setId(ackId); // we set ackId to the same Id that belongs to the client request or server response
         communicator.send(ack, dest);
     }
 
@@ -133,7 +128,7 @@ public class Network {
 
 
     // server side receive
-    public void receive(BiConsumer<InetSocketAddress, ClientQuery> serverOps) {
+    public void receive(BiConsumer<InetSocketAddress, ClientRequest> serverOps) {
         this.serverAction = serverOps;
         Thread.yield();
     }

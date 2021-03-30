@@ -3,7 +3,7 @@ package client.handlers;
 import client.ClientUI;
 import remote_objects.Common.Booking;
 import utils.Constants;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import network.Network;
@@ -15,13 +15,13 @@ import java.util.Scanner;
 public class FacilityBooking {
 
     public static void createAndSendMessage(Network network, Scanner scanner) {
-        ClientQuery query;
+        ClientRequest query;
         List<Booking> bookings = new ArrayList<Booking>();
 
         // appending bookings
         getUserInputs(scanner, bookings);
 
-        query = new ClientQuery();
+        query = new ClientRequest();
         query.setType(Constants.FACILITY_BOOKING);
         query.setBookings(bookings);
 

@@ -3,7 +3,7 @@ package database;
 import client.ClientUI;
 import remote_objects.Common.Booking;
 import remote_objects.Client.ClientCallback;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import javacutils.Pair;
 
@@ -14,7 +14,7 @@ public class database {
     private static final ArrayList<Booking> bookingData = new ArrayList<Booking>();
     private static final Set<String> facilityNames = new HashSet();
     private static final HashMap<String, List<ClientCallback>> monitorFacilityList = new HashMap<>();
-    private static final HashMap<String, List<Pair<ClientCallback, ClientQuery>>> bookOnVacancyList = new HashMap<>();
+    private static final HashMap<String, List<Pair<ClientCallback, ClientRequest>>> bookOnVacancyList = new HashMap<>();
 
     public database() {
         initDatabase();
@@ -25,6 +25,8 @@ public class database {
         facilityNames.add("LAB 2");
         facilityNames.add("LAB 3");
         facilityNames.add("LAB 4");
+        facilityNames.add("LAB 5");
+        facilityNames.add("LAB 6");
 
         DayAndTime d1 = new DayAndTime(1, 2, 23);
         DayAndTime d2 = new DayAndTime(1, 12, 12);
@@ -39,6 +41,8 @@ public class database {
         bookingData.add(new Booking("LAB 2", d3, d4));
         bookingData.add(new Booking("LAB 3", d5, d6));
         bookingData.add(new Booking("LAB 4", d7, d8));
+        bookingData.add(new Booking("LAB 5", d1, d5));
+        bookingData.add(new Booking("LAB 6", d3, d8));
     }
 
     public static Booking createBooking(String name, DayAndTime startTime, DayAndTime endTime) {
@@ -49,17 +53,6 @@ public class database {
     }
 
     public List<Booking> getAllBookings() {
-        System.out.println(ClientUI.LINE_SEPARATOR);
-        System.out.println("Monitor facilities list");
-
-        monitorFacilityList.forEach((name, cInfoList) -> {
-            for (ClientCallback cInfo : cInfoList) {
-                System.out.println(cInfo.getExpire() + " " + cInfo.getQueryId());
-            }
-        });
-
-        System.out.println(ClientUI.LINE_SEPARATOR);
-
         return bookingData;
     }
 
@@ -137,17 +130,17 @@ public class database {
      * @param facilityName   - name of facility client is interested in monitoring
      * @param clientCallback - client's socket information
      */
-    public void registerBookOnVacancy(String facilityName, ClientCallback clientCallback, ClientQuery query) {
+    public void registerBookOnVacancy(String facilityName, ClientCallback clientCallback, ClientRequest query) {
         if (!bookOnVacancyList.containsKey(facilityName)) {
             bookOnVacancyList.put(facilityName, new ArrayList<>());
         }
-        List<Pair<ClientCallback, ClientQuery>> addresses = bookOnVacancyList.get(facilityName);
-        Pair<ClientCallback, ClientQuery> pair = Pair.of(clientCallback, query);
+        List<Pair<ClientCallback, ClientRequest>> addresses = bookOnVacancyList.get(facilityName);
+        Pair<ClientCallback, ClientRequest> pair = Pair.of(clientCallback, query);
         addresses.add(pair);
         bookOnVacancyList.put(facilityName, addresses);
     }
 
-    public static List<Pair<ClientCallback, ClientQuery>> getValidBookOnVacancyRequest(String facilityName) {
+    public static List<Pair<ClientCallback, ClientRequest>> getValidBookOnVacancyRequest(String facilityName) {
         filterCallBackAddresses();
         return bookOnVacancyList.get(facilityName);
     }

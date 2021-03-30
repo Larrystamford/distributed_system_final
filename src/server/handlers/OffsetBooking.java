@@ -1,7 +1,7 @@
 package server.handlers;
 
 import remote_objects.Common.Booking;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import network.Network;
@@ -18,7 +18,7 @@ public class OffsetBooking {
     private static DayAndTime newDayAndTimeStart;
 
 
-    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientQuery query) {
+    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientRequest query) {
         ServerResponse response;
         Booking changeInfo = query.getBookings().get(0);
         DayAndTime offset = changeInfo.getOffset();
