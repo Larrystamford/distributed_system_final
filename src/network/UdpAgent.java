@@ -60,7 +60,7 @@ public class UdpAgent {
     }
 
     public AddressAndData receive() {
-        byte[] inputBuffer = new byte[5000];
+        byte[] inputBuffer = new byte[20000];
         DatagramPacket p = new DatagramPacket(inputBuffer, inputBuffer.length);
         try {
             dSocket.receive(p);

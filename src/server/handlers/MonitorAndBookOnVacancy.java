@@ -3,7 +3,7 @@ package server.handlers;
 import javacutils.Pair;
 import network.Network;
 import remote_objects.Client.ClientCallback;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class MonitorAndBookOnVacancy {
 
-    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientQuery query) {
+    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientRequest query) {
         // check if the booking is already vacant
         Booking booking = query.getBookings().get(0);
         String name = booking.getName();
@@ -34,19 +34,19 @@ public class MonitorAndBookOnVacancy {
 
     public static void informRegisteredClients(Network network, ServerResponse response, database database) {
         String facilityName = response.getInfos().get(0).getName();
-        List<Pair<ClientCallback, ClientQuery>> addresses = database.getValidBookOnVacancyRequest(facilityName);
+        List<Pair<ClientCallback, ClientRequest>> addresses = database.getValidBookOnVacancyRequest(facilityName);
         if (addresses == null || addresses.isEmpty()) {
             return;
         }
 
         // send to client first in queue to book facility
         ClientCallback cInfo = addresses.get(0).first;
-        ClientQuery registeredQuery = addresses.get(0).second;
+        ClientRequest registeredQuery = addresses.get(0).second;
 
         // make new client query to be handled by HandleBooking
-        ClientQuery cQuery = new ClientQuery();
+        ClientRequest cQuery = new ClientRequest();
         cQuery.setBookings(registeredQuery.getBookings());
-        cQuery.setId(cInfo.getQueryId());
+        cQuery.setId(cInfo.getRequestId());
         server.handlers.FacilityBooking.handleRequest(network, (InetSocketAddress) cInfo.getSocket(), database, cQuery);
     }
 

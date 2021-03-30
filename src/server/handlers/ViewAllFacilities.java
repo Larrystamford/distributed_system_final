@@ -1,7 +1,7 @@
 package server.handlers;
 
 import remote_objects.Common.Booking;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Server.ServerResponse;
 import network.Network;
 import database.database;
@@ -14,7 +14,7 @@ public class ViewAllFacilities {
     private static ServerResponse response;
     private static List<Booking> bookings;
 
-    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientQuery query) {
+    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientRequest query) {
         bookings = database.getAllBookings();
         if (bookings.isEmpty()) {
             response = new ServerResponse(query.getId(), 404, bookings);

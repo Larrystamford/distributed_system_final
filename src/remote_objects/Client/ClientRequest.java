@@ -6,18 +6,18 @@ import remote_objects.Common.Booking;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientQuery extends Marshal {
+public class ClientRequest extends Marshal {
     // type is switch case number
     int type;
     int monitoringDuration;
     List<Booking> bookings = new ArrayList<Booking>();
 
 
-    public ClientQuery() {
+    public ClientRequest() {
         super();
     }
 
-    public ClientQuery(int type, List<Booking> bookings) {
+    public ClientRequest(int type, List<Booking> bookings) {
         super();
         this.type = type;
         this.bookings = bookings;

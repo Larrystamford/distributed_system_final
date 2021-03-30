@@ -1,153 +1,103 @@
 package marshal_handler;
 
+import com.google.common.primitives.Bytes;
+import remote_objects.Common.Marshal;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
-import java.util.*;
-
-import com.google.common.primitives.Bytes;
-import remote_objects.Common.Marshal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UnmarshalHandler {
 
     public static Object unmarshall(byte[] data) throws ClassNotFoundException {
-        List<Byte> byteList = new LinkedList<>(Bytes.asList(data));
-        String className = unmarshallString(byteList);
-        int id = unmarshallInt(byteList);
-        Object o = unmarshallObject(byteList, Class.forName(className));
-        if (o instanceof Marshal) {
-            Marshal m = (Marshal) o;
-            m.setId(id);
-            return m;
-        }
-        return o;
+        List<Byte> byteList = new ArrayList<>(Bytes.asList(data));
+
+        // start by retrieving the object ID
+        int id = unmarshalInt(byteList);
+        // then get the classname of the object
+        String className = unmarshalString(byteList);
+        // with the object's classname we can unravel each field within the object
+        Object o = unmarshalObject(byteList, Class.forName(className));
+
+        // downcast back to marshal class
+        Marshal marshalObject = (Marshal) o;
+        marshalObject.setId(id);
+        return marshalObject;
     }
 
-    private static <T> T unmarshallObject(List<Byte> byteList, Class<T> clazz) {
-        T obj;
+    private static <T> T unmarshalObject(List<Byte> byteList, Class<T> _class) {
+        T object;
         try {
-            obj = clazz.getConstructor().newInstance();
+            // create a new instance of the class
+            object = _class.getConstructor().newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field f : fields) {
-            f.setAccessible(true);
+
+        // get the fields that the class contains
+        Field[] fields = _class.getDeclaredFields();
+
+        // unmarshal each field
+        for (Field eachField : fields) {
             try {
-                Object unmarshalledFieldValue = unmarshallSelect(byteList, f.getGenericType());
-                System.out.println(unmarshalledFieldValue);
-                f.set(obj, unmarshalledFieldValue);
-            } catch (IllegalAccessException e) {
+                eachField.setAccessible(true); // need to do this in order to access private fields
+                Object unmarshalledFieldValue = typeToUnmarshal(byteList, eachField.getGenericType());
+
+                // set the object with the unmarshalled data
+                eachField.set(object, unmarshalledFieldValue);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        return obj;
+        // unmarshalled object
+        return object;
     }
 
 
-
-    private static Object unmarshallSelect(List<Byte> byteList, Type type) {
-
-        boolean notNull = unmarshallBoolean(byteList);
+    private static Object typeToUnmarshal(List<Byte> byteList, Type type) {
+        // if field was not assigned any data, return null
+        boolean notNull = unmarshalBoolean(byteList);
         if (!notNull) return null;
 
-        String[] typeWithGeneric = type.getTypeName().split("[<>]");
-        switch (typeWithGeneric[0]) {
+        // choose type to unmarshal
+        String[] typeAndObjectName = type.getTypeName().split("[<>]");
+        switch (typeAndObjectName[0]) {
             case "java.lang.String":
-                return unmarshallString(byteList);
+                return unmarshalString(byteList);
             case "java.lang.Short":
             case "short":
-                return unmarshallShort(byteList);
+                return unmarshalShort(byteList);
             case "java.lang.Integer":
             case "int":
-                return unmarshallInt(byteList);
+                return unmarshalInt(byteList);
             case "java.lang.Float":
             case "float":
-                return unmarshallFloat(byteList);
+                return unmarshalFloat(byteList);
             case "java.lang.Double":
             case "double":
-                return unmarshallDouble(byteList);
+                return unmarshalDouble(byteList);
             case "java.lang.Boolean":
             case "boolean":
-                return unmarshallBoolean(byteList);
+                return unmarshalBoolean(byteList);
             case "java.util.List":
-                System.out.println(typeWithGeneric);
                 Type genericType = ((ParameterizedType) type).getActualTypeArguments()[0];
-                System.out.println(genericType);
-                return unmarshallList(byteList, genericType);
+                return unmarshalList(byteList, genericType);
             default:
-                return unmarshallObject(byteList, (Class<?>) type);
+                return unmarshalObject(byteList, (Class<?>) type);
         }
     }
 
 
+    private static String unmarshalString(List<Byte> byteList) {
+        // unmarshal length of the string
+        int size = getShortFromByteList(byteList);
 
-
-    private static <T> List<T> unmarshallList(List<Byte> byteList, Type genericType) {
-        List<T> list = new ArrayList<>();
-        int size = shortFromByteList(byteList);
-
-        for (int i = 0; i < size; i++) {
-            T obj = (T) unmarshallSelect(byteList, genericType);
-            list.add(obj);
-        }
-
-        return list;
-    }
-
-
-
-    private static int unmarshallInt(List<Byte> byteList) {
-        return intFromByteList(byteList);
-    }
-
-
-
-    private static short unmarshallShort(List<Byte> byteList) {
-        return shortFromByteList(byteList);
-    }
-
-
-
-    private static float unmarshallFloat(List<Byte> byteList) {
-        return floatFromByteList(byteList);
-    }
-
-
-
-    private static double unmarshallDouble(List<Byte> byteList) {
-        return doubleFromByteList(byteList);
-    }
-
-
-
-    private static boolean unmarshallBoolean(List<Byte> byteList) {
-        return booleanFromByteList(byteList);
-    }
-
-
-
-    private static String unmarshallString(List<Byte> byteList) {
-        return stringFromByteList(byteList);
-    }
-
-
-
-
-    private static int intFromByteList(List<Byte> byteList) {
-        byte[] intBytes = new byte[Integer.BYTES];
-        for (int i = 0; i < Integer.BYTES; i++) {
-            intBytes[i] = byteList.remove(0);
-        }
-        return ByteBuffer.wrap(intBytes).getInt();
-    }
-
-
-    private static String stringFromByteList(List<Byte> byteList) {
-        int size = shortFromByteList(byteList);
+        // unmarshal each char in the string
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < size; i++) {
             builder.append((char) byteList.remove(0).byteValue());
@@ -155,20 +105,23 @@ public class UnmarshalHandler {
         return builder.toString();
     }
 
-
-
-    private static short shortFromByteList(List<Byte> byteList) {
-        byte[] shortBytes = new byte[Short.BYTES];
-        for (int i = 0; i < Short.BYTES; i++) {
-            shortBytes[i] = byteList.remove(0);
+    private static int unmarshalInt(List<Byte> byteList) {
+        byte[] intBytes = new byte[Integer.BYTES];
+        for (int i = 0; i < Integer.BYTES; i++) {
+            intBytes[i] = byteList.remove(0);
         }
-        return ByteBuffer.wrap(shortBytes).getShort();
+        return ByteBuffer.wrap(intBytes).getInt();
     }
 
+    private static float unmarshalFloat(List<Byte> byteList) {
+        byte[] floatBytes = new byte[Float.BYTES];
+        for (int i = 0; i < Float.BYTES; i++) {
+            floatBytes[i] = byteList.remove(0);
+        }
+        return ByteBuffer.wrap(floatBytes).getFloat();
+    }
 
-
-
-    private static double doubleFromByteList(List<Byte> byteList) {
+    private static double unmarshalDouble(List<Byte> byteList) {
         byte[] doubleBytes = new byte[Double.BYTES];
         for (int i = 0; i < Double.BYTES; i++) {
             doubleBytes[i] = byteList.remove(0);
@@ -177,20 +130,37 @@ public class UnmarshalHandler {
     }
 
 
-    private static float floatFromByteList(List<Byte> byteList) {
-        byte[] floatBytes = new byte[Float.BYTES];
-        for (int i = 0; i < Float.BYTES; i++) {
-            floatBytes[i] = byteList.remove(0);
-        }
-        return ByteBuffer.wrap(floatBytes).getFloat();
-    }
-
-
-
-    private static boolean booleanFromByteList(List<Byte> byteList) {
+    private static boolean unmarshalBoolean(List<Byte> byteList) {
         Byte bool = byteList.remove(0);
-        return bool != (byte) 0;
+
+        if (bool == (byte) 1) {
+            return true;
+        }
+        return false;
     }
 
+    private static short unmarshalShort(List<Byte> byteList) {
+        return getShortFromByteList(byteList);
+    }
 
+    private static short getShortFromByteList(List<Byte> byteList) {
+        byte[] shortBytes = new byte[Short.BYTES];
+        for (int i = 0; i < Short.BYTES; i++) {
+            shortBytes[i] = byteList.remove(0);
+        }
+        return ByteBuffer.wrap(shortBytes).getShort();
+    }
+
+    private static <T> List<T> unmarshalList(List<Byte> byteList, Type genericType) {
+        List<T> list = new ArrayList<>();
+        // unmarshal length of list
+        int size = getShortFromByteList(byteList);
+
+        // unmarshal each object in the list
+        for (int i = 0; i < size; i++) {
+            T obj = (T) typeToUnmarshal(byteList, genericType);
+            list.add(obj);
+        }
+        return list;
+    }
 }

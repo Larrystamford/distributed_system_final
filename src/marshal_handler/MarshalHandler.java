@@ -15,41 +15,51 @@ public class MarshalHandler {
         List<Byte> marshalingList = new ArrayList<>();
 
         String className = object.getClass().getName();
-        marshalString(className, marshalingList);
+
+        // start by marshaling the object id
         marshalInt(object.getId(), marshalingList);
+        // then marshal the classname
+        marshalString(className, marshalingList);
+        // finally marshal all the fields within the object
         marshallObject(object, marshalingList);
 
-        byte[] resBytes = Bytes.toArray(marshalingList);
-        return resBytes;
+        return Bytes.toArray(marshalingList);
     }
 
 
     private static void marshallObject(Object object, List<Byte> marshalingList) {
-
         Field[] fields = object.getClass().getDeclaredFields();
-        for (Field f : fields) {
-            String type = f.getGenericType().getTypeName();
-            f.setAccessible(true);
-            try {
-                Object o = f.get(object);
 
-                String[] typeWithGeneric = type.split("[<>]");
-                marshallSelect(typeWithGeneric, o, marshalingList);
-            } catch (IllegalAccessException e) {
+        // marshal each field that the object contains
+        for (Field eachField : fields) {
+            try {
+                eachField.setAccessible(true); // need to do this in order to access private fields
+
+                String type = eachField.getGenericType().getTypeName(); // example type = java.lang.String<remote_objects.Client.ClientRequest>
+                Object o = eachField.get(object);
+
+                // most of the time we only care about the type
+                // however when dealing with list, we will need the objectName as well. Example: java.util.List<String>
+                String[] typeAndObjectName = type.split("[<>]");
+
+                typeToMarshal(typeAndObjectName, o, marshalingList);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private static void marshallSelect(String[] typeWithGeneric, Object object, List<Byte> marshalingList) {
-
+    private static void typeToMarshal(String[] typeAndObjectName, Object object, List<Byte> marshalingList) {
+        // to unmarshal a field, we need to first know if the field was assigned any data
+        // marshal true if have data, else marshal false
         if (object == null) {
             marshalBoolean(false, marshalingList);
             return;
         }
         marshalBoolean(true, marshalingList);
 
-        switch (typeWithGeneric[0]) {
+        // choose type to marshal
+        switch (typeAndObjectName[0]) {
             case "java.lang.String":
                 marshalString(object, marshalingList);
                 break;
@@ -74,28 +84,13 @@ public class MarshalHandler {
                 marshalBoolean(object, marshalingList);
                 break;
             case "java.util.List":
-                marshalList(object, Arrays.copyOfRange(typeWithGeneric, 1, typeWithGeneric.length), marshalingList);
+                marshalList(object, Arrays.copyOfRange(typeAndObjectName, 1, typeAndObjectName.length), marshalingList);
                 break;
             default:
                 marshallObject(object, marshalingList);
                 break;
         }
 
-    }
-
-
-    private static void marshalList(Object object, String[] typeWithGeneric, List<Byte> marshalingList) {
-        List<?> list = (List<?>) object;
-
-        // marshal list length
-        short listLength = (short) list.size();
-        byte[] array = ByteBuffer.allocate(Short.BYTES).putShort(listLength).array();
-        marshalingList.addAll(Bytes.asList(array));
-
-        // marshal each item in the list
-        for (Object item : list) {
-            marshallSelect(typeWithGeneric, item, marshalingList);
-        }
     }
 
     private static void marshalString(Object object, List<Byte> marshalingList) {
@@ -109,6 +104,7 @@ public class MarshalHandler {
         // marshal string
         marshalingList.addAll(Bytes.asList(value.getBytes()));
     }
+
 
     private static void marshalInt(Object object, List<Byte> marshalingList) {
         int value = (int) object;
@@ -127,7 +123,6 @@ public class MarshalHandler {
     private static void marshalFloat(Object object, List<Byte> marshalingList) {
         float value = (float) object;
         byte[] array = ByteBuffer.allocate(Float.BYTES).putFloat(value).array();
-
         marshalingList.addAll(Bytes.asList(array));
     }
 
@@ -146,8 +141,21 @@ public class MarshalHandler {
         } else {
             value = (byte) 0;
         }
-
         marshalingList.addAll(Bytes.asList(value));
+    }
+
+    private static void marshalList(Object object, String[] typeAndObjectName, List<Byte> marshalingList) {
+        List<?> list = (List<?>) object;
+
+        // marshal list length
+        short listLength = (short) list.size();
+        byte[] array = ByteBuffer.allocate(Short.BYTES).putShort(listLength).array();
+        marshalingList.addAll(Bytes.asList(array));
+
+        // marshal each item in the list
+        for (Object item : list) {
+            typeToMarshal(typeAndObjectName, item, marshalingList);
+        }
     }
 
 }
