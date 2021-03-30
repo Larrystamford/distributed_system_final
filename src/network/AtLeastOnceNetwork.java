@@ -1,23 +1,17 @@
 package network;
 
-import entity.Ack;
-import entity.ClientQuery;
-import entity.Response;
-import entity.ServerResponse;
-
-import java.util.function.Consumer;
+import remote_objects.Common.AddressAndData;
 
 public class AtLeastOnceNetwork extends Network {
 
 
-    public AtLeastOnceNetwork(UDPCommunicator communicator) {
+    public AtLeastOnceNetwork(UdpAgent communicator) {
         super(communicator);
     }
 
     @Override
-    protected boolean responseNeeded(Response data) {
-        //Do nothing for at least once
-        return true;
+    public boolean filterDuplicate(AddressAndData data) {
+        return false;
     }
 
 }

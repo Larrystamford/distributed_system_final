@@ -1,9 +1,8 @@
 package server.handlers;
 
-import entity.BookingInfo;
-import entity.ClientQuery;
-import entity.DateTime;
-import entity.ServerResponse;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Common.DayAndTime;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 import server.ServerDB;
 import utils.VacancyChecker;
@@ -17,16 +16,16 @@ public class FacilityBooking {
     private static ServerResponse response;
 
     public static void handleRequest(Network network, InetSocketAddress origin, ServerDB database, ClientQuery query) {
-        List<BookingInfo> bookings;
-        List<BookingInfo> bookingsFiltered;
-        List<BookingInfo> confirmedBooking = new ArrayList<BookingInfo>();
+        List<remote_objects.Common.FacilityBooking> bookings;
+        List<remote_objects.Common.FacilityBooking> bookingsFiltered;
+        List<remote_objects.Common.FacilityBooking> confirmedBooking = new ArrayList<remote_objects.Common.FacilityBooking>();
 
         bookings = query.getBookings();
         boolean bookingNameExist = database.bookingNameExist(bookings.get(0).getName());
-        List<BookingInfo> bookingsFilteredByName = database.getBookingsByName(bookings.get(0).getName());
+        List<remote_objects.Common.FacilityBooking> bookingsFilteredByName = database.getBookingsByName(bookings.get(0).getName());
 
         if (bookingNameExist) {
-            for (BookingInfo info : bookings) {
+            for (remote_objects.Common.FacilityBooking info : bookings) {
                 String bookingName = info.getName();
                 int startDay = info.getStartTime().getDay();
                 int startHour = info.getStartTime().getHour();
@@ -35,12 +34,12 @@ public class FacilityBooking {
                 int endHour = info.getEndTime().getHour();
                 int endMinute = info.getEndTime().getMinute();
 
-                DateTime startTime = new DateTime(startDay, startHour, startMinute);
-                DateTime endTime = new DateTime(endDay, endHour, endMinute);
+                DayAndTime startTime = new DayAndTime(startDay, startHour, startMinute);
+                DayAndTime endTime = new DayAndTime(endDay, endHour, endMinute);
 
                 if (VacancyChecker.isVacant(bookingsFilteredByName, startTime, endTime)) {
                     // book here
-                    BookingInfo newBooking = ServerDB.createBooking(bookingName, startTime, endTime);
+                    remote_objects.Common.FacilityBooking newBooking = ServerDB.createBooking(bookingName, startTime, endTime);
                     confirmedBooking.add(newBooking);
                     response = new ServerResponse(query.getId(), 200, confirmedBooking);
                     FacilityMonitoring.informRegisteredClients(network, response, query.getType());

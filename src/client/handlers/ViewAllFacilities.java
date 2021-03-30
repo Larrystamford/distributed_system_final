@@ -1,9 +1,9 @@
 package client.handlers;
 
 import client.ClientUI;
-import constants.Constants;
-import entity.ClientQuery;
-import entity.ServerResponse;
+import utils.Constants;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 
 public class ViewAllFacilities {
@@ -25,7 +25,7 @@ public class ViewAllFacilities {
             if (response.getStatus() == 200) {
                 printFaciliiesAvailability(response);
             } else {
-                ClientUI.PrintErrorMessage(response);
+                ClientUI.ServerErrorUI(response);
             }
         }, false, 5);
     }
@@ -36,7 +36,7 @@ public class ViewAllFacilities {
      * @param response - response from the server
      */
     public static void printFaciliiesAvailability(ServerResponse response) {
-        ClientUI.PrintServerResponse();
+        ClientUI.ServerSuccessStatus();
         System.out.println("QUERY:");
 //        String format = "%-40s%s%n";
 //        System.out.printf(format, "Source:", query.getBooking().getName());

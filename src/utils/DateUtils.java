@@ -1,6 +1,6 @@
 package utils;
 
-import entity.DateTime;
+import remote_objects.Common.DayAndTime;
 
 public class DateUtils {
 
@@ -18,7 +18,7 @@ public class DateUtils {
         return seconds / secsMin;
     }
 
-    public static DateTime convSecondsToDateTime(int seconds) {
+    public static DayAndTime convSecondsToDateTime(int seconds) {
         int day = seconds / (24 * 3600);
         seconds -= day * 24 * 3600;
         int hour = seconds / 3600;
@@ -26,7 +26,7 @@ public class DateUtils {
         int minute = seconds / 60;
 
         if (isValidDateTimeFormat(day, hour, minute)) {
-            return new DateTime(day, hour, minute);
+            return new DayAndTime(day, hour, minute);
         }
         return null;
     }

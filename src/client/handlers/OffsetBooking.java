@@ -3,11 +3,11 @@ package client.handlers;
 import client.ClientUI;
 import utils.DateUtils;
 import utils.UserInputValidator;
-import constants.Constants;
-import entity.BookingInfo;
-import entity.ClientQuery;
-import entity.DateTime;
-import entity.ServerResponse;
+import utils.Constants;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Common.DayAndTime;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 
 import java.util.ArrayList;
@@ -25,17 +25,17 @@ public class OffsetBooking {
      * @param network - udp communicator
      */
     public static void createAndSendMessage(Network network, Scanner scanner) {
-        BookingInfo booking = getUserInputs(scanner);
-        List<BookingInfo> payload = new ArrayList<>();
+        FacilityBooking booking = getUserInputs(scanner);
+        List<FacilityBooking> payload = new ArrayList<>();
         payload.add(booking);
 
-        query = new ClientQuery(Constants.CHANGE_BOOKING, payload);
+        query = new ClientQuery(Constants.OFFSET_BOOKING, payload);
         int id = network.send(query);
         network.receive(id, (response) -> {
             if (response.getStatus() == 200) {
                 printChangeBookingSuccess(query, response);
             } else {
-                ClientUI.PrintErrorMessage(response);
+                ClientUI.ServerErrorUI(response);
             }
         }, false, 5);
     }
@@ -43,10 +43,10 @@ public class OffsetBooking {
     /**
      * parses the users inputs and retrieves the user's booking offset
      */
-    public static BookingInfo getUserInputs(Scanner scanner) {
-        System.out.println(ClientUI.SEPARATOR);
+    public static FacilityBooking getUserInputs(Scanner scanner) {
+        System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println(ClientUI.CHANGE_BOOKING_HEADER);
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
 
         // Enter booking id
         System.out.println(ClientUI.ENTER_UUID);
@@ -73,11 +73,11 @@ public class OffsetBooking {
             }
         }
 
-        DateTime offset;
+        DayAndTime offset;
         if (choice.equals("2")) {
-            offset = new DateTime(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
+            offset = new DayAndTime(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
         } else {
-            offset = new DateTime(-Integer.parseInt(date[0]), -Integer.parseInt(date[1]), -Integer.parseInt(date[2]));
+            offset = new DayAndTime(-Integer.parseInt(date[0]), -Integer.parseInt(date[1]), -Integer.parseInt(date[2]));
         }
 
         System.out.println("your information is as follows");
@@ -85,7 +85,7 @@ public class OffsetBooking {
         System.out.println("Choice: " + choice);
         System.out.println("Offset: " + offset.toNiceString());
 
-        BookingInfo payload = new BookingInfo();
+        FacilityBooking payload = new FacilityBooking();
         payload.setUuid(UUID);
         payload.setOffset(offset);
 
@@ -98,16 +98,16 @@ public class OffsetBooking {
      * @param response - response from the server
      */
     public static void printChangeBookingSuccess(ClientQuery query, ServerResponse response) {
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("Booking successfully changed");
-        BookingInfo booking = response.getInfos().get(0);
+        FacilityBooking booking = response.getInfos().get(0);
         String UUID = booking.getUuid();
-        DateTime newStart = booking.getStartTime();
-        DateTime newEnd = booking.getEndTime();
+        DayAndTime newStart = booking.getStartTime();
+        DayAndTime newEnd = booking.getEndTime();
         System.out.println("New booking details:");
         System.out.println("Booking ID: " + UUID);
         System.out.println("Start: " + newStart.toNiceString());
         System.out.println("End: " + newEnd.toNiceString());
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
     }
 }

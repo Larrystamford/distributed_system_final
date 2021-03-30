@@ -2,10 +2,10 @@
 
 package server.handlers;
 
-import entity.BookingInfo;
-import entity.ClientQuery;
-import entity.DateTime;
-import entity.ServerResponse;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Common.DayAndTime;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 import server.ServerDB;
 import utils.DateUtils;
@@ -20,15 +20,15 @@ public class FacilitiesAvailability {
     private static ServerResponse response;
 
     public static void handleRequest(Network network, InetSocketAddress origin, ServerDB database, ClientQuery query) {
-        List<BookingInfo> bookings;
-        List<BookingInfo> bookingsFiltered;
-        List<BookingInfo> availableBookings = new ArrayList<BookingInfo>();
+        List<FacilityBooking> bookings;
+        List<FacilityBooking> bookingsFiltered;
+        List<FacilityBooking> availableBookings = new ArrayList<FacilityBooking>();
 
         bookings = query.getBookings();
         boolean bookingNameExist = database.bookingNameExist(bookings.get(0).getName());
 
         if (bookingNameExist) {
-            for (BookingInfo info : bookings) {
+            for (FacilityBooking info : bookings) {
                 String interestedName = info.getName();
 
                 int interestedDay = info.getStartTime().getDay();
@@ -44,16 +44,16 @@ public class FacilitiesAvailability {
         network.send(response, origin);
     }
 
-    public static List<BookingInfo> getFreeBookingSlots(List<BookingInfo> bookingsFiltered, String interestedName, int interestedDay) {
+    public static List<FacilityBooking> getFreeBookingSlots(List<FacilityBooking> bookingsFiltered, String interestedName, int interestedDay) {
         int secondsInADay = 86400;
-        List<BookingInfo> freeBookings = new ArrayList<BookingInfo>();
-        BookingInfo booking;
+        List<FacilityBooking> freeBookings = new ArrayList<FacilityBooking>();
+        FacilityBooking booking;
 
         // whole day is available
         if (bookingsFiltered.isEmpty()) {
-            DateTime d1 = new DateTime(interestedDay, 0, 0);
-            DateTime d2 = new DateTime(interestedDay, 23, 59);
-            booking = new BookingInfo(interestedName.toUpperCase(), d1, d2);
+            DayAndTime d1 = new DayAndTime(interestedDay, 0, 0);
+            DayAndTime d2 = new DayAndTime(interestedDay, 23, 59);
+            booking = new FacilityBooking(interestedName.toUpperCase(), d1, d2);
             freeBookings.add(booking);
 
             return freeBookings;
@@ -91,7 +91,7 @@ public class FacilitiesAvailability {
 
         int freeStart = -1;
         int freeEnd = -1;
-        DateTime d1, d2;
+        DayAndTime d1, d2;
 
         if (Collections.frequency(freeSlotsInSeconds, 1) != secondsInADay) {
             for (int x = 0; x < secondsInADay; x++) {
@@ -118,9 +118,9 @@ public class FacilitiesAvailability {
 
                     // avoid cases like start 23:59 end 23:59
                     if (!(freeStartHour == freeEndHour && freeStartMinutes == freeEndMinutes)) {
-                        d1 = new DateTime(interestedDay, freeStartHour, freeStartMinutes);
-                        d2 = new DateTime(interestedDay, freeEndHour, freeEndMinutes);
-                        booking = new BookingInfo(interestedName.toUpperCase(), d1, d2);
+                        d1 = new DayAndTime(interestedDay, freeStartHour, freeStartMinutes);
+                        d2 = new DayAndTime(interestedDay, freeEndHour, freeEndMinutes);
+                        booking = new FacilityBooking(interestedName.toUpperCase(), d1, d2);
                         freeBookings.add(booking);
                     }
 

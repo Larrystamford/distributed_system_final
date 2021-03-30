@@ -1,14 +1,13 @@
 package network;
 
-import entity.Ack;
-import entity.ClientQuery;
-import entity.Response;
-import entity.ServerResponse;
-import marshaller.Marshallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Common.Ack;
+import remote_objects.Common.AddressAndData;
+import remote_objects.Common.Marshal;
+import remote_objects.Server.ServerResponse;
+import utils.Constants;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,11 +20,9 @@ import java.util.function.Consumer;
  * establishes a request-reply protocol
  * Implemented by AtMostOnce and AtLeastOnce network classes
  */
-public abstract class Network {
-    UDPCommunicator communicator;
-    private final IdContainer idGen = new IdContainer();
-    protected static final long SEND_TIMEOUT = 500;
-    protected static final int MAX_TRY = 5;
+public class Network {
+    UdpAgent communicator;
+    private final IdGenerator idGen = new IdGenerator();
     private static final Logger logger = LoggerFactory.getLogger(Network.class);
 
     /**
@@ -44,18 +41,21 @@ public abstract class Network {
 
     BiConsumer<InetSocketAddress, ClientQuery> serverAction;
 
-    Network(UDPCommunicator communicator) {
+    public Network(UdpAgent communicator) {
         this.communicator = communicator;
         runReceiver();
     }
 
-    protected abstract boolean responseNeeded(Response data);
+    public boolean filterDuplicate(AddressAndData data) {
+        // default to no filter
+        return false;
+    }
 
     private void runReceiver() {
         Thread t = new Thread(() -> {
             while (true) {
                 // response from the other party
-                Response resp = communicator.receive();
+                AddressAndData resp = communicator.receive();
 
                 if (resp.getData() instanceof Ack) {
                     Ack ack = (Ack) resp.getData();
@@ -67,31 +67,26 @@ public abstract class Network {
                     // client and server both sends back an ack
                     sendAck(resp.getData().getId(), resp.getOrigin());
 
-                    // this may only be false in 'at most once network' in which
-                    // 'received hashmaps' keep track of which requests ids the server has seen
-                    // if the server has seen the query before, its either still processing
-                    // or still trying to send
-                    // thus, we preserve idempotence by not rerunning the client query again
-                    if (!responseNeeded(resp)) continue;
-
-                    if (resp.getData() instanceof ServerResponse) {
-                        ServerResponse serverResponse = (ServerResponse) resp.getData();
-                        System.out.println(serverResponse);
-                        Consumer<ServerResponse> c = callbacks.get(serverResponse.getQueryId());
-                        System.out.println(c);
-                        if (c == null) {
-                            continue; //Results were already displayed
+                    if (!filterDuplicate(resp)) {
+                        if (resp.getData() instanceof ServerResponse) {
+                            ServerResponse serverResponse = (ServerResponse) resp.getData();
+                            System.out.println(serverResponse);
+                            Consumer<ServerResponse> c = callbacks.get(serverResponse.getQueryId());
+                            System.out.println(c);
+                            if (c == null) {
+                                continue; //Results were already displayed
+                            }
+                            // perform the operation in the client with this response as the argument
+                            // and interrupt the receive thread in client (if not monitoring)
+                            c.accept(serverResponse);
+                            if (threadsToBreak.containsKey(serverResponse.getQueryId())) {
+                                threadsToBreak.get(serverResponse.getQueryId()).interrupt();
+                            }
+                        } else if (resp.getData() instanceof ClientQuery) {
+                            // this determines how many times the server is ran
+                            ClientQuery clientQuery = (ClientQuery) resp.getData();
+                            serverAction.accept(resp.getOrigin(), clientQuery);
                         }
-                        // perform the operation in the client with this response as the argument
-                        // and interrupt the receive thread in client (if not monitoring)
-                        c.accept(serverResponse);
-                        if (threadsToBreak.containsKey(serverResponse.getQueryId())) {
-                            threadsToBreak.get(serverResponse.getQueryId()).interrupt();
-                        }
-                    } else if (resp.getData() instanceof ClientQuery) {
-                        // this determines how many times the server is ran
-                        ClientQuery clientQuery = (ClientQuery) resp.getData();
-                        serverAction.accept(resp.getOrigin(), clientQuery);
                     }
                 }
             }
@@ -101,8 +96,12 @@ public abstract class Network {
 
     void sendAck(int ackId, InetSocketAddress dest) {
         Ack ack = new Ack(ackId); // the request / respond ID is the ackId
+
+        // luke - can we remove this?
         int id = idGen.get();
         ack.setId(id);
+        //
+
         communicator.send(ack, dest);
     }
 
@@ -140,7 +139,7 @@ public abstract class Network {
     }
 
     // both server and client use this
-    public int send(Marshallable data, InetSocketAddress dest) {
+    public int send(Marshal data, InetSocketAddress dest) {
         int id = idGen.get();
 
         data.setId(id);
@@ -150,11 +149,11 @@ public abstract class Network {
         // acknowledgements will interrupt this thread
         Thread t = new Thread(() -> {
             try {
-                for (int i = 0; i < MAX_TRY; i++) {
+                for (int i = 0; i < Constants.DEFAULT_MAX_TRY; i++) {
                     communicator.send(data, dest);
-                    Thread.sleep(SEND_TIMEOUT);
+                    Thread.sleep(Constants.DEFAULT_TIMEOUT);
                 }
-                logger.error("Failed to send after {} tries: {}", MAX_TRY, data);
+                logger.error("Failed to send after {} tries: {}", Constants.DEFAULT_MAX_TRY, data);
                 acks.remove(id);
             } catch (InterruptedException ignored) {
                 // when the correct ack is received, sending is interrupted and we can stop sending req / respond
@@ -170,7 +169,7 @@ public abstract class Network {
         return id;
     }
 
-    public int send(Marshallable data) {
+    public int send(Marshal data) {
         // client calls the send func above with the server socket address
         return send(data, communicator.getServerSocket());
     }

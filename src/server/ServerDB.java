@@ -1,11 +1,10 @@
 package server;
 
 import client.ClientUI;
-import constants.Constants;
-import entity.BookingInfo;
-import entity.ClientCallbackInfo;
-import entity.ClientQuery;
-import entity.DateTime;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Client.ClientCallback;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Common.DayAndTime;
 import javacutils.Pair;
 
 import java.util.ArrayList;
@@ -14,32 +13,32 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ServerDB {
-    private static final ArrayList<BookingInfo> bookingData = new ArrayList<BookingInfo>();
+    private static final ArrayList<FacilityBooking> bookingData = new ArrayList<FacilityBooking>();
     private static final ArrayList<String> facilitiesAvailableNames = new ArrayList<>();
 
-    private static final HashMap<String, List<ClientCallbackInfo>> monitorFacilityList = new HashMap<>();
-    private static final HashMap<String, List<Pair<ClientCallbackInfo, ClientQuery>>> bookOnVacancyList = new HashMap<>();
+    private static final HashMap<String, List<ClientCallback>> monitorFacilityList = new HashMap<>();
+    private static final HashMap<String, List<Pair<ClientCallback, ClientQuery>>> bookOnVacancyList = new HashMap<>();
 
     public ServerDB() {
         seed();
     }
 
     public static void seed() {
-        DateTime d1 = new DateTime(1, 2, 23);
-        DateTime d2 = new DateTime(1, 12, 12);
-        DateTime d3 = new DateTime(3, 11, 21);
-        DateTime d4 = new DateTime(4, 12, 23);
-        DateTime d5 = new DateTime(2, 0, 0);
-        DateTime d6 = new DateTime(6, 23, 59);
-        DateTime d7 = new DateTime(6, 10, 23);
-        DateTime d8 = new DateTime(6, 23, 11);
+        DayAndTime d1 = new DayAndTime(1, 2, 23);
+        DayAndTime d2 = new DayAndTime(1, 12, 12);
+        DayAndTime d3 = new DayAndTime(3, 11, 21);
+        DayAndTime d4 = new DayAndTime(4, 12, 23);
+        DayAndTime d5 = new DayAndTime(2, 0, 0);
+        DayAndTime d6 = new DayAndTime(6, 23, 59);
+        DayAndTime d7 = new DayAndTime(6, 10, 23);
+        DayAndTime d8 = new DayAndTime(6, 23, 11);
 
-        bookingData.add(new BookingInfo("SS1", d1, d2));
-        bookingData.add(new BookingInfo("SS2", d3, d4));
-        bookingData.add(new BookingInfo("SS3", d5, d6));
-        bookingData.add(new BookingInfo("SS4", d7, d8));
+        bookingData.add(new FacilityBooking("SS1", d1, d2));
+        bookingData.add(new FacilityBooking("SS2", d3, d4));
+        bookingData.add(new FacilityBooking("SS3", d5, d6));
+        bookingData.add(new FacilityBooking("SS4", d7, d8));
 
-        BookingInfo changeBookingTest = new BookingInfo("SS5", d1, d2);
+        FacilityBooking changeBookingTest = new FacilityBooking("SS5", d1, d2);
 //        changeBookingTest.setUuid("1");
         bookingData.add(changeBookingTest);
 
@@ -51,35 +50,35 @@ public class ServerDB {
         facilitiesAvailableNames.add("SS6");
     }
 
-    public static BookingInfo createBooking(String name, DateTime startTime, DateTime endTime) {
-        BookingInfo newBooking = new BookingInfo(name, startTime, endTime);
+    public static FacilityBooking createBooking(String name, DayAndTime startTime, DayAndTime endTime) {
+        FacilityBooking newBooking = new FacilityBooking(name, startTime, endTime);
         bookingData.add(newBooking);
 
         return newBooking;
     }
 
-    public List<BookingInfo> getAllBookings() {
-        for (BookingInfo booking : bookingData) {
+    public List<FacilityBooking> getAllBookings() {
+        for (FacilityBooking booking : bookingData) {
             System.out.println(booking.getUuid());
             System.out.println(booking.getName() + booking.getStartTime().toNiceString() + booking.getEndTime().toNiceString());
         }
 
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("Monitor facilities list");
 
         monitorFacilityList.forEach((name, cInfoList) -> {
-            for (ClientCallbackInfo cInfo : cInfoList) {
+            for (ClientCallback cInfo : cInfoList) {
                 System.out.println(cInfo.getExpire() + " " + cInfo.getQueryId());
             }
         });
 
-        System.out.println(ClientUI.SEPARATOR);
+        System.out.println(ClientUI.LINE_SEPARATOR);
 
         return bookingData;
     }
 
-    public void updateBooking(String UUID, DateTime start, DateTime end) {
-        BookingInfo booking = returnBookingIfExists(UUID);
+    public void updateBooking(String UUID, DayAndTime start, DayAndTime end) {
+        FacilityBooking booking = returnBookingIfExists(UUID);
         if (booking != null) {
             booking.setStartTime(start);
             booking.setEndTime(end);
@@ -100,8 +99,8 @@ public class ServerDB {
     }
 
     // *** change this to hash map
-    public BookingInfo returnBookingIfExists(String UUID) {
-        for (BookingInfo booking : bookingData) {
+    public FacilityBooking returnBookingIfExists(String UUID) {
+        for (FacilityBooking booking : bookingData) {
             if (booking.getUuid() != null && booking.getUuid().equals(UUID)) {
                 return booking;
             }
@@ -109,9 +108,9 @@ public class ServerDB {
         return null;
     }
 
-    public List<BookingInfo> getBookingsByName(String name) {
-        List<BookingInfo> res = new ArrayList<>();
-        for (BookingInfo booking : bookingData) {
+    public List<FacilityBooking> getBookingsByName(String name) {
+        List<FacilityBooking> res = new ArrayList<>();
+        for (FacilityBooking booking : bookingData) {
             if (booking.getName().equals(name)) {
                 res.add(booking);
             }
@@ -119,9 +118,9 @@ public class ServerDB {
         return res;
     }
 
-    public List<BookingInfo> getBookingsByNameAndDay(String name, int day) {
-        List<BookingInfo> res = new ArrayList<>();
-        for (BookingInfo booking : bookingData) {
+    public List<FacilityBooking> getBookingsByNameAndDay(String name, int day) {
+        List<FacilityBooking> res = new ArrayList<>();
+        for (FacilityBooking booking : bookingData) {
             if (booking.getName().equals(name) && (booking.getStartTime().getDay() == day || booking.getEndTime().getDay() == day || (booking.getStartTime().getDay() < day && day <= booking.getEndTime().getDay()))) {
                 res.add(booking);
             }
@@ -136,18 +135,18 @@ public class ServerDB {
      * registers a client for monitoring a facility's availability over the week
      *
      * @param facilityName       - name of facility client is interested in monitoring
-     * @param clientCallbackInfo - client's socket information
+     * @param clientCallback - client's socket information
      */
-    public void registerMonitoring(String facilityName, ClientCallbackInfo clientCallbackInfo) {
+    public void registerMonitoring(String facilityName, ClientCallback clientCallback) {
         if (!monitorFacilityList.containsKey(facilityName)) {
             monitorFacilityList.put(facilityName, new ArrayList<>());
         }
-        List<ClientCallbackInfo> addresses = monitorFacilityList.get(facilityName);
-        addresses.add(clientCallbackInfo);
+        List<ClientCallback> addresses = monitorFacilityList.get(facilityName);
+        addresses.add(clientCallback);
         monitorFacilityList.put(facilityName, addresses);
     }
 
-    public static List<ClientCallbackInfo> getValidMonitorFacilityRequests(String facilityName) {
+    public static List<ClientCallback> getValidMonitorFacilityRequests(String facilityName) {
         filterCallBackAddresses();
         return monitorFacilityList.get(facilityName);
     }
@@ -157,19 +156,19 @@ public class ServerDB {
      * and booking it should it become vacant
      *
      * @param facilityName       - name of facility client is interested in monitoring
-     * @param clientCallbackInfo - client's socket information
+     * @param clientCallback - client's socket information
      */
-    public void registerBookOnVacancy(String facilityName, ClientCallbackInfo clientCallbackInfo, ClientQuery query) {
+    public void registerBookOnVacancy(String facilityName, ClientCallback clientCallback, ClientQuery query) {
         if (!bookOnVacancyList.containsKey(facilityName)) {
             bookOnVacancyList.put(facilityName, new ArrayList<>());
         }
-        List<Pair<ClientCallbackInfo, ClientQuery>> addresses = bookOnVacancyList.get(facilityName);
-        Pair<ClientCallbackInfo, ClientQuery> pair = Pair.of(clientCallbackInfo, query);
+        List<Pair<ClientCallback, ClientQuery>> addresses = bookOnVacancyList.get(facilityName);
+        Pair<ClientCallback, ClientQuery> pair = Pair.of(clientCallback, query);
         addresses.add(pair);
         bookOnVacancyList.put(facilityName, addresses);
     }
 
-    public static List<Pair<ClientCallbackInfo, ClientQuery>> getValidBookOnVacancyRequest(String facilityName) {
+    public static List<Pair<ClientCallback, ClientQuery>> getValidBookOnVacancyRequest(String facilityName) {
         filterCallBackAddresses();
         return bookOnVacancyList.get(facilityName);
     }

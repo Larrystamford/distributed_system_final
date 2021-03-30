@@ -1,9 +1,9 @@
 package server.handlers;
 
-import entity.BookingInfo;
-import entity.ClientQuery;
-import entity.DateTime;
-import entity.ServerResponse;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Common.DayAndTime;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 import server.ServerDB;
 import utils.DateUtils;
@@ -13,18 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShortenBooking {
-    private static DateTime newDateTimeEnd;
-    private static DateTime newDateTimeStart;
+    private static DayAndTime newDayAndTimeEnd;
+    private static DayAndTime newDayAndTimeStart;
 
     public static void handleRequest(Network network, InetSocketAddress origin, ServerDB database, ClientQuery query) {
         ServerResponse response;
-        BookingInfo changeInfo = query.getBookings().get(0);
-        DateTime offset = changeInfo.getOffset();
+        FacilityBooking changeInfo = query.getBookings().get(0);
+        DayAndTime offset = changeInfo.getOffset();
         String UUID = changeInfo.getUuid();
 
-        List<BookingInfo> res = new ArrayList<>();
+        List<FacilityBooking> res = new ArrayList<>();
 
-        BookingInfo booking = database.returnBookingIfExists(UUID);
+        FacilityBooking booking = database.returnBookingIfExists(UUID);
         if (booking != null) {
             if (validOffset(booking, offset)) {
                 res.add(changeBooking(booking, database
@@ -50,18 +50,18 @@ public class ShortenBooking {
      * @param database - ServerDB database
      * @return - new booking if change is valid otherwise null
      */
-    public static BookingInfo changeBooking(BookingInfo booking, ServerDB database) {
+    public static FacilityBooking changeBooking(FacilityBooking booking, ServerDB database) {
         // to be returned to client
-        booking.setEndTime(newDateTimeEnd);
+        booking.setEndTime(newDayAndTimeEnd);
 
         // update database
-        database.updateBooking(booking.getUuid(), booking.getStartTime(), newDateTimeEnd);
+        database.updateBooking(booking.getUuid(), booking.getStartTime(), newDayAndTimeEnd);
         return booking;
     }
 
-    public static boolean validOffset(BookingInfo booking, DateTime offset) {
+    public static boolean validOffset(FacilityBooking booking, DayAndTime offset) {
         int newEndSecs = booking.getEndTime().getEquivalentSeconds() - offset.getEquivalentSeconds();
-        newDateTimeEnd = DateUtils.convSecondsToDateTime(newEndSecs);
-        return newDateTimeEnd != null && newDateTimeEnd.convSecs() > booking.getStartTime().convSecs();
+        newDayAndTimeEnd = DateUtils.convSecondsToDateTime(newEndSecs);
+        return newDayAndTimeEnd != null && newDayAndTimeEnd.convSecs() > booking.getStartTime().convSecs();
     }
 }

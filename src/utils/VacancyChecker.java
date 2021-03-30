@@ -1,14 +1,14 @@
 package utils;
 
-import entity.BookingInfo;
-import entity.DateTime;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Common.DayAndTime;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class VacancyChecker {
 
-    public static boolean isVacant(List<BookingInfo> bookingsFilteredByName, DateTime start, DateTime end) {
+    public static boolean isVacant(List<FacilityBooking> bookingsFilteredByName, DayAndTime start, DayAndTime end) {
         if (bookingsFilteredByName.isEmpty()) {
             return true;
         }
@@ -24,7 +24,7 @@ public class VacancyChecker {
         }
 
         for (int i = 0; i < bookingsFilteredByName.size(); i++) {
-            BookingInfo booking = bookingsFilteredByName.get(i);
+            FacilityBooking booking = bookingsFilteredByName.get(i);
 
             // debug
             System.out.println(booking.getStartTime().convSecs() + " " + booking.getEndTime().convSecs());
@@ -48,7 +48,7 @@ public class VacancyChecker {
         return false;
     }
 
-    public static Comparator<BookingInfo> BookingComparator = Comparator
+    public static Comparator<FacilityBooking> BookingComparator = Comparator
             .comparing(l -> l.getStartTime().convSecs());
 
 }

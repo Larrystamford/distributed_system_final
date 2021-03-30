@@ -1,9 +1,9 @@
 package server.handlers;
 
-import entity.BookingInfo;
-import entity.ClientQuery;
-import entity.DateTime;
-import entity.ServerResponse;
+import remote_objects.Common.FacilityBooking;
+import remote_objects.Client.ClientQuery;
+import remote_objects.Common.DayAndTime;
+import remote_objects.Server.ServerResponse;
 import network.Network;
 import server.ServerDB;
 import utils.DateUtils;
@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OffsetBooking {
-    private static DateTime newDateTimeEnd;
-    private static DateTime newDateTimeStart;
+    private static DayAndTime newDayAndTimeEnd;
+    private static DayAndTime newDayAndTimeStart;
 
     /**
      * @param network  - the udp communicator used
@@ -25,13 +25,13 @@ public class OffsetBooking {
      */
     public static void handleRequest(Network network, InetSocketAddress origin, ServerDB database, ClientQuery query) {
         ServerResponse response;
-        BookingInfo changeInfo = query.getBookings().get(0);
-        DateTime offset = changeInfo.getOffset();
+        FacilityBooking changeInfo = query.getBookings().get(0);
+        DayAndTime offset = changeInfo.getOffset();
         String UUID = changeInfo.getUuid();
 
-        List<BookingInfo> res = new ArrayList<>();
+        List<FacilityBooking> res = new ArrayList<>();
 
-        BookingInfo booking = database.returnBookingIfExists(UUID);
+        FacilityBooking booking = database.returnBookingIfExists(UUID);
 
         if (booking != null) {
             if (!validOffset(booking, offset)) {
@@ -60,11 +60,11 @@ public class OffsetBooking {
      * @param database - ServerDB database
      * @return - new booking if change is valid otherwise null
      */
-    public static BookingInfo changeBooking(BookingInfo booking, DateTime offset, ServerDB database) {
+    public static FacilityBooking changeBooking(FacilityBooking booking, DayAndTime offset, ServerDB database) {
         // remove current booking to check if new booking would cause conflicts
-        List<BookingInfo> bookings = database.getBookingsByName(booking.getName());
+        List<FacilityBooking> bookings = database.getBookingsByName(booking.getName());
         for (int i = 0; i < bookings.size(); i++) {
-            BookingInfo bInfo = bookings.get(i);
+            FacilityBooking bInfo = bookings.get(i);
             if (bInfo.getUuid().equals(booking.getUuid())) {
                 bookings.remove(bInfo);
                 break;
@@ -72,12 +72,12 @@ public class OffsetBooking {
         }
 
         // to be returned to client
-        booking.setStartTime(newDateTimeStart);
-        booking.setEndTime(newDateTimeEnd);
+        booking.setStartTime(newDayAndTimeStart);
+        booking.setEndTime(newDayAndTimeEnd);
 
         // check for vacancy with selected timings and update db if changes are valid
-        if (VacancyChecker.isVacant(bookings, newDateTimeStart, newDateTimeEnd)) {
-            database.updateBooking(booking.getUuid(), newDateTimeStart, newDateTimeEnd);
+        if (VacancyChecker.isVacant(bookings, newDayAndTimeStart, newDayAndTimeEnd)) {
+            database.updateBooking(booking.getUuid(), newDayAndTimeStart, newDayAndTimeEnd);
             return booking;
         }
         return null;
@@ -92,14 +92,14 @@ public class OffsetBooking {
      * @param offset  - offset by which the client wants to change the booking
      * @return
      */
-    public static boolean validOffset(BookingInfo booking, DateTime offset) {
+    public static boolean validOffset(FacilityBooking booking, DayAndTime offset) {
         int newStartSecs = booking.getStartTime().getEquivalentSeconds() + offset.getEquivalentSeconds();
         int newEndSecs = booking.getEndTime().getEquivalentSeconds() + offset.getEquivalentSeconds();
 
-        newDateTimeStart = DateUtils.convSecondsToDateTime(newStartSecs);
-        newDateTimeEnd = DateUtils.convSecondsToDateTime(newEndSecs);
+        newDayAndTimeStart = DateUtils.convSecondsToDateTime(newStartSecs);
+        newDayAndTimeEnd = DateUtils.convSecondsToDateTime(newEndSecs);
 
-        return newDateTimeStart != null && newDateTimeEnd != null;
+        return newDayAndTimeStart != null && newDayAndTimeEnd != null;
     }
 }
 
