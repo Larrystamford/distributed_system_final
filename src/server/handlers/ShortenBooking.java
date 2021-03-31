@@ -39,7 +39,7 @@ public class ShortenBooking {
             response = new ServerResponse(query.getId(), 404, res);
         }
 
-        network.send(response, origin);
+        network.replyClient(response, origin);
     }
 
 

@@ -26,8 +26,8 @@ public class MonitorAndBookOnVacancy {
         query.setRequestChoice(Constants.MONITOR_AND_BOOK_ON_AVAILABLE);
         query.setBookings(bookings);
 
-        int id = network.send(query);
-        network.receive(id, (response) -> {
+        int id = network.requestServer(query);
+        network.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
                 printMonitoringResults(response);
             } else {

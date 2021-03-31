@@ -23,8 +23,8 @@ public class OffsetBooking {
         payload.add(booking);
 
         query = new ClientRequest(Constants.OFFSET_BOOKING, payload);
-        int id = network.send(query);
-        network.receive(id, (response) -> {
+        int id = network.requestServer(query);
+        network.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
                 printChangeBookingSuccess(query, response);
             } else {

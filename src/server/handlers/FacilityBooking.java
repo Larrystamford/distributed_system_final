@@ -50,6 +50,6 @@ public class FacilityBooking {
         } else {
             response = new ServerResponse(query.getId(), 404, confirmedBooking);
         }
-        network.send(response, origin);
+        network.replyClient(response, origin);
     }
 }

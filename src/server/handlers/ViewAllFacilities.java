@@ -21,6 +21,6 @@ public class ViewAllFacilities {
         } else {
             response = new ServerResponse(query.getId(), 200, bookings);
         }
-        network.send(response, origin);
+        network.replyClient(response, origin);
     }
 }

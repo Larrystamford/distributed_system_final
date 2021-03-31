@@ -41,7 +41,7 @@ public class FacilitiesAvailability {
             response = new ServerResponse(query.getId(), 404, availableBookings);
         }
 
-        network.send(response, origin);
+        network.replyClient(response, origin);
     }
 
     public static List<Booking> getFreeBookingSlots(List<Booking> bookingsFiltered, String interestedName, int interestedDay) {

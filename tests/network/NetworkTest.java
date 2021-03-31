@@ -49,8 +49,8 @@ class NetworkTest {
         ClientRequest cReq = new ClientRequest(3, bookings);
 
         Thread clientThread = new Thread(() -> {
-            int id = client.send(cReq);
-            client.receive(id, (response) -> {
+            int id = client.requestServer(cReq);
+            client.receiveResponse(id, (response) -> {
                 if (response.getServerStatus() == 200) {
                     OffsetBooking.printChangeBookingSuccess(cReq, response);
                 } else {

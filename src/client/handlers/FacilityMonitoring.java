@@ -25,8 +25,8 @@ public class FacilityMonitoring {
         query.setRequestChoice(Constants.FACILITY_MONITORING);
         query.setBookings(bookings);
 
-        int id = network.send(query);
-        network.receive(id, (response) -> {
+        int id = network.requestServer(query);
+        network.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
                 printMonitoringResults(query, response);
             } else {

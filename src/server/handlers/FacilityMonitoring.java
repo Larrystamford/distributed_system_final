@@ -20,7 +20,7 @@ public class FacilityMonitoring {
             ServerResponse callbackRes = res.clone();
             callbackRes.setRequestChoice(responseType);
             callbackRes.setRequestId(cInfo.getRequestId());
-            network.send(callbackRes, (InetSocketAddress) cInfo.getSocket());
+            network.replyClient(callbackRes, (InetSocketAddress) cInfo.getSocket());
         }
     }
 }

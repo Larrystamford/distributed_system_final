@@ -20,36 +20,22 @@ public class Server {
         database database = new database();
         System.out.println("Database Initialised ...");
 
-        network.receive((origin, query) -> {
+        network.receiveClientRequest((origin, query) -> {
             switch (query.getRequestChoice()) {
-                case Constants.VIEW_ALL_FACILITIES:
-                    ViewAllFacilities.handleRequest(network, origin, database, query);
-                    break;
-                case Constants.FACILITY_AVAILABILITY:
-                    FacilitiesAvailability.handleRequest(network, origin, database, query);
-                    break;
-
-                case Constants.FACILITY_BOOKING:
-                    FacilityBooking.handleRequest(network, origin, database, query);
-                    break;
-
-                case Constants.OFFSET_BOOKING:
-                    OffsetBooking.handleRequest(network, origin, database, query);
-                    break;
-                case Constants.FACILITY_MONITORING:
+                case Constants.VIEW_ALL_FACILITIES -> ViewAllFacilities.handleRequest(network, origin, database, query);
+                case Constants.FACILITY_AVAILABILITY -> FacilitiesAvailability.handleRequest(network, origin, database, query);
+                case Constants.FACILITY_BOOKING -> FacilityBooking.handleRequest(network, origin, database, query);
+                case Constants.OFFSET_BOOKING -> OffsetBooking.handleRequest(network, origin, database, query);
+                case Constants.FACILITY_MONITORING -> {
                     ClientCallback cInfo = new ClientCallback(query.getId(), origin, query.getMonitoringDuration());
                     database.registerMonitoring(query.getBookings().get(0).getName(), cInfo);
-                    break;
-                case Constants.SHORTEN_BOOKING:
-                    ShortenBooking.handleRequest(network, origin, database, query);
-                    break;
-                case Constants.MONITOR_AND_BOOK_ON_AVAILABLE:
-                    MonitorAndBookOnVacancy.handleRequest(network, origin, database, query);
-                    break;
-                default:
+                }
+                case Constants.SHORTEN_BOOKING -> ShortenBooking.handleRequest(network, origin, database, query);
+                case Constants.MONITOR_AND_BOOK_ON_AVAILABLE -> MonitorAndBookOnVacancy.handleRequest(network, origin, database, query);
+                default -> {
                     response = new ServerResponse(query.getId(), 404, null);
-                    network.send(response, origin);
-                    break;
+                    network.replyClient(response, origin);
+                }
             }
         });
     }
