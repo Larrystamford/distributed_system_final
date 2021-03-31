@@ -54,7 +54,7 @@ public class UdpAgent {
 
     public void send(Marshal data, InetSocketAddress dest) {
         logger.info("Send: {}", data);
-        byte[] byteArray = data.marshall();
+        byte[] byteArray = data.marshal();
         DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, dest);
 
         try {
@@ -70,7 +70,7 @@ public class UdpAgent {
         DatagramPacket p = new DatagramPacket(inputBuffer, inputBuffer.length);
         try {
             dSocket.receive(p);
-            AddressAndData resp = new AddressAndData((InetSocketAddress) p.getSocketAddress(), Marshal.unmarshall(p.getData()));
+            AddressAndData resp = new AddressAndData((InetSocketAddress) p.getSocketAddress(), Marshal.unmarshal(p.getData()));
             logger.info("Recv: {}", resp);
             return resp;
         } catch (IOException e) {

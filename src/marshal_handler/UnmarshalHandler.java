@@ -12,7 +12,7 @@ import java.util.List;
 
 public class UnmarshalHandler {
 
-    public static Object unmarshall(byte[] data) throws ClassNotFoundException {
+    public static Marshal unmarshal(byte[] data) throws ClassNotFoundException {
         List<Byte> byteList = new ArrayList<>(Bytes.asList(data));
 
         // start by retrieving the object ID

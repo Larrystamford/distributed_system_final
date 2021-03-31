@@ -45,8 +45,8 @@ public abstract class Network {
     public abstract boolean filterDuplicate(AddressAndData data);
     protected abstract void registerResponse(ServerResponse resp, InetSocketAddress dest);
 
-    public String genClientKey(String socketAddress, int marshallableId) {
-        return socketAddress + "-ID:" + marshallableId;
+    public String genClientKey(String socketAddress, int marshalId) {
+        return socketAddress + "-ID:" + marshalId;
     }
 
     void sendAck(int ackId, InetSocketAddress dest) {
