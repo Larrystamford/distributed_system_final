@@ -4,12 +4,10 @@ import remote_objects.Common.AddressAndData;
 import remote_objects.Common.Marshal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.Constants;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
+import java.net.*;
 
 /**
  * Manages the sending and receiving of marshalled datagrams
@@ -46,6 +44,14 @@ public class UdpAgent {
         }
     }
 
+    public void setSocketTimeout(int newTimeout) {
+        try {
+            this.dSocket.setSoTimeout(newTimeout);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void send(Marshal data, InetSocketAddress dest) {
         logger.info("Send: {}", data);
         byte[] byteArray = data.marshall();
@@ -59,7 +65,7 @@ public class UdpAgent {
         }
     }
 
-    public AddressAndData receive() {
+    public AddressAndData receive() throws SocketException{
         byte[] inputBuffer = new byte[20000];
         DatagramPacket p = new DatagramPacket(inputBuffer, inputBuffer.length);
         try {
@@ -72,7 +78,6 @@ public class UdpAgent {
             return null;
         }
     }
-
 
     InetSocketAddress getServerSocket() {
         return serverSocket;

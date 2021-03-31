@@ -1,9 +1,9 @@
 package network;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import remote_objects.Common.AddressAndData;
+import remote_objects.Server.ServerResponse;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -15,15 +15,26 @@ public class AtMostOnceNetwork extends Network {
     private ConcurrentMap<String, Long> received = new ConcurrentHashMap<>();
 
     public boolean filterDuplicate(AddressAndData data) {
-        String uniqueClientIdData = data.getOrigin().toString() + "-ID:" + data.getData().getId();
+        String origin = data.getOrigin().toString();
+        int clientId = data.getData().getId();
+        String clientKey = genClientKey(origin, clientId);
 
-        if (!received.containsKey(uniqueClientIdData)) {
-            received.put(uniqueClientIdData, System.currentTimeMillis());
+        // client request not seen before
+        if (!received.containsKey(clientKey)) {
+            received.put(clientKey, System.currentTimeMillis());
             return false;
         } else {
-            System.out.print("Repeated Request " + uniqueClientIdData + " is ignored.");
+            System.out.print("Repeated Request " + clientKey + " is ignored.");
             return true;
         }
+    }
+
+    @Override
+    public void registerResponse(ServerResponse resp, InetSocketAddress socketAddress) {
+        int clientQueryId = resp.getRequestId();
+        String uniqueClientIdData = genClientKey(socketAddress.toString(), clientQueryId);
+        System.out.println("response registered");
+       generatedResponses.put(uniqueClientIdData, resp);
     }
 
 }
