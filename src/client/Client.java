@@ -112,7 +112,8 @@ public class Client {
             System.out.println(ClientUI.STARTING_MESSAGE);
             System.out.println(ClientUI.LINE_SEPARATOR);
 
-            client = new Client(new Network(communicator));
+            // TODO - confirm that client only uses at least once
+            client = new Client(new AtLeastOnceNetwork(communicator));
 
             while (true) {
                 client.run();

@@ -5,8 +5,8 @@ import java.util.HashMap;
 public class Constants {
     // Argument Constant
     public static final double DEFAULT_FAILURE_RATE = 0.0;
-    public static final int DEFAULT_TIMEOUT = 500;
-    public static final int DEFAULT_MAX_TRY = 10;
+    public static final int DEFAULT_TIMEOUT = 500; // milliseconds
+    public static final int DEFAULT_MAX_TRY = 5;
 
 
     // Service constant
