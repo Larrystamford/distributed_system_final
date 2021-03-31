@@ -30,7 +30,7 @@ public class ShortenBooking {
                 res.add(changeBooking(booking, database
                 ));
                 response = new ServerResponse(query.getId(), 200, res);
-                FacilityMonitoring.informRegisteredClients(network, response, query.getType());
+                FacilityMonitoring.informRegisteredClients(network, response, query.getRequestChoice());
                 MonitorAndBookOnVacancy.informRegisteredClients(network, response, database);
             } else {
                 response = new ServerResponse(query.getId(), 405, res);

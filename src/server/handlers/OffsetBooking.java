@@ -34,7 +34,7 @@ public class OffsetBooking {
             } else if (changeBooking(booking, offset, database) != null) {
                 res.add(booking);
                 response = new ServerResponse(query.getId(), 200, res);
-                FacilityMonitoring.informRegisteredClients(network, response, query.getType());
+                FacilityMonitoring.informRegisteredClients(network, response, query.getRequestChoice());
                 MonitorAndBookOnVacancy.informRegisteredClients(network, response, database);
             } else {
                 response = new ServerResponse(query.getId(), 405, res);

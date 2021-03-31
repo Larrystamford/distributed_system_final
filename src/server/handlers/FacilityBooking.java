@@ -39,13 +39,11 @@ public class FacilityBooking {
                 DayAndTime endTime = new DayAndTime(endDay, endHour, endMinute);
 
                 if (VacancyChecker.isVacant(bookingsFilteredByName, startTime, endTime)) {
-                    // book here
                     Booking newBooking = database.createBooking(bookingName, startTime, endTime);
                     confirmedBooking.add(newBooking);
                     response = new ServerResponse(query.getId(), 200, confirmedBooking);
-                    FacilityMonitoring.informRegisteredClients(network, response, query.getType());
+                    FacilityMonitoring.informRegisteredClients(network, response, query.getRequestChoice());
                 } else {
-                    // status conflict
                     response = new ServerResponse(query.getId(), 409, confirmedBooking);
                 }
             }

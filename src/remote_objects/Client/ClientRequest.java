@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientRequest extends Marshal {
-    // type is switch case number
-    int type;
+    int requestChoice;
     int monitoringDuration;
     List<Booking> bookings = new ArrayList<Booking>();
 
@@ -17,18 +16,18 @@ public class ClientRequest extends Marshal {
         super();
     }
 
-    public ClientRequest(int type, List<Booking> bookings) {
+    public ClientRequest(int requestChoice, List<Booking> bookings) {
         super();
-        this.type = type;
+        this.requestChoice = requestChoice;
         this.bookings = bookings;
     }
 
-    public int getType() {
-        return type;
+    public int getRequestChoice() {
+        return requestChoice;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setRequestChoice(int requestChoice) {
+        this.requestChoice = requestChoice;
     }
 
     public void setMonitoringDuration(int monitoringDuration) {

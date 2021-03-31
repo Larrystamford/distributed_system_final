@@ -21,12 +21,12 @@ public class FacilitiesAvailability {
         getUserInputs(scanner, bookings);
 
         query = new ClientRequest();
-        query.setType(Constants.FACILITY_AVAILABILITY);
+        query.setRequestChoice(Constants.FACILITY_AVAILABILITY);
         query.setBookings(bookings);
 
         int id = network.send(query);
         network.receive(id, (response) -> {
-            if (response.getStatus() == 200) {
+            if (response.getServerStatus() == 200) {
                 printFacilitiesAvailability(response);
             } else {
                 ClientUI.ServerErrorUI(response);
@@ -94,10 +94,10 @@ public class FacilitiesAvailability {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("Facilities Available for Booking:");
-        for (int i = 0; i < response.getInfos().size(); i++) {
-            System.out.println(response.getInfos().get(i).getName() + ": " + response.getInfos().get(i).getStartTime().toNiceString() + " - " + response.getInfos().get(i).getEndTime().toNiceString());
+        for (int i = 0; i < response.getBookings().size(); i++) {
+            System.out.println(response.getBookings().get(i).getName() + ": " + response.getBookings().get(i).getStartTime().toNiceString() + " - " + response.getBookings().get(i).getEndTime().toNiceString());
         }
-        if (response.getInfos().size() == 0) {
+        if (response.getBookings().size() == 0) {
             System.out.println("No slots available on selected booking day/s");
         }
         System.out.println("=================================================");
