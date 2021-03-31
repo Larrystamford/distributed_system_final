@@ -1,4 +1,4 @@
-package network;
+package semantics;
 
 import remote_objects.Common.AddressAndData;
 import remote_objects.Server.ServerResponse;
@@ -7,9 +7,9 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class AtMostOnceNetwork extends Network {
+public class AtMostOnceSemantics extends Semantics {
 
-    public AtMostOnceNetwork(UdpAgent communicator) {
+    public AtMostOnceSemantics(UdpAgent communicator) {
         super(communicator);
     }
     private ConcurrentMap<String, Long> received = new ConcurrentHashMap<>();

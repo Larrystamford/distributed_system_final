@@ -1,7 +1,7 @@
 package server.handlers;
 
 import javacutils.Pair;
-import network.Network;
+import semantics.Semantics;
 import remote_objects.Client.ClientCallback;
 import remote_objects.Client.ClientRequest;
 import remote_objects.Common.Booking;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class MonitorAndBookOnVacancy {
 
-    public static void handleRequest(Network network, InetSocketAddress origin, Database database, ClientRequest query) {
+    public static void handleRequest(Semantics semInvo, InetSocketAddress origin, Database database, ClientRequest query) {
         // check if the booking is already vacant
         Booking booking = query.getBookings().get(0);
         String name = booking.getName();
@@ -23,7 +23,7 @@ public class MonitorAndBookOnVacancy {
         DayAndTime end = booking.getEndTime();
 
         if (VacancyChecker.isVacant(database.getBookingsByName(name), start, end)) {
-            server.handlers.FacilityBooking.handleRequest(network, origin, database, query);
+            server.handlers.FacilityBooking.handleRequest(semInvo, origin, database, query);
             return;
         }
 
@@ -32,7 +32,7 @@ public class MonitorAndBookOnVacancy {
         database.registerBookOnVacancy(query.getBookings().get(0).getName(), cInfo, query);
     }
 
-    public static void informRegisteredClients(Network network, ServerResponse response, Database database) {
+    public static void informRegisteredClients(Semantics semInvo, ServerResponse response, Database database) {
         String facilityName = response.getBookings().get(0).getName();
         List<Pair<ClientCallback, ClientRequest>> addresses = Database.getValidBookOnVacancyRequest(facilityName);
         if (addresses == null || addresses.isEmpty()) {
@@ -47,7 +47,7 @@ public class MonitorAndBookOnVacancy {
         ClientRequest cQuery = new ClientRequest();
         cQuery.setBookings(registeredQuery.getBookings());
         cQuery.setId(cInfo.getRequestId());
-        server.handlers.FacilityBooking.handleRequest(network, (InetSocketAddress) cInfo.getSocket(), database, cQuery);
+        server.handlers.FacilityBooking.handleRequest(semInvo, (InetSocketAddress) cInfo.getSocket(), database, cQuery);
     }
 
 }

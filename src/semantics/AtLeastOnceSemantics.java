@@ -1,14 +1,14 @@
-package network;
+package semantics;
 
 import remote_objects.Common.AddressAndData;
 import remote_objects.Server.ServerResponse;
 
 import java.net.InetSocketAddress;
 
-public class AtLeastOnceNetwork extends Network {
+public class AtLeastOnceSemantics extends Semantics {
 
 
-    public AtLeastOnceNetwork(UdpAgent communicator) {
+    public AtLeastOnceSemantics(UdpAgent communicator) {
         super(communicator);
     }
 

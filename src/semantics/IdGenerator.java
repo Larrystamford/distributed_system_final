@@ -1,5 +1,4 @@
-package network;
-import java.io.File;
+package semantics;
 
 public class IdGenerator {
     private int id = 0;

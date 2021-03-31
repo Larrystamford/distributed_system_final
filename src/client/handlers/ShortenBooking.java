@@ -7,7 +7,7 @@ import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
-import network.Network;
+import semantics.Semantics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +16,14 @@ import java.util.Scanner;
 public class ShortenBooking {
     private static ClientRequest query;
 
-    public static void createAndSendMessage(Network network, Scanner scanner) {
+    public static void createAndSendMessage(Semantics semInvo, Scanner scanner) {
         Booking booking = getUserInputs(scanner);
         List<Booking> payload = new ArrayList<>();
         payload.add(booking);
 
         query = new ClientRequest(Constants.SHORTEN_BOOKING, payload);
-        int id = network.requestServer(query);
-        network.receiveResponse(id, (response) -> {
+        int id = semInvo.requestServer(query);
+        semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
                 printChangeBookingSuccess(response);
             } else {

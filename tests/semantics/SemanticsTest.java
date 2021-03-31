@@ -1,4 +1,4 @@
-package network;
+package semantics;
 
 import client.ClientUI;
 import client.handlers.OffsetBooking;
@@ -13,11 +13,11 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-class NetworkTest {
+class SemanticsTest {
 
-    Network client;
-    Network atLeastOnceServer;
-    Network atMostOnceServer;
+    Semantics client;
+    Semantics atLeastOnceServer;
+    Semantics atMostOnceServer;
     Database database;
 
     InetSocketAddress clientSocket = new InetSocketAddress("127.0.0.1", 2222);
@@ -25,11 +25,11 @@ class NetworkTest {
     @BeforeEach
     void setup() {
         UdpAgent clientCommunicator = new UdpAgentWithFailures(clientSocket, 0.7);
-        client = new AtLeastOnceNetwork(clientCommunicator);
+        client = new AtLeastOnceSemantics(clientCommunicator);
 
         UdpAgent serverCommunicator = new UdpAgentWithFailures(2222, 0.7);
-        atLeastOnceServer = new AtLeastOnceNetwork(serverCommunicator);
-        atMostOnceServer = new AtLeastOnceNetwork(serverCommunicator);
+        atLeastOnceServer = new AtLeastOnceSemantics(serverCommunicator);
+        atMostOnceServer = new AtLeastOnceSemantics(serverCommunicator);
 
         database = new Database();
     }
