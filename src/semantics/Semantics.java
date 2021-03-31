@@ -1,4 +1,4 @@
-package network;
+package semantics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,19 +18,19 @@ import java.util.function.Consumer;
 
 /**
  * A wrapper class built on top of the UDP communicator that establishes a
- * request-reply protocol Implemented by AtMostOnce and AtLeastOnce network
+ * request-reply protocol Implemented by AtMostOnce and AtLeastOnce semantics
  * classes
  */
-public abstract class Network {
+public abstract class Semantics {
     UdpAgent communicator;
     private final IdGenerator idGen = new IdGenerator();
-    private static final Logger logger = LoggerFactory.getLogger(Network.class);
+    private static final Logger logger = LoggerFactory.getLogger(Semantics.class);
 
     Map<String, ServerResponse> generatedResponses = new LRUCache<>(50); // server side
     Map<Integer, AddressAndData> storedResponses = new LRUCache<>(50); // client side
     Map<Integer, AddressAndData> monitorResponses = new LRUCache<>(50); // client side
 
-    public Network(UdpAgent communicator) {
+    public Semantics(UdpAgent communicator) {
         this.communicator = communicator;
     }
 
@@ -166,7 +166,7 @@ public abstract class Network {
             }
 
             // filter duplicates and resend stored responses data
-            // only used in at most once network
+            // only used in at most once semantics
             if (filterDuplicate(clientRequest)) {
                 System.out.println("duplicates handle");
                 InetSocketAddress origin = clientRequest.getOrigin();
@@ -204,7 +204,7 @@ public abstract class Network {
         response.setId(id);
         // store server's generated response to send the client should the
         // same client request come in. (Response will only be extracted on
-        // at most once network)
+        // at most once semInvo)
         registerResponse(response, dest);
 
         AddressAndData resp;

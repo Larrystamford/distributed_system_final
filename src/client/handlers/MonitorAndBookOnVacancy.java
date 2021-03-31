@@ -6,7 +6,7 @@ import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
-import network.Network;
+import semantics.Semantics;
 import utils.UserInputValidator;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class MonitorAndBookOnVacancy {
 
-    public static void createAndSendMessage(Network network, Scanner scanner) {
+    public static void createAndSendMessage(Semantics semInvo, Scanner scanner) {
         ClientRequest query;
         List<Booking> bookings = new ArrayList<Booking>();
 
@@ -26,8 +26,8 @@ public class MonitorAndBookOnVacancy {
         query.setRequestChoice(Constants.MONITOR_AND_BOOK_ON_AVAILABLE);
         query.setBookings(bookings);
 
-        int id = network.requestServer(query);
-        network.monitorServer((response) -> {
+        int id = semInvo.requestServer(query);
+        semInvo.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
                 printMonitoringResults(response);
             } else {

@@ -4,7 +4,7 @@ import remote_objects.Client.ClientRequest;
 import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
-import network.Network;
+import semantics.Semantics;
 import database.Database;
 import utils.VacancyChecker;
 
@@ -16,7 +16,7 @@ import java.util.List;
 public class FacilityBooking {
     private static ServerResponse response;
 
-    public static void handleRequest(Network network, InetSocketAddress origin, Database database, ClientRequest query) {
+    public static void handleRequest(Semantics semInvo, InetSocketAddress origin, Database database, ClientRequest query) {
         List<Booking> bookings;
         List<Booking> bookingsFiltered;
         List<Booking> confirmedBooking = new ArrayList<Booking>();
@@ -42,7 +42,7 @@ public class FacilityBooking {
                     Booking newBooking = database.createBooking(bookingName, startTime, endTime);
                     confirmedBooking.add(newBooking);
                     response = new ServerResponse(query.getId(), 200, confirmedBooking);
-                    FacilityMonitoring.informRegisteredClients(network, response, query.getRequestChoice());
+                    FacilityMonitoring.informRegisteredClients(semInvo, response, query.getRequestChoice());
                 } else {
                     response = new ServerResponse(query.getId(), 409, confirmedBooking);
                 }
@@ -50,6 +50,6 @@ public class FacilityBooking {
         } else {
             response = new ServerResponse(query.getId(), 404, confirmedBooking);
         }
-        network.replyClient(response, origin);
+        semInvo.replyClient(response, origin);
     }
 }

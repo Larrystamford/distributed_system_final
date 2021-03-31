@@ -6,14 +6,14 @@ import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
-import network.Network;
+import semantics.Semantics;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class FacilitiesAvailability {
-    public static void createAndSendMessage(Network network, Scanner scanner) {
+    public static void createAndSendMessage(Semantics semInvo, Scanner scanner) {
         ClientRequest query;
         List<Booking> bookings = new ArrayList<>();
 
@@ -24,8 +24,8 @@ public class FacilitiesAvailability {
         query.setRequestChoice(Constants.FACILITY_AVAILABILITY);
         query.setBookings(bookings);
 
-        int id = network.requestServer(query);
-        network.receiveResponse(id, (response) -> {
+        int id = semInvo.requestServer(query);
+        semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
                 printFacilitiesAvailability(response);
             } else {

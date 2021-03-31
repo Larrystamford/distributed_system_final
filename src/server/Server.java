@@ -4,37 +4,37 @@ import database.Database;
 import utils.Constants;
 import remote_objects.Client.ClientCallback;
 import remote_objects.Server.ServerResponse;
-import network.*;
+import semantics.*;
 import org.apache.commons.cli.*;
 import server.handlers.*;
 
 public class Server {
-    private Network network;
+    private Semantics semInvo;
     ServerResponse response;
 
-    public Server(Network network) {
-        this.network = network;
+    public Server(Semantics semInvo) {
+        this.semInvo = semInvo;
     }
 
     public void run() {
         Database database = new Database();
         System.out.println("Database Initialised ...");
 
-        network.receiveClientRequest((origin, query) -> {
+        semInvo.receiveClientRequest((origin, query) -> {
             switch (query.getRequestChoice()) {
-                case Constants.VIEW_ALL_FACILITIES -> ViewAllFacilities.handleRequest(network, origin, database, query);
-                case Constants.FACILITY_AVAILABILITY -> FacilitiesAvailability.handleRequest(network, origin, database, query);
-                case Constants.FACILITY_BOOKING -> FacilityBooking.handleRequest(network, origin, database, query);
-                case Constants.OFFSET_BOOKING -> OffsetBooking.handleRequest(network, origin, database, query);
+                case Constants.VIEW_ALL_FACILITIES -> ViewAllFacilities.handleRequest(semInvo, origin, database, query);
+                case Constants.FACILITY_AVAILABILITY -> FacilitiesAvailability.handleRequest(semInvo, origin, database, query);
+                case Constants.FACILITY_BOOKING -> FacilityBooking.handleRequest(semInvo, origin, database, query);
+                case Constants.OFFSET_BOOKING -> OffsetBooking.handleRequest(semInvo, origin, database, query);
                 case Constants.FACILITY_MONITORING -> {
                     ClientCallback cInfo = new ClientCallback(query.getId(), origin, query.getMonitoringDuration() * 1000);
                     database.registerMonitoring(query.getBookings().get(0).getName(), cInfo);
                 }
-                case Constants.SHORTEN_BOOKING -> ShortenBooking.handleRequest(network, origin, database, query);
-                case Constants.MONITOR_AND_BOOK_ON_AVAILABLE -> MonitorAndBookOnVacancy.handleRequest(network, origin, database, query);
+                case Constants.SHORTEN_BOOKING -> ShortenBooking.handleRequest(semInvo, origin, database, query);
+                case Constants.MONITOR_AND_BOOK_ON_AVAILABLE -> MonitorAndBookOnVacancy.handleRequest(semInvo, origin, database, query);
                 default -> {
                     response = new ServerResponse(query.getId(), 404, null);
-                    network.replyClient(response, origin);
+                    semInvo.replyClient(response, origin);
                 }
             }
         });
@@ -98,9 +98,9 @@ public class Server {
             UdpAgent communicator = new UdpAgentWithFailures(port, failureRate);
 
             if (atLeastOnce) {
-                server = new Server(new AtLeastOnceNetwork(communicator));
+                server = new Server(new AtLeastOnceSemantics(communicator));
             } else {
-                server = new Server(new AtMostOnceNetwork(communicator));
+                server = new Server(new AtMostOnceSemantics(communicator));
             }
 
             server.run();

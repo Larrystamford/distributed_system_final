@@ -1,10 +1,9 @@
-package network;
+package semantics;
 
 import remote_objects.Common.AddressAndData;
 import remote_objects.Common.Marshal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.Constants;
 
 import java.io.IOException;
 import java.net.*;
