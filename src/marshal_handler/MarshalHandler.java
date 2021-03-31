@@ -11,7 +11,7 @@ import java.util.List;
 
 public class MarshalHandler {
 
-    public static byte[] marshall(Marshal object) {
+    public static byte[] marshal(Marshal object) {
         List<Byte> marshalingList = new ArrayList<>();
 
         String className = object.getClass().getName();
@@ -21,13 +21,13 @@ public class MarshalHandler {
         // then marshal the classname
         marshalString(className, marshalingList);
         // finally marshal all the fields within the object
-        marshallObject(object, marshalingList);
+        marshalObject(object, marshalingList);
 
         return Bytes.toArray(marshalingList);
     }
 
 
-    private static void marshallObject(Object object, List<Byte> marshalingList) {
+    private static void marshalObject(Object object, List<Byte> marshalingList) {
         Field[] fields = object.getClass().getDeclaredFields();
 
         // marshal each field that the object contains
@@ -87,7 +87,7 @@ public class MarshalHandler {
                 marshalList(object, Arrays.copyOfRange(typeAndObjectName, 1, typeAndObjectName.length), marshalingList);
                 break;
             default:
-                marshallObject(object, marshalingList);
+                marshalObject(object, marshalingList);
                 break;
         }
 
