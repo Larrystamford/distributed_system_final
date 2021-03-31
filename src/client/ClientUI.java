@@ -82,9 +82,9 @@ public class ClientUI {
 
     public static void ServerErrorUI(ServerResponse response) {
         System.out.println("\n=================================================");
-        System.out.println("=================== " + response.getStatus() + " ERROR ==================");
+        System.out.println("=================== " + response.getServerStatus() + " ERROR ==================");
         System.out.println("=================================================");
-        switch (response.getStatus()) {
+        switch (response.getServerStatus()) {
             case 500:
                 System.out.println("Server Error Try Again");
                 System.out.println("\n=================================================");

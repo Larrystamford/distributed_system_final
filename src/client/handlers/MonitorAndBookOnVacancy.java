@@ -23,12 +23,12 @@ public class MonitorAndBookOnVacancy {
         query = new ClientRequest();
         getUserInputs(scanner, bookings, query);
 
-        query.setType(Constants.MONITOR_AND_BOOK_ON_AVAILABLE);
+        query.setRequestChoice(Constants.MONITOR_AND_BOOK_ON_AVAILABLE);
         query.setBookings(bookings);
 
         int id = network.send(query);
         network.receive(id, (response) -> {
-            if (response.getStatus() == 200) {
+            if (response.getServerStatus() == 200) {
                 printMonitoringResults(response);
             } else {
                 ClientUI.ServerErrorUI(response);
@@ -133,8 +133,8 @@ public class MonitorAndBookOnVacancy {
         System.out.println("=================================================");
         System.out.println("VACANCY FOUND");
         System.out.println("BOOKING MADE:");
-        System.out.println(response.getInfos().get(0).getName() + ": " + response.getInfos().get(0).getStartTime().toNiceString() + " - " + response.getInfos().get(0).getEndTime().toNiceString());
-        System.out.println("Booking ID: " + response.getInfos().get(0).getUuid());
+        System.out.println(response.getBookings().get(0).getName() + ": " + response.getBookings().get(0).getStartTime().toNiceString() + " - " + response.getBookings().get(0).getEndTime().toNiceString());
+        System.out.println("Booking ID: " + response.getBookings().get(0).getUuid());
         System.out.println("=================================================\n");
     }
 }

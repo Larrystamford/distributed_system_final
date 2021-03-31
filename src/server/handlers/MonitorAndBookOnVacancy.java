@@ -33,7 +33,7 @@ public class MonitorAndBookOnVacancy {
     }
 
     public static void informRegisteredClients(Network network, ServerResponse response, database database) {
-        String facilityName = response.getInfos().get(0).getName();
+        String facilityName = response.getBookings().get(0).getName();
         List<Pair<ClientCallback, ClientRequest>> addresses = database.getValidBookOnVacancyRequest(facilityName);
         if (addresses == null || addresses.isEmpty()) {
             return;
