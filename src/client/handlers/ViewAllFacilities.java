@@ -13,8 +13,8 @@ public class ViewAllFacilities {
         query = new ClientRequest();
         query.setRequestChoice(Constants.VIEW_ALL_FACILITIES);
 
-        int id = network.send(query);
-        network.receive(id, (response) -> {
+        int id = network.requestServer(query);
+        network.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
                 printFaciliiesAvailability(response);
             } else {

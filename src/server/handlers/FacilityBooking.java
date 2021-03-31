@@ -5,7 +5,7 @@ import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import network.Network;
-import database.database;
+import database.Database;
 import utils.VacancyChecker;
 
 import java.net.InetSocketAddress;
@@ -16,7 +16,7 @@ import java.util.List;
 public class FacilityBooking {
     private static ServerResponse response;
 
-    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientRequest query) {
+    public static void handleRequest(Network network, InetSocketAddress origin, Database database, ClientRequest query) {
         List<Booking> bookings;
         List<Booking> bookingsFiltered;
         List<Booking> confirmedBooking = new ArrayList<Booking>();
@@ -50,6 +50,6 @@ public class FacilityBooking {
         } else {
             response = new ServerResponse(query.getId(), 404, confirmedBooking);
         }
-        network.send(response, origin);
+        network.replyClient(response, origin);
     }
 }

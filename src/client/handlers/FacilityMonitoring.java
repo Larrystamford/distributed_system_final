@@ -25,14 +25,14 @@ public class FacilityMonitoring {
         query.setRequestChoice(Constants.FACILITY_MONITORING);
         query.setBookings(bookings);
 
-        int id = network.send(query);
-        network.receive(id, (response) -> {
+        int id = network.requestServer(query);
+        network.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
                 printMonitoringResults(query, response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
-        }, true, query.getMonitoringDuration());
+        }, true, query.getMonitoringDuration() * 1000);
 
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("MONITORING COMPLETE");
@@ -70,7 +70,7 @@ public class FacilityMonitoring {
 
         System.out.println();
         query.setMonitoringDuration(Integer.parseInt(duration));
-        booking.setName(name);
+        booking.setName(name.toUpperCase());
         bookings.add(booking);
     }
 

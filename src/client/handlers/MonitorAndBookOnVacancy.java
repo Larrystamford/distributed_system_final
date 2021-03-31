@@ -26,14 +26,14 @@ public class MonitorAndBookOnVacancy {
         query.setRequestChoice(Constants.MONITOR_AND_BOOK_ON_AVAILABLE);
         query.setBookings(bookings);
 
-        int id = network.send(query);
-        network.receive(id, (response) -> {
+        int id = network.requestServer(query);
+        network.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
                 printMonitoringResults(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
-        }, false, query.getMonitoringDuration());
+        }, false, query.getMonitoringDuration() * 1000);
 
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("MONITORING COMPLETE");
@@ -55,7 +55,7 @@ public class MonitorAndBookOnVacancy {
             System.out.print(ClientUI.ENTER_FACILITIES_NAME);
             System.out.println();
 
-            name = scanner.nextLine();
+            name = scanner.nextLine().toUpperCase();
         }
 
         // Enter Start Day

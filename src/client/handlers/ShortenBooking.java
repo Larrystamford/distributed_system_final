@@ -22,8 +22,8 @@ public class ShortenBooking {
         payload.add(booking);
 
         query = new ClientRequest(Constants.SHORTEN_BOOKING, payload);
-        int id = network.send(query);
-        network.receive(id, (response) -> {
+        int id = network.requestServer(query);
+        network.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
                 printChangeBookingSuccess(response);
             } else {

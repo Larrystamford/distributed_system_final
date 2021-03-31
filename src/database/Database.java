@@ -10,13 +10,13 @@ import javacutils.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class database {
+public class Database {
     private static final ArrayList<Booking> bookingData = new ArrayList<Booking>();
     private static final Set<String> facilityNames = new HashSet();
     private static final HashMap<String, List<ClientCallback>> monitorFacilityList = new HashMap<>();
     private static final HashMap<String, List<Pair<ClientCallback, ClientRequest>>> bookOnVacancyList = new HashMap<>();
 
-    public database() {
+    public Database() {
         initDatabase();
     }
 

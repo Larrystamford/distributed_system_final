@@ -24,8 +24,8 @@ public class FacilitiesAvailability {
         query.setRequestChoice(Constants.FACILITY_AVAILABILITY);
         query.setBookings(bookings);
 
-        int id = network.send(query);
-        network.receive(id, (response) -> {
+        int id = network.requestServer(query);
+        network.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
                 printFacilitiesAvailability(response);
             } else {

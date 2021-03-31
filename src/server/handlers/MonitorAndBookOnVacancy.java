@@ -7,7 +7,7 @@ import remote_objects.Client.ClientRequest;
 import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
-import database.database;
+import database.Database;
 import utils.VacancyChecker;
 
 import java.net.InetSocketAddress;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class MonitorAndBookOnVacancy {
 
-    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientRequest query) {
+    public static void handleRequest(Network network, InetSocketAddress origin, Database database, ClientRequest query) {
         // check if the booking is already vacant
         Booking booking = query.getBookings().get(0);
         String name = booking.getName();
@@ -28,13 +28,13 @@ public class MonitorAndBookOnVacancy {
         }
 
         // register clients interest
-        ClientCallback cInfo = new ClientCallback(query.getId(), origin, query.getMonitoringDuration());
+        ClientCallback cInfo = new ClientCallback(query.getId(), origin, query.getMonitoringDuration() * 1000);
         database.registerBookOnVacancy(query.getBookings().get(0).getName(), cInfo, query);
     }
 
-    public static void informRegisteredClients(Network network, ServerResponse response, database database) {
+    public static void informRegisteredClients(Network network, ServerResponse response, Database database) {
         String facilityName = response.getBookings().get(0).getName();
-        List<Pair<ClientCallback, ClientRequest>> addresses = database.getValidBookOnVacancyRequest(facilityName);
+        List<Pair<ClientCallback, ClientRequest>> addresses = Database.getValidBookOnVacancyRequest(facilityName);
         if (addresses == null || addresses.isEmpty()) {
             return;
         }

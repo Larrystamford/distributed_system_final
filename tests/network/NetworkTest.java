@@ -2,7 +2,7 @@ package network;
 
 import client.ClientUI;
 import client.handlers.OffsetBooking;
-import database.database;
+import database.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import remote_objects.Client.ClientRequest;
@@ -18,7 +18,7 @@ class NetworkTest {
     Network client;
     Network atLeastOnceServer;
     Network atMostOnceServer;
-    database database;
+    Database database;
 
     InetSocketAddress clientSocket = new InetSocketAddress("127.0.0.1", 2222);
 
@@ -31,7 +31,7 @@ class NetworkTest {
         atLeastOnceServer = new AtLeastOnceNetwork(serverCommunicator);
         atMostOnceServer = new AtLeastOnceNetwork(serverCommunicator);
 
-        database = new database();
+        database = new Database();
     }
     @Test
     void set() {
@@ -49,8 +49,8 @@ class NetworkTest {
         ClientRequest cReq = new ClientRequest(3, bookings);
 
         Thread clientThread = new Thread(() -> {
-            int id = client.send(cReq);
-            client.receive(id, (response) -> {
+            int id = client.requestServer(cReq);
+            client.receiveResponse(id, (response) -> {
                 if (response.getServerStatus() == 200) {
                     OffsetBooking.printChangeBookingSuccess(cReq, response);
                 } else {
