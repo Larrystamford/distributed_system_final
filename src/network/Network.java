@@ -28,7 +28,8 @@ public abstract class Network {
     UdpAgent communicator;
     private final IdGenerator idGen = new IdGenerator();
     private static final Logger logger = LoggerFactory.getLogger(Network.class);
-    Map<String, ServerResponse> generatedResponses = new LRUCache<>(50);
+    Map<String, ServerResponse> generatedResponses = new LRUCache<>(50); // server side
+    Map<Integer, AddressAndData> storedResponses = new LRUCache<>(50); // client side
 
     /**
      * responses the client expects from the server
@@ -41,7 +42,6 @@ public abstract class Network {
 
     BiConsumer<InetSocketAddress, ClientRequest> serverAction;
 
-    AddressAndData storedResp = null;
 
     public Network(UdpAgent communicator) {
         this.communicator = communicator;
@@ -66,16 +66,19 @@ public abstract class Network {
         AddressAndData resp;
 
         // response has already been received
-        if (storedResp != null) {
+        if (storedResponses.containsKey(id)) {
+            AddressAndData storedResp = storedResponses.get(id);
             System.out.println("Server response was stored with response id" + storedResp.getData().getId());
             sendAck(storedResp.getData().getId(), storedResp.getOrigin());
             callback.accept((ServerResponse) storedResp.getData());
             communicator.setSocketTimeout(0); // unset socket timeout
-            storedResp = null;
+            System.out.println("Server response with id :" + id + "was removed");
+            storedResponses.remove(id);
             return;
         }
 
-        communicator.setSocketTimeout(500); // set socket timeout
+        int timeout = continuous ? blockTime : 500;
+        communicator.setSocketTimeout(timeout); // set socket timeout
         for (int i = 0; i < Constants.DEFAULT_MAX_TRY; i++) {
             try {
                 resp = communicator.receive();
@@ -126,9 +129,6 @@ public abstract class Network {
             // filter duplicates and resend stored responses data
             // only used in at most once network
             if (filterDuplicate(clientRequest)) {
-                System.out.println("Duplicate request from client");
-                System.out.println("Replied with stored response");
-
                 InetSocketAddress origin = clientRequest.getOrigin();
                 int clientId = clientRequest.getData().getId();
 
@@ -154,7 +154,6 @@ public abstract class Network {
         payload.setId(id);
 
         if (payload instanceof ServerResponse) {
-            System.out.println("we are registering response!");
             registerResponse((ServerResponse) payload, dest);
         }
 
@@ -166,19 +165,13 @@ public abstract class Network {
             try {
                 AddressAndData resp = communicator.receive();
                 if (resp.getData() instanceof Ack && resp.getData().getId() == id) {
-                    System.out.println("Client received server acknowledgement");
+                    String curr = (payload instanceof ClientRequest) ? "client" : "server";
+                    System.out.println(curr + " received acknowledgement from other party");
                     break;
                 } else if (resp.getData() instanceof ServerResponse){
-                    storedResp = resp;
+                    storedResponses.put(((ServerResponse) resp.getData()).getRequestId(), resp);
                     break;
                 }
-//                System.out.println(ClientUI.LINE_SEPARATOR);
-//                System.out.println("something went wrong");
-//                System.out.println("Response class: " + resp.getData().getClass().toString());
-//                System.out.println("Response id: " + resp.getData().getId());
-//                System.out.println("Payload id: " + payload.getId());
-//                System.out.println(ClientUI.LINE_SEPARATOR);
-                // no timeout
                 break;
             } catch (SocketTimeoutException ignored) {
                 if (payload instanceof ClientRequest)
