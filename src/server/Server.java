@@ -88,6 +88,7 @@ public class Server {
 
 
         double failureRate = Constants.DEFAULT_FAILURE_RATE;
+        failureRate = 0.5;
 
         int port;
         boolean atMostOnce, atLeastOnce;

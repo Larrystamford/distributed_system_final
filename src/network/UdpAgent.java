@@ -65,7 +65,7 @@ public class UdpAgent {
         }
     }
 
-    public AddressAndData receive() throws SocketException{
+    public AddressAndData receive() throws SocketTimeoutException {
         byte[] inputBuffer = new byte[20000];
         DatagramPacket p = new DatagramPacket(inputBuffer, inputBuffer.length);
         try {
@@ -73,6 +73,8 @@ public class UdpAgent {
             AddressAndData resp = new AddressAndData((InetSocketAddress) p.getSocketAddress(), Marshal.unmarshall(p.getData()));
             logger.info("Recv: {}", resp);
             return resp;
+        } catch (SocketTimeoutException s) {
+            throw new SocketTimeoutException();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
