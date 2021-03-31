@@ -7,7 +7,7 @@ import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import network.Network;
-import database.database;
+import database.Database;
 import utils.DateUtils;
 
 import java.net.InetSocketAddress;
@@ -19,7 +19,7 @@ import java.util.List;
 public class FacilitiesAvailability {
     private static ServerResponse response;
 
-    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientRequest query) {
+    public static void handleRequest(Network network, InetSocketAddress origin, Database database, ClientRequest query) {
         List<Booking> bookings;
         List<Booking> bookingsFiltered;
         List<Booking> availableBookings = new ArrayList<Booking>();

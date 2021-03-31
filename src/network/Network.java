@@ -138,7 +138,7 @@ public abstract class Network {
                     callback.accept((ServerResponse) resp.getData());
                     monitorResponses.put(((ServerResponse) resp.getData()).getRequestId(), resp);
                 }
-                if (continuous) {
+                if (!continuous) {
                     break;
                 }
             } catch (SocketTimeoutException ignored) {

@@ -33,7 +33,7 @@ public class MonitorAndBookOnVacancy {
             } else {
                 ClientUI.ServerErrorUI(response);
             }
-        }, false, query.getMonitoringDuration());
+        }, false, query.getMonitoringDuration() * 1000);
 
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("MONITORING COMPLETE");
@@ -55,7 +55,7 @@ public class MonitorAndBookOnVacancy {
             System.out.print(ClientUI.ENTER_FACILITIES_NAME);
             System.out.println();
 
-            name = scanner.nextLine();
+            name = scanner.nextLine().toUpperCase();
         }
 
         // Enter Start Day

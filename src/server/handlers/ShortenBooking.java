@@ -5,7 +5,7 @@ import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import network.Network;
-import database.database;
+import database.Database;
 import utils.DateUtils;
 
 import java.net.InetSocketAddress;
@@ -16,7 +16,7 @@ public class ShortenBooking {
     private static DayAndTime newDayAndTimeEnd;
     private static DayAndTime newDayAndTimeStart;
 
-    public static void handleRequest(Network network, InetSocketAddress origin, database database, ClientRequest query) {
+    public static void handleRequest(Network network, InetSocketAddress origin, Database database, ClientRequest query) {
         ServerResponse response;
         Booking changeInfo = query.getBookings().get(0);
         DayAndTime offset = changeInfo.getOffset();
@@ -44,7 +44,7 @@ public class ShortenBooking {
 
 
 
-    public static Booking changeBooking(Booking booking, database database) {
+    public static Booking changeBooking(Booking booking, Database database) {
         // to be returned to client
         booking.setEndTime(newDayAndTimeEnd);
 

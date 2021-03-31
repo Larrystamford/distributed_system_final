@@ -32,7 +32,7 @@ public class FacilityMonitoring {
             } else {
                 ClientUI.ServerErrorUI(response);
             }
-        }, true, query.getMonitoringDuration());
+        }, true, query.getMonitoringDuration() * 1000);
 
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("MONITORING COMPLETE");
@@ -70,7 +70,7 @@ public class FacilityMonitoring {
 
         System.out.println();
         query.setMonitoringDuration(Integer.parseInt(duration));
-        booking.setName(name);
+        booking.setName(name.toUpperCase());
         bookings.add(booking);
     }
 
