@@ -6,8 +6,8 @@ import marshal_handler.UnmarshalHandler;
 public class Marshal {
     int id;
 
-    public byte[] marshall() {
-        return MarshalHandler.marshall(this);
+    public byte[] marshal() {
+        return MarshalHandler.marshal(this);
     }
 
     public int getId() {
@@ -18,9 +18,9 @@ public class Marshal {
         this.id = id;
     }
 
-    public static Marshal unmarshall(byte[] raw) {
+    public static Marshal unmarshal(byte[] byteList) {
         try {
-            return (Marshal) UnmarshalHandler.unmarshall(raw);
+            return UnmarshalHandler.unmarshal(byteList);
         } catch (ClassNotFoundException | ClassCastException e) {
             e.printStackTrace();
             return null;

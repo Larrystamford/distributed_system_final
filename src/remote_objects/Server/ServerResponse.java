@@ -7,19 +7,19 @@ import java.util.List;
 
 public class ServerResponse extends Marshal implements Cloneable {
     int requestId;
-    int status;
-    int type;
-    List<Booking> infos;
+    int serverStatus;
+    int requestChoice;
+    List<Booking> bookings;
 
     public ServerResponse() {
         super();
     }
 
-    public ServerResponse(int requestId, int status, List<Booking> infos) {
+    public ServerResponse(int requestId, int serverStatus, List<Booking> bookings) {
         super();
         this.requestId = requestId;
-        this.status = status;
-        this.infos = infos;
+        this.serverStatus = serverStatus;
+        this.bookings = bookings;
     }
 
     public int getRequestId() {
@@ -30,20 +30,20 @@ public class ServerResponse extends Marshal implements Cloneable {
         this.requestId = requestId;
     }
 
-    public int getStatus() {
-        return status;
+    public int getServerStatus() {
+        return serverStatus;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setRequestChoice(int requestChoice) {
+        this.requestChoice = requestChoice;
     }
 
-    public int getType() {
-        return type;
+    public int getRequestChoice() {
+        return requestChoice;
     }
 
-    public List<Booking> getInfos() {
-        return infos;
+    public List<Booking> getBookings() {
+        return bookings;
     }
 
     public ServerResponse clone() {

@@ -22,12 +22,12 @@ public class FacilityBooking {
         getUserInputs(scanner, bookings);
 
         query = new ClientRequest();
-        query.setType(Constants.FACILITY_BOOKING);
+        query.setRequestChoice(Constants.FACILITY_BOOKING);
         query.setBookings(bookings);
 
         int id = network.send(query);
         network.receive(id, (response) -> {
-            if (response.getStatus() == 200) {
+            if (response.getServerStatus() == 200) {
                 printBookingResponse(response);
             } else {
                 ClientUI.ServerErrorUI(response);
@@ -122,8 +122,8 @@ public class FacilityBooking {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("Booking Successful:");
-        System.out.println(response.getInfos().get(0).getName() + ": " + response.getInfos().get(0).getStartTime().toNiceString() + " - " + response.getInfos().get(0).getEndTime().toNiceString());
-        System.out.println("Booking ID: " + response.getInfos().get(0).getUuid());
+        System.out.println(response.getBookings().get(0).getName() + ": " + response.getBookings().get(0).getStartTime().toNiceString() + " - " + response.getBookings().get(0).getEndTime().toNiceString());
+        System.out.println("Booking ID: " + response.getBookings().get(0).getUuid());
 
         System.out.println("=================================================");
     }

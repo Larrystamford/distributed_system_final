@@ -21,7 +21,7 @@ public class Server {
         System.out.println("Database Initialised ...");
 
         network.receive((origin, query) -> {
-            switch (query.getType()) {
+            switch (query.getRequestChoice()) {
                 case Constants.VIEW_ALL_FACILITIES:
                     ViewAllFacilities.handleRequest(network, origin, database, query);
                     break;

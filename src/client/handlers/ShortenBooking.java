@@ -24,7 +24,7 @@ public class ShortenBooking {
         query = new ClientRequest(Constants.SHORTEN_BOOKING, payload);
         int id = network.send(query);
         network.receive(id, (response) -> {
-            if (response.getStatus() == 200) {
+            if (response.getServerStatus() == 200) {
                 printChangeBookingSuccess(response);
             } else {
                 ClientUI.ServerErrorUI(response);
@@ -71,7 +71,7 @@ public class ShortenBooking {
     public static void printChangeBookingSuccess(ServerResponse response) {
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("Booking successfully changed");
-        Booking booking = response.getInfos().get(0);
+        Booking booking = response.getBookings().get(0);
         String UUID = booking.getUuid();
         DayAndTime newStart = booking.getStartTime();
         DayAndTime newEnd = booking.getEndTime();

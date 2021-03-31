@@ -11,11 +11,11 @@ public class ViewAllFacilities {
 
     public static void createAndSendMessage(Network network) {
         query = new ClientRequest();
-        query.setType(Constants.VIEW_ALL_FACILITIES);
+        query.setRequestChoice(Constants.VIEW_ALL_FACILITIES);
 
         int id = network.send(query);
         network.receive(id, (response) -> {
-            if (response.getStatus() == 200) {
+            if (response.getServerStatus() == 200) {
                 printFaciliiesAvailability(response);
             } else {
                 ClientUI.ServerErrorUI(response);
@@ -26,8 +26,8 @@ public class ViewAllFacilities {
     public static void printFaciliiesAvailability(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
         System.out.println("Facilities Availability:");
-        for (int i = 0; i < response.getInfos().size(); i++) {
-            System.out.println("[" + i + "] " + response.getInfos().get(i).getName());
+        for (int i = 0; i < response.getBookings().size(); i++) {
+            System.out.println("[" + i + "] " + response.getBookings().get(i).getName());
         }
         System.out.println("=================================================");
     }
