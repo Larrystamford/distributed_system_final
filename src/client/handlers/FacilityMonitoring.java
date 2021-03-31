@@ -3,7 +3,7 @@ package client.handlers;
 import client.ClientUI;
 import utils.Constants;
 import remote_objects.Common.Booking;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Server.ServerResponse;
 import network.Network;
 import utils.UserInputValidator;
@@ -15,11 +15,11 @@ import java.util.Scanner;
 public class FacilityMonitoring {
 
     public static void createAndSendMessage(Network network, Scanner scanner) {
-        ClientQuery query;
+        ClientRequest query;
         List<Booking> bookings = new ArrayList<Booking>();
 
         // get monitor duration
-        query = new ClientQuery();
+        query = new ClientRequest();
         getUserInputs(scanner, bookings, query);
 
         query.setType(Constants.FACILITY_MONITORING);
@@ -39,7 +39,7 @@ public class FacilityMonitoring {
         System.out.println(ClientUI.LINE_SEPARATOR);
     }
 
-    public static void getUserInputs(Scanner scanner, List<Booking> bookings, ClientQuery query) {
+    public static void getUserInputs(Scanner scanner, List<Booking> bookings, ClientRequest query) {
         Booking booking = new Booking();
 
         System.out.println(ClientUI.LINE_SEPARATOR);
@@ -74,7 +74,7 @@ public class FacilityMonitoring {
         bookings.add(booking);
     }
 
-    public static void printMonitoringResults(ClientQuery query, ServerResponse response) {
+    public static void printMonitoringResults(ClientRequest query, ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("=================================================");

@@ -23,16 +23,13 @@ public class Server {
         network.receive((origin, query) -> {
             switch (query.getType()) {
                 case Constants.VIEW_ALL_FACILITIES:
-                    System.out.println("request to view all facilities");
                     ViewAllFacilities.handleRequest(network, origin, database, query);
                     break;
                 case Constants.FACILITY_AVAILABILITY:
-                    System.out.println("request to check facilities availability");
                     FacilitiesAvailability.handleRequest(network, origin, database, query);
                     break;
 
                 case Constants.FACILITY_BOOKING:
-                    System.out.println("request to book facility");
                     FacilityBooking.handleRequest(network, origin, database, query);
                     break;
 
@@ -40,22 +37,15 @@ public class Server {
                     OffsetBooking.handleRequest(network, origin, database, query);
                     break;
                 case Constants.FACILITY_MONITORING:
-                    // we handle monitorAvailability(facility name, monitor interval) - callback
-                    System.out.println("request to monitor");
                     ClientCallback cInfo = new ClientCallback(query.getId(), origin, query.getMonitoringDuration());
                     database.registerMonitoring(query.getBookings().get(0).getName(), cInfo);
                     break;
                 case Constants.SHORTEN_BOOKING:
-                    System.out.println("request to shorten booking");
                     ShortenBooking.handleRequest(network, origin, database, query);
                     break;
                 case Constants.MONITOR_AND_BOOK_ON_AVAILABLE:
-                    System.out.println("request to book on vacancy");
                     MonitorAndBookOnVacancy.handleRequest(network, origin, database, query);
                     break;
-                case 11:
-                    System.out.println("Get all bookings.");
-                    database.getAllBookings();
                 default:
                     response = new ServerResponse(query.getId(), 404, null);
                     network.send(response, origin);

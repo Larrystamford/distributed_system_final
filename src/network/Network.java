@@ -2,7 +2,7 @@ package network;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Common.Ack;
 import remote_objects.Common.AddressAndData;
 import remote_objects.Common.Marshal;
@@ -36,7 +36,7 @@ public abstract class Network {
      * specifically, threads in network.send()
      */
 
-    BiConsumer<InetSocketAddress, ClientQuery> serverAction;
+    BiConsumer<InetSocketAddress, ClientRequest> serverAction;
 
     public Network(UdpAgent communicator) {
         this.communicator = communicator;
@@ -50,14 +50,8 @@ public abstract class Network {
     }
 
     void sendAck(int ackId, InetSocketAddress dest) {
-        Ack ack = new Ack(ackId); // the request / respond ID is the ackId
-
-        // luke - can we remove this?
-        // TODO - pretty sure we can
-        int id = idGen.get();
-        ack.setId(id);
-        //
-
+        Ack ack = new Ack();
+        ack.setId(ackId); // we set ackId to the same Id that belongs to the client request or server response
         communicator.send(ack, dest);
     }
 
@@ -98,7 +92,7 @@ public abstract class Network {
     }
 
     // server side receive
-    public void receive(BiConsumer<InetSocketAddress, ClientQuery> serverOps) {
+    public void receive(BiConsumer<InetSocketAddress, ClientRequest> serverOps) {
         AddressAndData clientRequest;
         while (true) {
             try {
@@ -123,9 +117,9 @@ public abstract class Network {
                 continue;
             }
 
-            if (clientRequest.getData() instanceof ClientQuery) {
+            if (clientRequest.getData() instanceof ClientRequest) {
                 sendAck(clientRequest.getData().getId(), clientRequest.getOrigin());
-                serverOps.accept(clientRequest.getOrigin(), (ClientQuery) clientRequest.getData());
+                serverOps.accept(clientRequest.getOrigin(), (ClientRequest) clientRequest.getData());
             }
         }
     }
@@ -146,7 +140,7 @@ public abstract class Network {
             communicator.setSocketTimeout(Constants.DEFAULT_TIMEOUT); // set timeout
             try {
                 Marshal respData = communicator.receive().getData();
-                if (respData instanceof Ack && ((Ack) respData).getAckId() == id) {
+                if (respData instanceof Ack && respData.getId() == id) {
                     break;
                 }
             } catch (SocketException ignored) {

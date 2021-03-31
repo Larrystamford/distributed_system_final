@@ -66,7 +66,7 @@ public class UdpAgent {
     }
 
     public AddressAndData receive() throws SocketException{
-        byte[] inputBuffer = new byte[5000];
+        byte[] inputBuffer = new byte[20000];
         DatagramPacket p = new DatagramPacket(inputBuffer, inputBuffer.length);
         try {
             dSocket.receive(p);
@@ -78,7 +78,6 @@ public class UdpAgent {
             return null;
         }
     }
-
 
     InetSocketAddress getServerSocket() {
         return serverSocket;

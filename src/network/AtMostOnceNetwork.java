@@ -31,7 +31,7 @@ public class AtMostOnceNetwork extends Network {
 
     @Override
     public void registerResponse(ServerResponse resp, InetSocketAddress socketAddress) {
-        int clientQueryId = resp.getQueryId();
+        int clientQueryId = resp.getRequestId();
         String uniqueClientIdData = genClientKey(socketAddress.toString(), clientQueryId);
         System.out.println("response registered");
        generatedResponses.put(uniqueClientIdData, resp);

@@ -2,15 +2,15 @@ package client.handlers;
 
 import client.ClientUI;
 import network.Network;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Server.ServerResponse;
 import utils.Constants;
 
 public class ViewAllFacilities {
-    private static ClientQuery query;
+    private static ClientRequest query;
 
     public static void createAndSendMessage(Network network) {
-        query = new ClientQuery();
+        query = new ClientRequest();
         query.setType(Constants.VIEW_ALL_FACILITIES);
 
         int id = network.send(query);

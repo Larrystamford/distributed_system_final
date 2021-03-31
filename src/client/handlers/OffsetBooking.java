@@ -5,7 +5,7 @@ import utils.DateUtils;
 import utils.UserInputValidator;
 import utils.Constants;
 import remote_objects.Common.Booking;
-import remote_objects.Client.ClientQuery;
+import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import network.Network;
@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class OffsetBooking {
-    private static ClientQuery query;
+    private static ClientRequest query;
 
     public static void createAndSendMessage(Network network, Scanner scanner) {
         Booking booking = getUserInputs(scanner);
         List<Booking> payload = new ArrayList<>();
         payload.add(booking);
 
-        query = new ClientQuery(Constants.OFFSET_BOOKING, payload);
+        query = new ClientRequest(Constants.OFFSET_BOOKING, payload);
         int id = network.send(query);
         network.receive(id, (response) -> {
             if (response.getStatus() == 200) {
@@ -84,7 +84,7 @@ public class OffsetBooking {
     }
 
 
-    public static void printChangeBookingSuccess(ClientQuery query, ServerResponse response) {
+    public static void printChangeBookingSuccess(ClientRequest query, ServerResponse response) {
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("Booking successfully changed");
         Booking booking = response.getInfos().get(0);
