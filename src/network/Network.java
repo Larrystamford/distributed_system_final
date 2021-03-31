@@ -1,5 +1,6 @@
 package network;
 
+import client.ClientUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import remote_objects.Client.ClientRequest;
@@ -7,11 +8,13 @@ import remote_objects.Common.Ack;
 import remote_objects.Common.AddressAndData;
 import remote_objects.Common.Marshal;
 import remote_objects.Server.ServerResponse;
+import server.Server;
 import utils.Constants;
 import utils.LRUCache;
 
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -38,6 +41,8 @@ public abstract class Network {
 
     BiConsumer<InetSocketAddress, ClientRequest> serverAction;
 
+    AddressAndData storedResp = null;
+
     public Network(UdpAgent communicator) {
         this.communicator = communicator;
     }
@@ -60,13 +65,25 @@ public abstract class Network {
         callbacks.put(id, callback);
         AddressAndData resp;
 
+        // response has already been received
+        if (storedResp != null) {
+            System.out.println("Server response was stored with response id" + storedResp.getData().getId());
+            sendAck(storedResp.getData().getId(), storedResp.getOrigin());
+            callback.accept((ServerResponse) storedResp.getData());
+            communicator.setSocketTimeout(0); // unset socket timeout
+            storedResp = null;
+            return;
+        }
+
+        communicator.setSocketTimeout(500); // set socket timeout
         for (int i = 0; i < Constants.DEFAULT_MAX_TRY; i++) {
             try {
                 resp = communicator.receive();
-            } catch (SocketException ignored) {
+
+            } catch (SocketTimeoutException ignored) {
                 // timeout
-                System.out.println("FAILED TO RECEIVE " + i);
-                if (!continuous) {
+                System.out.println("Failed to receive server response on client " + i);
+                if (continuous) {
                     // max monitor duration has been reached
                     break;
                 }
@@ -76,6 +93,7 @@ public abstract class Network {
             if (resp.getData() instanceof ServerResponse) {
                 sendAck(resp.getData().getId(), resp.getOrigin());
                 callback.accept((ServerResponse) resp.getData());
+                communicator.setSocketTimeout(0); // unset socket timeout
                 return;
             }
 
@@ -83,6 +101,8 @@ public abstract class Network {
                 break;
             }
         }
+
+        communicator.setSocketTimeout(0); // unset socket timeout
 
         // if time out
         if (!continuous) {
@@ -97,7 +117,7 @@ public abstract class Network {
         while (true) {
             try {
                 clientRequest = communicator.receive();
-            } catch (SocketException ignored) {
+            } catch (SocketTimeoutException ignored) {
                 // should never happen as timeout is currently at infinity
                 // but we need the throws SocketException in the sending function
                 continue;
@@ -106,6 +126,9 @@ public abstract class Network {
             // filter duplicates and resend stored responses data
             // only used in at most once network
             if (filterDuplicate(clientRequest)) {
+                System.out.println("Duplicate request from client");
+                System.out.println("Replied with stored response");
+
                 InetSocketAddress origin = clientRequest.getOrigin();
                 int clientId = clientRequest.getData().getId();
 
@@ -131,19 +154,37 @@ public abstract class Network {
         payload.setId(id);
 
         if (payload instanceof ServerResponse) {
+            System.out.println("we are registering response!");
             registerResponse((ServerResponse) payload, dest);
         }
+
+        communicator.setSocketTimeout(Constants.DEFAULT_TIMEOUT); // set timeout
 
         // keep trying to send until ack received
         for (int i = 0; i < Constants.DEFAULT_MAX_TRY; i++) {
             communicator.send(payload, dest);
-            communicator.setSocketTimeout(Constants.DEFAULT_TIMEOUT); // set timeout
             try {
-                Marshal respData = communicator.receive().getData();
-                if (respData instanceof Ack && respData.getId() == id) {
+                AddressAndData resp = communicator.receive();
+                if (resp.getData() instanceof Ack && resp.getData().getId() == id) {
+                    System.out.println("Client received server acknowledgement");
+                    break;
+                } else if (resp.getData() instanceof ServerResponse){
+                    storedResp = resp;
                     break;
                 }
-            } catch (SocketException ignored) {
+//                System.out.println(ClientUI.LINE_SEPARATOR);
+//                System.out.println("something went wrong");
+//                System.out.println("Response class: " + resp.getData().getClass().toString());
+//                System.out.println("Response id: " + resp.getData().getId());
+//                System.out.println("Payload id: " + payload.getId());
+//                System.out.println(ClientUI.LINE_SEPARATOR);
+                // no timeout
+                break;
+            } catch (SocketTimeoutException ignored) {
+                if (payload instanceof ClientRequest)
+                    System.out.println("Failed to receive ack on client send " + i);
+                else
+                    System.out.println("Failed to receive ack on server send " + i);
                 // timeout
             }
         }
@@ -151,7 +192,6 @@ public abstract class Network {
         communicator.setSocketTimeout(0); // unset timeout
         return id;
     }
-
 
     public int send(Marshal data) {
         // client calls the send func above with the server socket address
