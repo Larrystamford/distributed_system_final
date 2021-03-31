@@ -126,9 +126,6 @@ public abstract class Network {
             // filter duplicates and resend stored responses data
             // only used in at most once network
             if (filterDuplicate(clientRequest)) {
-                System.out.println("Duplicate request from client");
-                System.out.println("Replied with stored response");
-
                 InetSocketAddress origin = clientRequest.getOrigin();
                 int clientId = clientRequest.getData().getId();
 
@@ -142,6 +139,7 @@ public abstract class Network {
 
             if (clientRequest.getData() instanceof ClientRequest) {
                 sendAck(clientRequest.getData().getId(), clientRequest.getOrigin());
+                
                 serverOps.accept(clientRequest.getOrigin(), (ClientRequest) clientRequest.getData());
             }
         }
@@ -154,7 +152,6 @@ public abstract class Network {
         payload.setId(id);
 
         if (payload instanceof ServerResponse) {
-            System.out.println("we are registering response!");
             registerResponse((ServerResponse) payload, dest);
         }
 
@@ -166,19 +163,13 @@ public abstract class Network {
             try {
                 AddressAndData resp = communicator.receive();
                 if (resp.getData() instanceof Ack && resp.getData().getId() == id) {
-                    System.out.println("Client received server acknowledgement");
+                    String curr = (payload instanceof ClientRequest) ? "client" : "server";
+                    System.out.println(curr + " received acknowledgement from other party");
                     break;
                 } else if (resp.getData() instanceof ServerResponse){
                     storedResp = resp;
                     break;
                 }
-//                System.out.println(ClientUI.LINE_SEPARATOR);
-//                System.out.println("something went wrong");
-//                System.out.println("Response class: " + resp.getData().getClass().toString());
-//                System.out.println("Response id: " + resp.getData().getId());
-//                System.out.println("Payload id: " + payload.getId());
-//                System.out.println(ClientUI.LINE_SEPARATOR);
-                // no timeout
                 break;
             } catch (SocketTimeoutException ignored) {
                 if (payload instanceof ClientRequest)
