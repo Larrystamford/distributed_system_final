@@ -94,17 +94,17 @@ public class ClientUI {
         System.out.println("=================================================");
         switch (response.getServerStatus()) {
             case 500:
-                System.out.println("Server Error Try Again");
+                System.out.println("Internal Server Error");
                 System.out.println("\n=================================================");
                 break;
             case 404:
-                System.out.println("User provided input was not found in our system");
+                System.out.println("The inputs that you entered were not found in our Database");
                 System.out.println("\n=================================================");
                 break;
             case 405:
                 System.out.println("Changes clashes with existing bookings");
                 System.out.println("\n=================================================");
-            case 409:
+            case 406:
                 System.out.println("Time slot selected is unavailable, please try another time slot");
                 System.out.println("\n=================================================");
                 break;
@@ -118,16 +118,25 @@ public class ClientUI {
 
 
     // client handlers
-    public static void listFacilitiesResponse(ServerResponse response) {
+    public static void facilitiesAvailabilityResponse(ClientRequest query, ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
-        System.out.println("Facilities Available for Booking:");
-        for (int i = 0; i < response.getBookings().size(); i++) {
-            System.out.println(response.getBookings().get(i).getName() + ": " + response.getBookings().get(i).getStartTime().toNiceString() + " - " + response.getBookings().get(i).getEndTime().toNiceString());
+        System.out.println("Facilities Booking Time Table:");
+
+        for (Booking booking : query.getBookings()) {
+            int timeTableDay = booking.getStartTime().getDay();
+            System.out.println("TIME TABLE FOR DAY: " + timeTableDay);
+
+            for (Booking booked : response.getBookings()) {
+                if (booked.getStartTime().getDay() == timeTableDay) {
+                    System.out.println(booked.getName() + ": " + booked.getStartTime().toNiceString() + " - " + booked.getEndTime().toNiceString() + " (BOOKED)");
+                }
+            }
+
+            System.out.println("=================================================");
         }
-        if (response.getBookings().size() == 0) {
-            System.out.println("No slots available on selected booking day/s");
-        }
+
+
         System.out.println("=================================================");
     }
 
@@ -202,7 +211,7 @@ public class ClientUI {
     }
 
     // get inputs from user
-    public static void getListFacilitiesInput(Scanner scanner, List<Booking> bookings) {
+    public static void getFacilitiesAvailability(Scanner scanner, List<Booking> bookings) {
         Booking booking;
 
         System.out.println(ClientUI.LINE_SEPARATOR);

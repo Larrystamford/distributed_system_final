@@ -17,7 +17,7 @@ public class FacilitiesAvailability {
         List<Booking> bookings = new ArrayList<>();
 
         // appending bookings
-        ClientUI.getListFacilitiesInput(scanner, bookings);
+        ClientUI.getFacilitiesAvailability(scanner, bookings);
 
         query = new ClientRequest();
         query.setRequestChoice(Constants.FACILITY_AVAILABILITY);
@@ -26,7 +26,7 @@ public class FacilitiesAvailability {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                ClientUI.listFacilitiesResponse(response);
+                ClientUI.facilitiesAvailabilityResponse(query, response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }

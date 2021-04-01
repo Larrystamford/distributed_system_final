@@ -22,7 +22,7 @@ public class MonitorAndBookOnVacancy {
         DayAndTime start = booking.getStartTime();
         DayAndTime end = booking.getEndTime();
 
-        if (VacancyChecker.isVacant(database.getBookingsByName(name), start, end)) {
+        if (VacancyChecker.isVacant(database.getBookings(name), start, end)) {
             server.handlers.FacilityBooking.handleRequest(semInvo, origin, database, query);
             return;
         }
