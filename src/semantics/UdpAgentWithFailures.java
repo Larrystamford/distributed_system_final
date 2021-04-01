@@ -26,7 +26,7 @@ public class UdpAgentWithFailures extends UdpAgent {
         if (limit >= failProb) {
             super.send(data, dest);
         } else {
-            System.out.printf("%s WAS INTENTIONALLY FAILED TO SEND ID: %s", getPacketType(data).toUpperCase(), data.getId());;
+            System.out.printf("%s ID: %s WAS INTENTIONALLY FAILED TO SEND\n", getPacketType(data).toUpperCase(), data.getId());;
         }
     }
 }

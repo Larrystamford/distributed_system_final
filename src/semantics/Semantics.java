@@ -78,7 +78,6 @@ public abstract class Semantics {
             sendAck(storedResp.getData().getId(), storedResp.getOrigin());
             callback.accept((ServerResponse) storedResp.getData());
             communicator.setSocketTimeout(0); // unset socket timeout
-            System.out.println("Server response with id :" + id + "was removed");
             storedResponses.remove(id);
             return;
         }
@@ -92,7 +91,7 @@ public abstract class Semantics {
 
             } catch (SocketTimeoutException ignored) {
                 // timeout
-//                System.out.println("Failed to receive server response on client " + i);
+                System.out.println("FAILED TO RECEIVE SERVER RESPONSE ON CLIENT " + i + 1);
                 continue;
             }
 
@@ -220,13 +219,12 @@ public abstract class Semantics {
             } catch (SocketTimeoutException ignored) {
                 // timeout occurred, will try to send again if server has tried less than
                 // Constants.DEFAULT_MAX_TRY number of times
-                System.out.printf("Failed to receive ack on server send %d\n", i);
+                System.out.printf("FAILED TO RECEIVE ACK ON SERVER SEND %d\n", i + 1);
                 continue;
             }
 
             // if ack received, stop sending
             if (data instanceof Ack && data.getId() == id) {
-                System.out.println("server received acknowledgement from other party");
                 break;
             } else if (data instanceof ClientRequest && data.getId() == response.getRequestId()) {
                 // if server has began performing the client's query but the client failed to
@@ -272,7 +270,7 @@ public abstract class Semantics {
             } catch (SocketTimeoutException ignored) {
                 // timeout occurred, will try to send again if client has tried less than
                 // Constants.DEFAULT_MAX_TRY number of times
-                System.out.printf("Failed to receive ack on client send %d", i);
+                System.out.printf("FAILED TO RECEIVE ACK ON CLIENT SEND %d\n", i + 1);
                 continue;
             }
 
