@@ -5,6 +5,10 @@ import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import utils.Constants;
+import utils.UserInputValidator;
+
+import java.util.List;
+import java.util.Scanner;
 
 public class ClientUI {
 
@@ -114,7 +118,7 @@ public class ClientUI {
 
 
     // client handlers
-    public static void printFacilitiesAvailability(ServerResponse response) {
+    public static void listFacilitiesResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("Facilities Available for Booking:");
@@ -127,7 +131,7 @@ public class ClientUI {
         System.out.println("=================================================");
     }
 
-    public static void printBookingResponse(ServerResponse response) {
+    public static void bookingResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("Booking Successful:");
@@ -137,7 +141,7 @@ public class ClientUI {
         System.out.println("=================================================");
     }
 
-    public static void printBookOnVacancy(ServerResponse response) {
+    public static void bookingIfVacancyAppearsResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("=================================================");
@@ -148,7 +152,7 @@ public class ClientUI {
         System.out.println("=================================================\n");
     }
 
-    public static void printChangeBookingSuccess(ClientRequest query, ServerResponse response) {
+    public static void changeBookingResponse(ClientRequest query, ServerResponse response) {
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("Booking successfully changed");
         Booking booking = response.getBookings().get(0);
@@ -162,7 +166,7 @@ public class ClientUI {
         System.out.println(ClientUI.LINE_SEPARATOR);
     }
 
-    public static void printChangeBookingSuccess(ServerResponse response) {
+    public static void changeBookingResponse(ServerResponse response) {
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("Booking successfully changed");
         Booking booking = response.getBookings().get(0);
@@ -176,7 +180,7 @@ public class ClientUI {
         System.out.println(ClientUI.LINE_SEPARATOR);
     }
 
-    public static void printMonitoringResults(ClientRequest query, ServerResponse response) {
+    public static void monitoringResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("=================================================");
@@ -187,7 +191,7 @@ public class ClientUI {
     }
 
 
-    public static void printFaciliiesAvailability(ServerResponse response) {
+    public static void viewAllFacilityAvailabilitiesResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
         System.out.println("Facilities Availability:");
         for (int i = 0; i < response.getBookings().size(); i++) {
@@ -195,5 +199,180 @@ public class ClientUI {
         }
         System.out.println("=================================================");
 
+    }
+
+    // get inputs from user
+    public static void getListFacilitiesInput(Scanner scanner, List<Booking> bookings) {
+        Booking booking;
+
+        System.out.println(ClientUI.LINE_SEPARATOR);
+        System.out.println(ClientUI.FACILITIES_AVAILABILITY);
+        System.out.println(ClientUI.LINE_SEPARATOR);
+
+        // Enter Facility Name
+        System.out.print(ClientUI.ENTER_FACILITIES_NAME);
+        System.out.println();
+
+        String name = scanner.nextLine();
+        while (name.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_FACILITIES_NAME);
+            System.out.println();
+
+            name = scanner.nextLine();
+        }
+
+        boolean continueAdding = true;
+        while (continueAdding) {
+            System.out.print(ClientUI.ENTER_DAYS);
+            System.out.println();
+
+            String day = scanner.nextLine();
+
+            while (day.length() == 0) {
+                System.out.println(ClientUI.INVALID_INPUT);
+                System.out.println();
+                System.out.print(ClientUI.ENTER_DAYS);
+                System.out.println();
+
+                name = scanner.nextLine();
+            }
+
+            DayAndTime d1 = new DayAndTime(Integer.parseInt(day), 0, 0);
+            DayAndTime d2 = new DayAndTime(Integer.parseInt(day), 23, 59);
+            booking = new Booking(name.toUpperCase(), d1, d2);
+            bookings.add(booking);
+
+            System.out.println(ClientUI.CONTINUE_ENTER_DAYS);
+            System.out.println(ClientUI.YES_1);
+            System.out.println(ClientUI.NO_2);
+
+            System.out.println();
+            String continueAddingDays = scanner.nextLine();
+            int continueAddingDaysValue = Integer.parseInt(continueAddingDays);
+
+            if (continueAddingDaysValue != 1) {
+                continueAdding = false;
+            }
+        }
+    }
+
+    public static void getMakeBookingInput(Scanner scanner, List<Booking> bookings) {
+        Booking booking;
+
+        System.out.println(ClientUI.LINE_SEPARATOR);
+        System.out.println(ClientUI.BOOKING_FACILITY);
+        System.out.println(ClientUI.LINE_SEPARATOR);
+
+        // Enter Facility Name
+        System.out.print(ClientUI.ENTER_FACILITIES_NAME);
+        System.out.println();
+
+        String name = scanner.nextLine();
+        while (name.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_FACILITIES_NAME);
+            System.out.println();
+
+            name = scanner.nextLine();
+        }
+
+        // Enter Start Day
+        System.out.print(ClientUI.ENTER_START_DAY);
+        System.out.println();
+
+        String startDay = scanner.nextLine();
+        while (startDay.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_START_DAY);
+            System.out.println();
+
+            startDay = scanner.nextLine();
+        }
+
+        // Enter Start Time
+        System.out.print(ClientUI.ENTER_START_TIME);
+        System.out.println();
+
+        String startTime = scanner.nextLine();
+        while (startTime.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_START_TIME);
+            System.out.println();
+
+            startTime = scanner.nextLine();
+        }
+
+        // Enter End Day
+        System.out.print(ClientUI.ENTER_END_DAY);
+        System.out.println();
+
+        String endDay = scanner.nextLine();
+        while (endDay.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_END_DAY);
+            System.out.println();
+
+            endDay = scanner.nextLine();
+        }
+
+        // Enter End Time
+        System.out.print(ClientUI.ENTER_END_TIME);
+        System.out.println();
+
+        String endTime = scanner.nextLine();
+        while (endTime.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_END_TIME);
+            System.out.println();
+
+            endTime = scanner.nextLine();
+        }
+
+        DayAndTime d1 = new DayAndTime(Integer.parseInt(startDay), Integer.parseInt(startTime.substring(0, 2)), Integer.parseInt(startTime.substring(2, 4)));
+        DayAndTime d2 = new DayAndTime(Integer.parseInt(endDay), Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(2, 4)));
+        booking = new Booking(name.toUpperCase(), d1, d2);
+        bookings.add(booking);
+    }
+
+    public static void getMonitorFacilityInput(Scanner scanner, List<Booking> bookings, ClientRequest query) {
+        Booking booking = new Booking();
+
+        System.out.println(ClientUI.LINE_SEPARATOR);
+        System.out.println(ClientUI.MONITOR_FACILITY_HEADER);
+        System.out.println(ClientUI.LINE_SEPARATOR);
+
+        // Enter Facility Name
+        System.out.println(ClientUI.ENTER_FACILITIES_NAME);
+
+        String name = scanner.nextLine();
+        while (name.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_FACILITIES_NAME);
+            System.out.println();
+
+            name = scanner.nextLine();
+        }
+
+        // Enter monitor duration
+        System.out.println(ClientUI.ENTER_MONITOR_DURATION);
+
+        String duration = scanner.nextLine();
+        while (!UserInputValidator.isNumericAndWithinRange(duration, 0, (int) Double.POSITIVE_INFINITY)) {
+            System.out.println("invalid input");
+            duration = scanner.nextLine();
+        }
+
+        System.out.println();
+        query.setMonitoringDuration(Integer.parseInt(duration));
+        booking.setName(name.toUpperCase());
+        bookings.add(booking);
     }
 }

@@ -1,11 +1,9 @@
 package client.handlers;
 
-import client.Client;
 import client.ClientUI;
 import utils.Constants;
 import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
-import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
 import utils.UserInputValidator;
 
@@ -21,7 +19,7 @@ public class FacilityMonitoring {
 
         // get monitor duration
         query = new ClientRequest();
-        getUserInputs(scanner, bookings, query);
+        ClientUI.getMonitorFacilityInput(scanner, bookings, query);
 
         query.setRequestChoice(Constants.FACILITY_MONITORING);
         query.setBookings(bookings);
@@ -29,7 +27,7 @@ public class FacilityMonitoring {
         int id = semInvo.requestServer(query);
         semInvo.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
-                ClientUI.printMonitoringResults(query, response);
+                ClientUI.monitoringResponse(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
@@ -38,41 +36,6 @@ public class FacilityMonitoring {
         System.out.println(ClientUI.LINE_SEPARATOR);
         System.out.println("MONITORING COMPLETE");
         System.out.println(ClientUI.LINE_SEPARATOR);
-    }
-
-    public static void getUserInputs(Scanner scanner, List<Booking> bookings, ClientRequest query) {
-        Booking booking = new Booking();
-
-        System.out.println(ClientUI.LINE_SEPARATOR);
-        System.out.println(ClientUI.MONITOR_FACILITY_HEADER);
-        System.out.println(ClientUI.LINE_SEPARATOR);
-
-        // Enter Facility Name
-        System.out.println(ClientUI.ENTER_FACILITIES_NAME);
-
-        String name = scanner.nextLine();
-        while (name.length() == 0) {
-            System.out.println(ClientUI.INVALID_INPUT);
-            System.out.println();
-            System.out.print(ClientUI.ENTER_FACILITIES_NAME);
-            System.out.println();
-
-            name = scanner.nextLine();
-        }
-
-        // Enter monitor duration
-        System.out.println(ClientUI.ENTER_MONITOR_DURATION);
-
-        String duration = scanner.nextLine();
-        while (!UserInputValidator.isNumericAndWithinRange(duration, 0, (int) Double.POSITIVE_INFINITY)) {
-            System.out.println("invalid input");
-            duration = scanner.nextLine();
-        }
-
-        System.out.println();
-        query.setMonitoringDuration(Integer.parseInt(duration));
-        booking.setName(name.toUpperCase());
-        bookings.add(booking);
     }
 
 

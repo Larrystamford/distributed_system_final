@@ -7,7 +7,6 @@ import utils.Constants;
 import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
-import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class OffsetBooking {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                ClientUI.printChangeBookingSuccess(query, response);
+                ClientUI.changeBookingResponse(query, response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
