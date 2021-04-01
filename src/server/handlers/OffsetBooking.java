@@ -51,7 +51,7 @@ public class OffsetBooking {
 
     public static Booking changeBooking(Booking booking, DayAndTime offset, database database) {
         // remove current booking to check if new booking would cause conflicts
-        List<Booking> bookings = database.getBookingsByName(booking.getName());
+        List<Booking> bookings = database.getBookings(booking.getName());
         for (int i = 0; i < bookings.size(); i++) {
             Booking bInfo = bookings.get(i);
             if (bInfo.getUuid().equals(booking.getUuid())) {

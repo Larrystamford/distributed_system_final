@@ -65,7 +65,7 @@ public class database {
         return null;
     }
 
-    public List<Booking> getBookingsByName(String name) {
+    public List<Booking> getBookings(String name) {
         List<Booking> res = new ArrayList<>();
         for (Booking booking : bookingData) {
             if (booking.getName().equals(name)) {
@@ -75,8 +75,9 @@ public class database {
         return res;
     }
 
-    public List<Booking> getBookingsByNameAndDay(String name, int day) {
+    public List<Booking> getBookings(String name, int day) {
         List<Booking> res = new ArrayList<>();
+
         for (Booking booking : bookingData) {
             if (booking.getName().equals(name) && (booking.getStartTime().getDay() == day || booking.getEndTime().getDay() == day || (booking.getStartTime().getDay() < day && day <= booking.getEndTime().getDay()))) {
                 res.add(booking);

@@ -60,9 +60,6 @@ public class MarshalHandler {
 
         // choose type to marshal
         switch (typeAndObjectName[0]) {
-            case "java.lang.String":
-                marshalString(object, marshalingList);
-                break;
             case "java.lang.Short":
             case "short":
                 marshalShort(object, marshalingList);
@@ -78,6 +75,9 @@ public class MarshalHandler {
             case "java.lang.Double":
             case "double":
                 marshalDouble(object, marshalingList);
+                break;
+            case "java.lang.String":
+                marshalString(object, marshalingList);
                 break;
             case "java.lang.Boolean":
             case "boolean":

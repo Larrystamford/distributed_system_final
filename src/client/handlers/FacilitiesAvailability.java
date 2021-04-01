@@ -1,10 +1,10 @@
 package client.handlers;
 
 import client.ClientUI;
-import utils.Constants;
-import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
+import remote_objects.Common.Booking;
 import semantics.Semantics;
+import utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class FacilitiesAvailability {
         List<Booking> bookings = new ArrayList<>();
 
         // appending bookings
-        ClientUI.getListFacilitiesInput(scanner, bookings);
+        ClientUI.getFacilitiesAvailability(scanner, bookings);
 
         query = new ClientRequest();
         query.setRequestChoice(Constants.FACILITY_AVAILABILITY);
@@ -25,7 +25,7 @@ public class FacilitiesAvailability {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                ClientUI.showFacilityAvailabilityResponse(response);
+                ClientUI.facilitiesAvailabilityResponse(query, response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }

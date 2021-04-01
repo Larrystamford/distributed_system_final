@@ -67,8 +67,6 @@ public class UnmarshalHandler {
         // choose type to unmarshal
         String[] typeAndObjectName = type.getTypeName().split("[<>]");
         switch (typeAndObjectName[0]) {
-            case "java.lang.String":
-                return unmarshalString(byteList);
             case "java.lang.Short":
             case "short":
                 return unmarshalShort(byteList);
@@ -81,6 +79,8 @@ public class UnmarshalHandler {
             case "java.lang.Double":
             case "double":
                 return unmarshalDouble(byteList);
+            case "java.lang.String":
+                return unmarshalString(byteList);
             case "java.lang.Boolean":
             case "boolean":
                 return unmarshalBoolean(byteList);
