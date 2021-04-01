@@ -33,6 +33,4 @@ public class FacilityBooking {
             }
         }, false, 5);
     }
-
-
 }
