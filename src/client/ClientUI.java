@@ -11,9 +11,10 @@ import utils.EntryChecker;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Client's CLI UI
+ */
 public class ClientUI {
-
-    // Main UI Constant
     public static final String LINE_SEPARATOR = "=====================================================================\n";
     public static final String STARTING_MESSAGE = "Distributed Facility Booking System";
     public static final String EXIT_SYSTEM_MESSAGE = "Good Bye!";
@@ -31,7 +32,6 @@ public class ClientUI {
     public static final String EXIT_MESSAGE = "8. Exit.";
 
 
-    // CHECK FACILITIES CASE
     public static final String FACILITIES_AVAILABILITY = "FACILITIES AVAILABILITY";
     public static final String ENTER_FACILITIES_NAME = "ENTER FACILITY NAME: ";
     public static final String ENTER_DAYS_TO_CHECK = "ENTER WHICH DAY TO CHECK (1 to 7)";
@@ -39,7 +39,7 @@ public class ClientUI {
     public static final String YES_1 = "1. Yes";
     public static final String NO_2 = "2. No";
 
-    // BOOK CASE
+
     public static final String BOOKING_FACILITY = "BOOKING FACILITY";
     public static final String ENTER_START_DAY_BOOKING = "ENTER BOOKING'S STARTING DAY (1 to 7)";
     public static final String ENTER_START_TIME_BOOKING = "ENTER BOOKING'S STARTING TIME (0000 - 2359)";
@@ -47,21 +47,20 @@ public class ClientUI {
     public static final String ENTER_END_TIME_BOOKING = "ENTER BOOKING'S ENDING TIME (0000 - 2359)";
 
 
-    // OFFSET CASE
     public static final String CHANGE_BOOKING_HEADER = "CHANGE BOOKING";
     public static final String ENTER_UUID = "ENTER BOOKING ID";
     public static final String ADVANCE_OR_POSTPONE = "HOW WOULD YOU LIKE TO CHANGE YOUR BOOKING\n1. BRING FORWARD\n2. PUSH BACKWARD";
     public static final String ENTER_OFFSET = "ENTER OFFSET - format(day hour minute)";
 
-    // MONITOR CASE
+
     public static final String MONITOR_FACILITY_HEADER = "MONITOR FACILITY";
     public static final String ENTER_MONITOR_DURATION = "HOW LONG WOULD YOU LIKE TO MONITOR THE FACILITY? (SECONDS)";
 
-    // SHORTEN CASE
+
     public static final String SHORTEN_BOOKING_HEADER = "SHORTEN BOOKING";
     public static final String SHORTEN_BOOKING_PROMPT = "BY HOW MUCH WOULD YOU LIKE TO SHORTEN YOUR BOOKING?";
 
-    // VACANCY CASE
+
     public static final String BOOK_ON_VACANCY_HEADER = "BOOK ON VACANCY";
     public static final String INVALID_INPUT = "Invalid input, must be non-empty!";
 
@@ -81,7 +80,6 @@ public class ClientUI {
     }
 
 
-    // Details of UI
     public static void ServerSuccessStatus() {
         System.out.println("\n==================================================");
         System.out.println("==================== Success =====================");
@@ -118,7 +116,6 @@ public class ClientUI {
     }
 
 
-    // client handlers
     public static void facilitiesAvailabilityResponse(ClientRequest query, ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
@@ -218,7 +215,6 @@ public class ClientUI {
 
     }
 
-    // get inputs from user
     public static void getFacilitiesAvailability(Scanner scanner, List<Booking> bookings) {
         Booking booking;
 
@@ -226,7 +222,6 @@ public class ClientUI {
         System.out.println(ClientUI.FACILITIES_AVAILABILITY);
         System.out.println(ClientUI.LINE_SEPARATOR);
 
-        // Enter Facility Name
         System.out.print(ClientUI.ENTER_FACILITIES_NAME);
         System.out.println();
 
@@ -282,7 +277,6 @@ public class ClientUI {
         System.out.println(ClientUI.BOOKING_FACILITY);
         System.out.println(ClientUI.LINE_SEPARATOR);
 
-        // Enter Facility Name
         System.out.print(ClientUI.ENTER_FACILITIES_NAME);
         System.out.println();
 
@@ -310,7 +304,6 @@ public class ClientUI {
             startDay = scanner.nextLine();
         }
 
-        // Enter Start Time
         System.out.print(ClientUI.ENTER_START_TIME_BOOKING);
         System.out.println();
 
@@ -324,7 +317,6 @@ public class ClientUI {
             startTime = scanner.nextLine();
         }
 
-        // Enter End Day
         System.out.print(ClientUI.ENTER_END_DAY_BOOKING);
         System.out.println();
 
@@ -338,7 +330,6 @@ public class ClientUI {
             endDay = scanner.nextLine();
         }
 
-        // Enter End Time
         System.out.print(ClientUI.ENTER_END_TIME_BOOKING);
         System.out.println();
 
@@ -365,7 +356,6 @@ public class ClientUI {
         System.out.println(ClientUI.MONITOR_FACILITY_HEADER);
         System.out.println(ClientUI.LINE_SEPARATOR);
 
-        // Enter Facility Name
         System.out.println(ClientUI.ENTER_FACILITIES_NAME);
 
         String name = scanner.nextLine();
@@ -378,7 +368,6 @@ public class ClientUI {
             name = scanner.nextLine();
         }
 
-        // Enter monitor duration
         System.out.println(ClientUI.ENTER_MONITOR_DURATION);
 
         String duration = scanner.nextLine();
@@ -398,7 +387,6 @@ public class ClientUI {
         System.out.println(ClientUI.BOOK_ON_VACANCY_HEADER);
         System.out.println(ClientUI.LINE_SEPARATOR);
 
-        // Enter Facility Name
         System.out.println(ClientUI.ENTER_FACILITIES_NAME);
 
         String name = scanner.nextLine();
@@ -411,7 +399,6 @@ public class ClientUI {
             name = scanner.nextLine().toUpperCase();
         }
 
-        // Enter Start Day
         System.out.println(ClientUI.ENTER_START_DAY_BOOKING);
 
         String startDay = scanner.nextLine();
@@ -424,7 +411,6 @@ public class ClientUI {
             startDay = scanner.nextLine();
         }
 
-        // Enter Start Time
         System.out.println(ClientUI.ENTER_START_TIME_BOOKING);
 
         String startTime = scanner.nextLine();
@@ -437,7 +423,6 @@ public class ClientUI {
             startTime = scanner.nextLine();
         }
 
-        // Enter End Day
         System.out.println(ClientUI.ENTER_END_DAY_BOOKING);
 
         String endDay = scanner.nextLine();
@@ -450,7 +435,6 @@ public class ClientUI {
             endDay = scanner.nextLine();
         }
 
-        // Enter End Time
         System.out.println(ClientUI.ENTER_END_TIME_BOOKING);
 
         String endTime = scanner.nextLine();
@@ -463,7 +447,6 @@ public class ClientUI {
             endTime = scanner.nextLine();
         }
 
-        // Enter Monitor Duration
         System.out.println(ClientUI.ENTER_MONITOR_DURATION);
 
         String duration = scanner.nextLine();
@@ -471,7 +454,7 @@ public class ClientUI {
             System.out.println("invalid input");
             duration = scanner.nextLine();
         }
-        // Create Potential Booking And Set Monitor Duration
+
         System.out.println();
         DayAndTime d1 = new DayAndTime(Integer.parseInt(startDay), Integer.parseInt(startTime.substring(0, 2)), Integer.parseInt(startTime.substring(2, 4)));
         DayAndTime d2 = new DayAndTime(Integer.parseInt(endDay), Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(2, 4)));
@@ -485,11 +468,9 @@ public class ClientUI {
         System.out.println(ClientUI.CHANGE_BOOKING_HEADER);
         System.out.println(ClientUI.LINE_SEPARATOR);
 
-        // Enter booking id
         System.out.println(ClientUI.ENTER_UUID);
         String UUID = scanner.nextLine();
 
-        // Enter advance or postpone choice
         System.out.println(ClientUI.ADVANCE_OR_POSTPONE);
         String choice = scanner.nextLine();
         if (!EntryChecker.isAppropriateInteger(choice, 1, 2)) {
@@ -499,7 +480,6 @@ public class ClientUI {
             }
         }
 
-        // Enter offset
         System.out.println(ClientUI.ENTER_OFFSET);
         String[] date = scanner.nextLine().split(" ");
 
@@ -533,11 +513,9 @@ public class ClientUI {
         System.out.println(ClientUI.CHANGE_BOOKING_HEADER);
         System.out.println(ClientUI.LINE_SEPARATOR);
 
-        // Enter booking id
         System.out.println(ClientUI.ENTER_UUID);
         String UUID = scanner.nextLine();
 
-        // Enter advance or postpone choice
         System.out.println(ClientUI.ADVANCE_OR_POSTPONE);
         String choice = scanner.nextLine();
         if (!EntryChecker.isAppropriateInteger(choice, 1, 2)) {
@@ -547,7 +525,6 @@ public class ClientUI {
             }
         }
 
-        // Enter offset
         System.out.println(ClientUI.ENTER_OFFSET);
         String[] date = scanner.nextLine().split(" ");
 
@@ -582,11 +559,9 @@ public class ClientUI {
         System.out.println(ClientUI.SHORTEN_BOOKING_HEADER);
         System.out.println(ClientUI.LINE_SEPARATOR);
 
-        // Enter booking id
         System.out.println(ClientUI.ENTER_UUID);
         String UUID = scanner.nextLine();
 
-        // Enter offset
         System.out.println(ClientUI.SHORTEN_BOOKING_PROMPT);
         System.out.println(ClientUI.ENTER_OFFSET);
         String[] date = scanner.nextLine().split(" ");

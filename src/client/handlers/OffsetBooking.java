@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Allows user to offset their existing booking via their unique booking ID
+ */
 public class OffsetBooking {
     private static ClientRequest query;
 

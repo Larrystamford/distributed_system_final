@@ -10,6 +10,9 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Contains all the necessary handlers to unmarshal the different data types
+ */
 public class UnmarshalHandler {
 
     public static Marshal unmarshal(byte[] data) throws ClassNotFoundException {

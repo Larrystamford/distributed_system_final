@@ -8,6 +8,9 @@ import remote_objects.Server.ServerResponse;
 import java.net.InetSocketAddress;
 import java.util.List;
 
+/**
+ * Allows user to monitor an interested facility via its name
+ */
 public class FacilityMonitoring {
 
     public static void informRegisteredClients(Semantics semInvo, ServerResponse res, int responseType) {

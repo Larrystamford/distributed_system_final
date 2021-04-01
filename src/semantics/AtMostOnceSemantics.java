@@ -7,6 +7,10 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * At-most-once semantics
+ * Duplicated data will be filtered
+ */
 public class AtMostOnceSemantics extends Semantics {
 
     public AtMostOnceSemantics(UdpAgent communicator) {
@@ -19,7 +23,6 @@ public class AtMostOnceSemantics extends Semantics {
         int clientId = data.getData().getId();
         String clientKey = genClientKey(origin, clientId);
 
-        // client request not seen before
         if (!received.containsKey(clientKey)) {
             received.put(clientKey, System.currentTimeMillis());
             return false;

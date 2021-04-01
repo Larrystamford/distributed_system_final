@@ -13,6 +13,11 @@ import utils.BookingManager;
 import java.net.InetSocketAddress;
 import java.util.List;
 
+/**
+ * IDEMPOTENT EXAMPLE
+ * Allows user to indicate their interest for a booking slot that is currently unavailable
+ * If the unavailable booking slot opens up, the callback will automatically book it for the user
+ */
 public class MonitorAndBookOnVacancy {
 
     public static void handleRequest(Semantics semInvo, InetSocketAddress origin, database database, ClientRequest query) {
@@ -22,13 +27,13 @@ public class MonitorAndBookOnVacancy {
         DayAndTime start = booking.getStartTime();
         DayAndTime end = booking.getEndTime();
 
-        if (BookingManager.hasVacancy(database.getBookingsForFacility(name), start, end)) {
+        if (BookingManager.hasVacancy(database.getBookings(name), start, end)) {
 
             server.handlers.FacilityBooking.handleRequest(semInvo, origin, database, query);
             return;
         }
 
-        // register clients interest
+        // register clients callback
         ClientCallback cInfo = new ClientCallback(query.getId(), origin, query.getMonitoringDuration() * 1000);
         database.registerBookOnVacancy(query.getBookings().get(0).getName(), cInfo, query);
     }

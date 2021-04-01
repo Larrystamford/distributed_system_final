@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Allows user to check a facility's availability via its name and interested day/s
+ */
 public class FacilitiesAvailability {
     public static void createAndSendMessage(Semantics semInvo, Scanner scanner) {
         ClientRequest query;
         List<Booking> bookings = new ArrayList<>();
 
-        // appending bookings
         ClientUI.getFacilitiesAvailability(scanner, bookings);
 
         query = new ClientRequest();

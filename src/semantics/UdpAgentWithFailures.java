@@ -5,6 +5,11 @@ import remote_objects.Common.Marshal;
 import java.net.InetSocketAddress;
 import java.util.Random;
 
+/**
+ * This class is for simulating the UDP failure
+ * We generate a random float, and if the failure
+ * rate is higher than this float, we do not send the data
+ */
 public class UdpAgentWithFailures extends UdpAgent {
 
     private double failProb;

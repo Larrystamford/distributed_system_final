@@ -10,7 +10,9 @@ import server.ServerUI;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-
+/**
+ * Additional query that allows user to view all the facilities names that are available for booking
+ */
 public class ViewAllFacilities {
     private static ServerResponse response;
     private static List<Booking> bookings;

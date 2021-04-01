@@ -1,5 +1,8 @@
 package remote_objects.Common;
 
+/**
+ * We use this object to store day and time information
+ */
 public class DayAndTime {
 
     private int day;
@@ -43,6 +46,7 @@ public class DayAndTime {
         return equivalentSeconds;
     }
 
+
     public int getEquivalentSecondsWithoutDays() {
         int secsHour = 3600;
         int secsOneDay = 24 * secsHour;
@@ -55,7 +59,7 @@ public class DayAndTime {
         return equivalentSeconds;
     }
 
-    public String dayToName() {
+    public String convertIntDayToWeekNaming() {
         if (day == 1) {
             return "MONDAY";
         } else if (day == 2) {
@@ -74,6 +78,6 @@ public class DayAndTime {
     }
 
     public String getReadableFormat() {
-        return String.format(dayToName() + ", %02d:%02d", hour, minute);
+        return String.format(convertIntDayToWeekNaming() + ", %02d:%02d", hour, minute);
     }
 }

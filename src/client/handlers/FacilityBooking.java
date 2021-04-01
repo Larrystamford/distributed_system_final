@@ -11,13 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Allows user to book a facility
+ */
 public class FacilityBooking {
 
     public static void createAndSendMessage(Semantics semInvo, Scanner scanner) {
         ClientRequest query;
         List<Booking> bookings = new ArrayList<Booking>();
 
-        // appending bookings
         ClientUI.getMakeBookingInput(scanner, bookings);
 
         query = new ClientRequest();

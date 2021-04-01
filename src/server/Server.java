@@ -1,12 +1,12 @@
 package server;
 
 import database.database;
-import utils.Constants;
+import org.apache.commons.cli.*;
 import remote_objects.Client.ClientCallback;
 import remote_objects.Server.ServerResponse;
 import semantics.*;
-import org.apache.commons.cli.*;
 import server.handlers.*;
+import utils.Constants;
 
 public class Server {
     private Semantics semInvo;
@@ -19,6 +19,9 @@ public class Server {
     public void run() {
         database database = new database();
         System.out.println("Database Initialised ...");
+        System.out.println("Server running ...");
+        System.out.println("");
+
 
         semInvo.receiveClientRequest((origin, query) -> {
             switch (query.getRequestChoice()) {
@@ -51,16 +54,13 @@ public class Server {
         Option maxRetransmissions = new Option("MR", true, "Maximum number of retries in request-reply protocol");
         Option verbose = new Option("V", false, "Set debugging statements");
 
-        // required args
         portNumber.setRequired(true);
 
-        // non string args
         portNumber.setType(Integer.TYPE);
         failureRate.setType(Double.TYPE);
         timeout.setType(Integer.TYPE);
         maxRetransmissions.setType(Integer.TYPE);
 
-        // set up
         options.addOption(portNumber);
         options.addOption(ALOSemantics);
         options.addOption(AMOSemantics);
@@ -74,7 +74,6 @@ public class Server {
 
 
         double fr = Constants.DEFAULT_FAILURE_RATE;
-        fr = 0.5;
 
         int port;
         boolean atLeastOnce;

@@ -9,6 +9,9 @@ import javacutils.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Database for storing booking information
+ */
 public class database {
     private static final ArrayList<Booking> bookingData = new ArrayList<Booking>();
     private static final Set<String> facilityNames = new HashSet();
@@ -64,7 +67,7 @@ public class database {
         return null;
     }
 
-    public List<Booking> getBookingsForFacility(String name) {
+    public List<Booking> getBookings(String name) {
 
         List<Booking> res = new ArrayList<>();
         for (Booking booking : bookingData) {
@@ -135,5 +138,17 @@ public class database {
     public static List<Pair<ClientCallback, ClientRequest>> getBookOnVacancyRequest(String facilityName) {
         removeExpiredCallbacks();
         return bookOnVacancyList.get(facilityName);
+    }
+
+    /**
+     * this removes expired callbacks from the the callbacks lists
+     */
+    public static void filterCallBackAddresses() {
+        monitorFacilityList.forEach((facility, registeredCallbacks) -> {
+            monitorFacilityList.put(facility, registeredCallbacks.stream().filter((c) -> c.getExpire() > System.currentTimeMillis()).collect(Collectors.toList()));
+        });
+        bookOnVacancyList.forEach((facility, registeredCallbacks) -> {
+            bookOnVacancyList.put(facility, registeredCallbacks.stream().filter((c) -> c.first.getExpire() > System.currentTimeMillis()).collect(Collectors.toList()));
+        });
     }
 }

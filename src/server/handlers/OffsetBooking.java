@@ -14,6 +14,9 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Allows user to offset their existing booking via their unique booking ID
+ */
 public class OffsetBooking {
     private static DayAndTime newDayAndTimeEnd;
     private static DayAndTime newDayAndTimeStart;
@@ -50,8 +53,8 @@ public class OffsetBooking {
 
 
     public static Booking changeBooking(Booking booking, DayAndTime offset, database database) {
-        // remove current booking to check if new booking would cause conflicts
-        List<Booking> bookings = database.getBookingsForFacility(booking.getName());
+        // exclude the current booking to make sure our offset booking timing does not clash with it
+        List<Booking> bookings = database.getBookings(booking.getName());
 
         for (int i = 0; i < bookings.size(); i++) {
             Booking bInfo = bookings.get(i);
@@ -70,6 +73,10 @@ public class OffsetBooking {
             database.updateBooking(booking.getUuid(), newDayAndTimeStart, newDayAndTimeEnd);
             return booking;
         }
+
+        booking.setStartTime(newDayAndTimeStart);
+        booking.setEndTime(newDayAndTimeEnd);
+
         return null;
     }
 

@@ -98,7 +98,6 @@ public class Client {
 
         double fr = Constants.DEFAULT_FAILURE_RATE;
 
-        // parse program arguments
         try {
             cmd = parser.parse(options, args);
             host = cmd.getOptionValue("HOST");
@@ -118,7 +117,6 @@ public class Client {
             return;
         }
 
-        // initialise client with program arguments
         try {
             Client client;
             InetSocketAddress socketAddress = new InetSocketAddress(host, port);
@@ -128,9 +126,7 @@ public class Client {
             System.out.println(ClientUI.STARTING_MESSAGE);
             System.out.println(ClientUI.LINE_SEPARATOR);
 
-            // TODO - confirm that client only uses at least once
             client = new Client(new AtLeastOnceSemantics(communicator));
-
 
             while (run) {
                 client.run();

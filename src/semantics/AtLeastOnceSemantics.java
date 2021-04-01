@@ -5,8 +5,11 @@ import remote_objects.Server.ServerResponse;
 
 import java.net.InetSocketAddress;
 
+/**
+ * At-most-once semantics
+ * Duplicated data will re-execute the client's query
+ */
 public class AtLeastOnceSemantics extends Semantics {
-
 
     public AtLeastOnceSemantics(UdpAgent communicator) {
         super(communicator);

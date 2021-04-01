@@ -9,15 +9,15 @@ import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
 
-import database.database;
 import server.ServerUI;
-import utils.DateUtils;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Allows user to check a facility's availability via its name and interested day/s
+ */
 public class FacilitiesAvailability {
     private static ServerResponse response;
 

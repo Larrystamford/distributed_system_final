@@ -9,16 +9,14 @@ import java.io.IOException;
 import java.net.*;
 
 /**
- * Manages the sending and receiving of marshalled datagrams
+ * Udp Agent is solely in charge of sending and receiving bytes
  */
 public class UdpAgent {
     private DatagramSocket dSocket;
     private InetSocketAddress serverSocket;
 
     /**
-     * for client to create communicator with server
-     *
-     * @param serverSocket - server socket (default 2222)
+     * The Client's UdpAgent
      */
     public UdpAgent(InetSocketAddress serverSocket) {
         try {
@@ -30,9 +28,7 @@ public class UdpAgent {
     }
 
     /**
-     * for server to create communicator with client
-     *
-     * @param selfPortNumber - port number extracted from client query received
+     * The Server's UdpAgent
      */
     public UdpAgent(int selfPortNumber) {
         try {
@@ -79,7 +75,7 @@ public class UdpAgent {
         }
     }
 
-    protected String getPacketType (Marshal data) {
+    protected String getPacketType(Marshal data) {
         String payload = "ACK";
         if (data instanceof ClientRequest)
             payload = "CLIENT REQUEST";
