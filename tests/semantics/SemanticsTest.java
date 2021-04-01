@@ -2,7 +2,7 @@ package semantics;
 
 import client.ClientUI;
 import client.handlers.OffsetBooking;
-import database.Database;
+import database.database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import remote_objects.Client.ClientRequest;
@@ -18,7 +18,7 @@ class SemanticsTest {
     Semantics client;
     Semantics atLeastOnceServer;
     Semantics atMostOnceServer;
-    Database database;
+    database database;
 
     InetSocketAddress clientSocket = new InetSocketAddress("127.0.0.1", 2222);
 
@@ -31,7 +31,7 @@ class SemanticsTest {
         atLeastOnceServer = new AtLeastOnceSemantics(serverCommunicator);
         atMostOnceServer = new AtLeastOnceSemantics(serverCommunicator);
 
-        database = new Database();
+        database = new database();
     }
     @Test
     void set() {
@@ -52,7 +52,7 @@ class SemanticsTest {
             int id = client.requestServer(cReq);
             client.receiveResponse(id, (response) -> {
                 if (response.getServerStatus() == 200) {
-                    OffsetBooking.printChangeBookingSuccess(cReq, response);
+                    ClientUI.printChangeBookingSuccess(cReq, response);
                 } else {
                     ClientUI.ServerErrorUI(response);
                 }

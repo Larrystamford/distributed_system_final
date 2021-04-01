@@ -27,7 +27,7 @@ public class FacilitiesAvailability {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                printFacilitiesAvailability(response);
+                ClientUI.printFacilitiesAvailability(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
@@ -88,18 +88,5 @@ public class FacilitiesAvailability {
                 continueAdding = false;
             }
         }
-    }
-
-    public static void printFacilitiesAvailability(ServerResponse response) {
-        ClientUI.ServerSuccessStatus();
-
-        System.out.println("Facilities Available for Booking:");
-        for (int i = 0; i < response.getBookings().size(); i++) {
-            System.out.println(response.getBookings().get(i).getName() + ": " + response.getBookings().get(i).getStartTime().toNiceString() + " - " + response.getBookings().get(i).getEndTime().toNiceString());
-        }
-        if (response.getBookings().size() == 0) {
-            System.out.println("No slots available on selected booking day/s");
-        }
-        System.out.println("=================================================");
     }
 }

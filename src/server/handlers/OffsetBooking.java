@@ -5,7 +5,7 @@ import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
-import database.Database;
+import database.database;
 import utils.DateUtils;
 import utils.VacancyChecker;
 
@@ -18,7 +18,7 @@ public class OffsetBooking {
     private static DayAndTime newDayAndTimeStart;
 
 
-    public static void handleRequest(Semantics semInvo, InetSocketAddress origin, Database database, ClientRequest query) {
+    public static void handleRequest(Semantics semInvo, InetSocketAddress origin, database database, ClientRequest query) {
         ServerResponse response;
         Booking changeInfo = query.getBookings().get(0);
         DayAndTime offset = changeInfo.getOffset();
@@ -47,7 +47,7 @@ public class OffsetBooking {
     }
 
 
-    public static Booking changeBooking(Booking booking, DayAndTime offset, Database database) {
+    public static Booking changeBooking(Booking booking, DayAndTime offset, database database) {
         // remove current booking to check if new booking would cause conflicts
         List<Booking> bookings = database.getBookingsByName(booking.getName());
         for (int i = 0; i < bookings.size(); i++) {

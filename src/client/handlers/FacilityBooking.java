@@ -28,7 +28,7 @@ public class FacilityBooking {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                printBookingResponse(response);
+                ClientUI.printBookingResponse(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
@@ -116,15 +116,5 @@ public class FacilityBooking {
         DayAndTime d2 = new DayAndTime(Integer.parseInt(endDay), Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(2, 4)));
         booking = new Booking(name.toUpperCase(), d1, d2);
         bookings.add(booking);
-    }
-
-    public static void printBookingResponse(ServerResponse response) {
-        ClientUI.ServerSuccessStatus();
-
-        System.out.println("Booking Successful:");
-        System.out.println(response.getBookings().get(0).getName() + ": " + response.getBookings().get(0).getStartTime().toNiceString() + " - " + response.getBookings().get(0).getEndTime().toNiceString());
-        System.out.println("Booking ID: " + response.getBookings().get(0).getUuid());
-
-        System.out.println("=================================================");
     }
 }

@@ -29,7 +29,7 @@ public class MonitorAndBookOnVacancy {
         int id = semInvo.requestServer(query);
         semInvo.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
-                printMonitoringResults(response);
+                ClientUI.printBookOnVacancy(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
@@ -125,16 +125,5 @@ public class MonitorAndBookOnVacancy {
         Booking booking = new Booking(name.toUpperCase(), d1, d2);
         bookings.add(booking);
         query.setMonitoringDuration(Integer.parseInt(duration));
-    }
-
-    public static void printMonitoringResults(ServerResponse response) {
-        ClientUI.ServerSuccessStatus();
-
-        System.out.println("=================================================");
-        System.out.println("VACANCY FOUND");
-        System.out.println("BOOKING MADE:");
-        System.out.println(response.getBookings().get(0).getName() + ": " + response.getBookings().get(0).getStartTime().toNiceString() + " - " + response.getBookings().get(0).getEndTime().toNiceString());
-        System.out.println("Booking ID: " + response.getBookings().get(0).getUuid());
-        System.out.println("=================================================\n");
     }
 }
