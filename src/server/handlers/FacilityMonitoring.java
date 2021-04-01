@@ -1,6 +1,6 @@
 package server.handlers;
 
-import database.Database;
+import database.database;
 import semantics.Semantics;
 import remote_objects.Client.ClientCallback;
 import remote_objects.Server.ServerResponse;
@@ -12,7 +12,7 @@ public class FacilityMonitoring {
 
     public static void informRegisteredClients(Semantics semInvo, ServerResponse res, int responseType) {
         String facilityName = res.getBookings().get(0).getName();
-        List<ClientCallback> addresses = Database.getValidMonitorFacilityRequests(facilityName);
+        List<ClientCallback> addresses = database.getValidMonitorFacilityRequests(facilityName);
         if (addresses == null) {
             return;
         }

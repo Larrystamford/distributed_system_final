@@ -1,6 +1,10 @@
 package client;
 
+import remote_objects.Client.ClientRequest;
+import remote_objects.Common.Booking;
+import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
+import utils.Constants;
 
 public class ClientUI {
 
@@ -105,6 +109,91 @@ public class ClientUI {
                 System.out.println("\n=================================================");
                 break;
         }
+
+    }
+
+
+    // client handlers
+    public static void printFacilitiesAvailability(ServerResponse response) {
+        ClientUI.ServerSuccessStatus();
+
+        System.out.println("Facilities Available for Booking:");
+        for (int i = 0; i < response.getBookings().size(); i++) {
+            System.out.println(response.getBookings().get(i).getName() + ": " + response.getBookings().get(i).getStartTime().toNiceString() + " - " + response.getBookings().get(i).getEndTime().toNiceString());
+        }
+        if (response.getBookings().size() == 0) {
+            System.out.println("No slots available on selected booking day/s");
+        }
+        System.out.println("=================================================");
+    }
+
+    public static void printBookingResponse(ServerResponse response) {
+        ClientUI.ServerSuccessStatus();
+
+        System.out.println("Booking Successful:");
+        System.out.println(response.getBookings().get(0).getName() + ": " + response.getBookings().get(0).getStartTime().toNiceString() + " - " + response.getBookings().get(0).getEndTime().toNiceString());
+        System.out.println("Booking ID: " + response.getBookings().get(0).getUuid());
+
+        System.out.println("=================================================");
+    }
+
+    public static void printBookOnVacancy(ServerResponse response) {
+        ClientUI.ServerSuccessStatus();
+
+        System.out.println("=================================================");
+        System.out.println("VACANCY FOUND");
+        System.out.println("BOOKING MADE:");
+        System.out.println(response.getBookings().get(0).getName() + ": " + response.getBookings().get(0).getStartTime().toNiceString() + " - " + response.getBookings().get(0).getEndTime().toNiceString());
+        System.out.println("Booking ID: " + response.getBookings().get(0).getUuid());
+        System.out.println("=================================================\n");
+    }
+
+    public static void printChangeBookingSuccess(ClientRequest query, ServerResponse response) {
+        System.out.println(ClientUI.LINE_SEPARATOR);
+        System.out.println("Booking successfully changed");
+        Booking booking = response.getBookings().get(0);
+        String UUID = booking.getUuid();
+        DayAndTime newStart = booking.getStartTime();
+        DayAndTime newEnd = booking.getEndTime();
+        System.out.println("New booking details:");
+        System.out.println("Booking ID: " + UUID);
+        System.out.println("Start: " + newStart.toNiceString());
+        System.out.println("End: " + newEnd.toNiceString());
+        System.out.println(ClientUI.LINE_SEPARATOR);
+    }
+
+    public static void printChangeBookingSuccess(ServerResponse response) {
+        System.out.println(ClientUI.LINE_SEPARATOR);
+        System.out.println("Booking successfully changed");
+        Booking booking = response.getBookings().get(0);
+        String UUID = booking.getUuid();
+        DayAndTime newStart = booking.getStartTime();
+        DayAndTime newEnd = booking.getEndTime();
+        System.out.println("New booking details:");
+        System.out.println("Booking ID: " + UUID);
+        System.out.println("Start: " + newStart.toNiceString());
+        System.out.println("End: " + newEnd.toNiceString());
+        System.out.println(ClientUI.LINE_SEPARATOR);
+    }
+
+    public static void printMonitoringResults(ClientRequest query, ServerResponse response) {
+        ClientUI.ServerSuccessStatus();
+
+        System.out.println("=================================================");
+        System.out.println("NEW MONITORING UPDATE:\n");
+        System.out.println(Constants.SERVICES_MAP.get(response.getRequestChoice()));
+        System.out.println(response.getBookings().get(0).getName() + ": " + response.getBookings().get(0).getStartTime().toNiceString() + " - " + response.getBookings().get(0).getEndTime().toNiceString());
+        System.out.println("=================================================");
+    }
+
+
+    public static void printFaciliiesAvailability(ServerResponse response) {
+        ClientUI.ServerSuccessStatus();
+        System.out.println("Facilities Availability:");
+        for (int i = 0; i < response.getBookings().size(); i++) {
+            System.out.println("[" + i + "] " + response.getBookings().get(i).getName());
+        }
+        System.out.println("=================================================");
 
     }
 }

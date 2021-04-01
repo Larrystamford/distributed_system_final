@@ -16,19 +16,10 @@ public class ViewAllFacilities {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                printFaciliiesAvailability(response);
+                ClientUI.printFaciliiesAvailability(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
         }, false, 5);
-    }
-
-    public static void printFaciliiesAvailability(ServerResponse response) {
-        ClientUI.ServerSuccessStatus();
-        System.out.println("Facilities Availability:");
-        for (int i = 0; i < response.getBookings().size(); i++) {
-            System.out.println("[" + i + "] " + response.getBookings().get(i).getName());
-        }
-        System.out.println("=================================================");
     }
 }

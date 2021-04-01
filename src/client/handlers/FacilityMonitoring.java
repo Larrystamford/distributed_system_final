@@ -1,5 +1,6 @@
 package client.handlers;
 
+import client.Client;
 import client.ClientUI;
 import utils.Constants;
 import remote_objects.Common.Booking;
@@ -28,7 +29,7 @@ public class FacilityMonitoring {
         int id = semInvo.requestServer(query);
         semInvo.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
-                printMonitoringResults(query, response);
+                ClientUI.printMonitoringResults(query, response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
@@ -74,13 +75,5 @@ public class FacilityMonitoring {
         bookings.add(booking);
     }
 
-    public static void printMonitoringResults(ClientRequest query, ServerResponse response) {
-        ClientUI.ServerSuccessStatus();
 
-        System.out.println("=================================================");
-        System.out.println("NEW MONITORING UPDATE:\n");
-        System.out.println(Constants.SERVICES_MAP.get(response.getRequestChoice()));
-        System.out.println(response.getBookings().get(0).getName() + ": " + response.getBookings().get(0).getStartTime().toNiceString() + " - " + response.getBookings().get(0).getEndTime().toNiceString());
-        System.out.println("=================================================");
-    }
 }

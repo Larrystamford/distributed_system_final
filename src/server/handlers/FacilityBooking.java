@@ -5,7 +5,7 @@ import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
-import database.Database;
+import database.database;
 import utils.VacancyChecker;
 
 import java.net.InetSocketAddress;
@@ -16,7 +16,7 @@ import java.util.List;
 public class FacilityBooking {
     private static ServerResponse response;
 
-    public static void handleRequest(Semantics semInvo, InetSocketAddress origin, Database database, ClientRequest query) {
+    public static void handleRequest(Semantics semInvo, InetSocketAddress origin, database database, ClientRequest query) {
         List<Booking> bookings;
         List<Booking> bookingsFiltered;
         List<Booking> confirmedBooking = new ArrayList<Booking>();

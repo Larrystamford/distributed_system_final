@@ -1,15 +1,15 @@
 package utils;
 
-import database.Database;
+import database.database;
 
 class VacancyCheckerTest {
 
-    private static Database database;
+    private static database database;
 
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        database = new Database();
+        database = new database();
     }
 
     @org.junit.jupiter.api.AfterEach

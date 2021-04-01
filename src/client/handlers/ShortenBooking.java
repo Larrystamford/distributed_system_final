@@ -25,7 +25,7 @@ public class ShortenBooking {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                printChangeBookingSuccess(response);
+                ClientUI.printChangeBookingSuccess(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
@@ -65,20 +65,5 @@ public class ShortenBooking {
         payload.setOffset(offset);
 
         return payload;
-    }
-
-
-    public static void printChangeBookingSuccess(ServerResponse response) {
-        System.out.println(ClientUI.LINE_SEPARATOR);
-        System.out.println("Booking successfully changed");
-        Booking booking = response.getBookings().get(0);
-        String UUID = booking.getUuid();
-        DayAndTime newStart = booking.getStartTime();
-        DayAndTime newEnd = booking.getEndTime();
-        System.out.println("New booking details:");
-        System.out.println("Booking ID: " + UUID);
-        System.out.println("Start: " + newStart.toNiceString());
-        System.out.println("End: " + newEnd.toNiceString());
-        System.out.println(ClientUI.LINE_SEPARATOR);
     }
 }

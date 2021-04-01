@@ -1,6 +1,6 @@
 package server;
 
-import database.Database;
+import database.database;
 import utils.Constants;
 import remote_objects.Client.ClientCallback;
 import remote_objects.Server.ServerResponse;
@@ -17,7 +17,7 @@ public class Server {
     }
 
     public void run() {
-        Database database = new Database();
+        database database = new database();
         System.out.println("Database Initialised ...");
 
         semInvo.receiveClientRequest((origin, query) -> {
