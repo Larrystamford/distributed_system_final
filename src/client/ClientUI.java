@@ -132,7 +132,7 @@ public class ClientUI {
 
             for (Booking booked : response.getBookings()) {
                 if (booked.getStartTime().getDay() == timeTableDay) {
-                    System.out.println(booked.getName() + ": " + booked.getStartTime().toNiceString() + " - " + booked.getEndTime().toNiceString() + " (BOOKED)");
+                    System.out.println(booked.getName() + ": " + booked.getStartTime().getReadableFormat() + " - " + booked.getEndTime().getReadableFormat() + " (BOOKED)");
                     noneBookedForDay = false;
                 }
             }

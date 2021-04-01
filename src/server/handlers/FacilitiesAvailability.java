@@ -26,8 +26,8 @@ public class FacilitiesAvailability {
         List<Booking> unavailableBookingSlots = new ArrayList<>();
         List<Booking> totalUnavailableBookingSlots = new ArrayList<>();
 
-        bookings = query.getBookings();
-        boolean facilityNameExist = database.hasFacility(bookings.get(0).getName());
+        infos = query.getBookings();
+        boolean facilityNameExist = database.hasFacility(infos.get(0).getName());
 
 
         if (facilityNameExist) {
