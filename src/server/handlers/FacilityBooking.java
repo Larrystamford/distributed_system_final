@@ -20,11 +20,13 @@ public class FacilityBooking {
     public static void handleRequest(Semantics semInvo, InetSocketAddress origin, database database, ClientRequest query) {
         List<Booking> bookings;
         List<Booking> bookingsFiltered;
-        List<Booking> confirmedBooking = new ArrayList<Booking>();
+        List<Booking> confirmedBooking = new ArrayList<>();
 
         bookings = query.getBookings();
+
         boolean facilityNameExist = database.hasFacility(bookings.get(0).getName());
         List<Booking> bookingsFilteredByName = database.getBookingsForFacility(bookings.get(0).getName());
+
 
         if (facilityNameExist) {
             for (Booking info : bookings) {
@@ -45,7 +47,7 @@ public class FacilityBooking {
                     response = new ServerResponse(query.getId(), 200, confirmedBooking);
                     FacilityMonitoring.informRegisteredClients(semInvo, response, query.getRequestChoice());
                 } else {
-                    response = new ServerResponse(query.getId(), 409, confirmedBooking);
+                    response = new ServerResponse(query.getId(), 406, confirmedBooking);
                 }
             }
         } else {

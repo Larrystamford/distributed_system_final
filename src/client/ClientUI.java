@@ -33,18 +33,18 @@ public class ClientUI {
 
     // CHECK FACILITIES CASE
     public static final String FACILITIES_AVAILABILITY = "FACILITIES AVAILABILITY";
-    public static final String ENTER_FACILITIES_NAME = "ENTER THE FACILITY NAME";
-    public static final String ENTER_DAYS = "ENTER DAY (1-7: Monday-Sunday)";
-    public static final String CONTINUE_ENTER_DAYS = "CONTINUE ADDING MORE DAYS?";
+    public static final String ENTER_FACILITIES_NAME = "ENTER FACILITY NAME: ";
+    public static final String ENTER_DAYS_TO_CHECK = "ENTER WHICH DAY TO CHECK (1 to 7)";
+    public static final String CONTINUE_ENTER_DAYS = "WOULD YOU LIKE TO CHECK MORE DAYS?";
     public static final String YES_1 = "1. Yes";
     public static final String NO_2 = "2. No";
 
     // BOOK CASE
     public static final String BOOKING_FACILITY = "BOOKING FACILITY";
-    public static final String ENTER_START_DAY = "ENTER START DAY (1-7: Monday-Sunday)";
-    public static final String ENTER_START_TIME = "ENTER START TIME (0000 - 2359)";
-    public static final String ENTER_END_DAY = "ENTER END DAY (1-7: Monday-Sunday)";
-    public static final String ENTER_END_TIME = "ENTER END TIME (0000 - 2359)";
+    public static final String ENTER_START_DAY_BOOKING = "ENTER BOOKING'S STARTING DAY (1 to 7)";
+    public static final String ENTER_START_TIME_BOOKING = "ENTER BOOKING'S STARTING TIME (0000 - 2359)";
+    public static final String ENTER_END_DAY_BOOKING = "ENTER BOOKING'S ENDING DAY (1 to 7)";
+    public static final String ENTER_END_TIME_BOOKING = "ENTER BOOKING'S ENDING TIME (0000 - 2359)";
 
 
     // OFFSET CASE
@@ -95,17 +95,17 @@ public class ClientUI {
         System.out.println("=================================================");
         switch (response.getServerStatus()) {
             case 500:
-                System.out.println("Server Error Try Again");
+                System.out.println("Internal Server Error");
                 System.out.println("\n=================================================");
                 break;
             case 404:
-                System.out.println("User provided input was not found in our system");
+                System.out.println("The inputs that you entered were not found in our Database");
                 System.out.println("\n=================================================");
                 break;
             case 405:
                 System.out.println("Changes clashes with existing bookings");
                 System.out.println("\n=================================================");
-            case 409:
+            case 406:
                 System.out.println("Time slot selected is unavailable, please try another time slot");
                 System.out.println("\n=================================================");
                 break;
@@ -119,16 +119,32 @@ public class ClientUI {
 
 
     // client handlers
-    public static void showFacilityAvailabilityResponse(ServerResponse response) {
+    public static void facilitiesAvailabilityResponse(ClientRequest query, ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
-        System.out.println("Facilities Available for Booking:");
-        for (int i = 0; i < response.getBookings().size(); i++) {
-            System.out.println(response.getBookings().get(i).getName() + ": " + response.getBookings().get(i).getStartTime().getReadableFormat() + " - " + response.getBookings().get(i).getEndTime().getReadableFormat());
+        System.out.println("Facilities Booking Time Table:");
+
+        for (Booking booking : query.getBookings()) {
+            int timeTableDay = booking.getStartTime().getDay();
+            boolean noneBookedForDay = true;
+
+            System.out.println("TIME TABLE FOR DAY: " + timeTableDay);
+
+            for (Booking booked : response.getBookings()) {
+                if (booked.getStartTime().getDay() == timeTableDay) {
+                    System.out.println(booked.getName() + ": " + booked.getStartTime().toNiceString() + " - " + booked.getEndTime().toNiceString() + " (BOOKED)");
+                    noneBookedForDay = false;
+                }
+            }
+
+            if (noneBookedForDay) {
+                System.out.println("All Timings Available");
+            }
+
+            System.out.println("=================================================");
         }
-        if (response.getBookings().size() == 0) {
-            System.out.println("No slots available on selected booking day/s");
-        }
+
+
         System.out.println("=================================================");
     }
 
@@ -203,7 +219,7 @@ public class ClientUI {
     }
 
     // get inputs from user
-    public static void getListFacilitiesInput(Scanner scanner, List<Booking> bookings) {
+    public static void getFacilitiesAvailability(Scanner scanner, List<Booking> bookings) {
         Booking booking;
 
         System.out.println(ClientUI.LINE_SEPARATOR);
@@ -226,7 +242,7 @@ public class ClientUI {
 
         boolean continueAdding = true;
         while (continueAdding) {
-            System.out.print(ClientUI.ENTER_DAYS);
+            System.out.print(ClientUI.ENTER_DAYS_TO_CHECK);
             System.out.println();
 
             String day = scanner.nextLine();
@@ -234,7 +250,7 @@ public class ClientUI {
             while (day.length() == 0) {
                 System.out.println(ClientUI.INVALID_INPUT);
                 System.out.println();
-                System.out.print(ClientUI.ENTER_DAYS);
+                System.out.print(ClientUI.ENTER_DAYS_TO_CHECK);
                 System.out.println();
 
                 name = scanner.nextLine();
@@ -281,56 +297,56 @@ public class ClientUI {
         }
 
         // Enter Start Day
-        System.out.print(ClientUI.ENTER_START_DAY);
+        System.out.print(ClientUI.ENTER_START_DAY_BOOKING);
         System.out.println();
 
         String startDay = scanner.nextLine();
         while (startDay.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_START_DAY);
+            System.out.print(ClientUI.ENTER_START_DAY_BOOKING);
             System.out.println();
 
             startDay = scanner.nextLine();
         }
 
         // Enter Start Time
-        System.out.print(ClientUI.ENTER_START_TIME);
+        System.out.print(ClientUI.ENTER_START_TIME_BOOKING);
         System.out.println();
 
         String startTime = scanner.nextLine();
         while (startTime.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_START_TIME);
+            System.out.print(ClientUI.ENTER_START_TIME_BOOKING);
             System.out.println();
 
             startTime = scanner.nextLine();
         }
 
         // Enter End Day
-        System.out.print(ClientUI.ENTER_END_DAY);
+        System.out.print(ClientUI.ENTER_END_DAY_BOOKING);
         System.out.println();
 
         String endDay = scanner.nextLine();
         while (endDay.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_END_DAY);
+            System.out.print(ClientUI.ENTER_END_DAY_BOOKING);
             System.out.println();
 
             endDay = scanner.nextLine();
         }
 
         // Enter End Time
-        System.out.print(ClientUI.ENTER_END_TIME);
+        System.out.print(ClientUI.ENTER_END_TIME_BOOKING);
         System.out.println();
 
         String endTime = scanner.nextLine();
         while (endTime.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_END_TIME);
+            System.out.print(ClientUI.ENTER_END_TIME_BOOKING);
             System.out.println();
 
             endTime = scanner.nextLine();
@@ -396,52 +412,52 @@ public class ClientUI {
         }
 
         // Enter Start Day
-        System.out.println(ClientUI.ENTER_START_DAY);
+        System.out.println(ClientUI.ENTER_START_DAY_BOOKING);
 
         String startDay = scanner.nextLine();
         while (startDay.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_START_DAY);
+            System.out.print(ClientUI.ENTER_START_DAY_BOOKING);
             System.out.println();
 
             startDay = scanner.nextLine();
         }
 
         // Enter Start Time
-        System.out.println(ClientUI.ENTER_START_TIME);
+        System.out.println(ClientUI.ENTER_START_TIME_BOOKING);
 
         String startTime = scanner.nextLine();
         while (startTime.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_START_TIME);
+            System.out.print(ClientUI.ENTER_START_TIME_BOOKING);
             System.out.println();
 
             startTime = scanner.nextLine();
         }
 
         // Enter End Day
-        System.out.println(ClientUI.ENTER_END_DAY);
+        System.out.println(ClientUI.ENTER_END_DAY_BOOKING);
 
         String endDay = scanner.nextLine();
         while (endDay.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_END_DAY);
+            System.out.print(ClientUI.ENTER_END_DAY_BOOKING);
             System.out.println();
 
             endDay = scanner.nextLine();
         }
 
         // Enter End Time
-        System.out.println(ClientUI.ENTER_END_TIME);
+        System.out.println(ClientUI.ENTER_END_TIME_BOOKING);
 
         String endTime = scanner.nextLine();
         while (endTime.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_END_TIME);
+            System.out.print(ClientUI.ENTER_END_TIME_BOOKING);
             System.out.println();
 
             endTime = scanner.nextLine();
