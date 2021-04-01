@@ -2,7 +2,7 @@ package utils;
 
 import database.database;
 
-class VacancyCheckerTest {
+class BookingManagerTest {
 
     private static database database;
 

@@ -51,7 +51,7 @@ public class DayAndTime {
     }
 
 
-    public int convSecs() {
+    public int convertDateIntoSeconds() {
         return equivalentSeconds;
     }
 
@@ -73,7 +73,7 @@ public class DayAndTime {
         return "SUNDAY";
     }
 
-    public String toNiceString() {
+    public String getReadableFormat() {
         return String.format(dayToName() + ", %02d:%02d", hour, minute);
     }
 }

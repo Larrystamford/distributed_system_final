@@ -28,7 +28,7 @@ public class Server {
                 case Constants.OFFSET_BOOKING -> OffsetBooking.handleRequest(semInvo, origin, database, query);
                 case Constants.FACILITY_MONITORING -> {
                     ClientCallback cInfo = new ClientCallback(query.getId(), origin, query.getMonitoringDuration() * 1000);
-                    database.registerMonitoring(query.getBookings().get(0).getName(), cInfo);
+                    database.registerMonitorCallback(query.getBookings().get(0).getName(), cInfo);
                 }
                 case Constants.SHORTEN_BOOKING -> ShortenBooking.handleRequest(semInvo, origin, database, query);
                 case Constants.MONITOR_AND_BOOK_ON_AVAILABLE -> MonitorAndBookOnVacancy.handleRequest(semInvo, origin, database, query);
