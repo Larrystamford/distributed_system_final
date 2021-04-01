@@ -1,6 +1,18 @@
-### Client (Java)
+## Editor
 ```
-cd client
-javac -d . -cp .:lib/* *.java
-java -cp .:lib/* client.UDPClient -h <HOST NAME> -p <PORT> [-al] [-am] [-fr <FAILURE RATE>] [-to <TIMEOUT>] [-mt <MAX TIMEOUT COUNT>] [-v]
+Built and tested with InteliJ
+```
+
+## Client
+```
+Main: client.Client
+arguments: -HOST <user ip address> -PORT 2222
+```
+
+## Server
+```
+From InteliJ, build and run application:
+Main: server.Server
+arguments: -PORT 2222
+opt: -AMO / -ALO / FRATE / TIMEOUT / MR
 ```
