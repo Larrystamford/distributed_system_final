@@ -37,6 +37,4 @@ public class FacilityMonitoring {
         System.out.println("MONITORING COMPLETE");
         System.out.println(ClientUI.LINE_SEPARATOR);
     }
-
-
 }

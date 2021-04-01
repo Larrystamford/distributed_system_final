@@ -4,7 +4,6 @@ import client.handlers.*;
 import semantics.*;
 import org.apache.commons.cli.*;
 import utils.Constants;
-import utils.ProgramArgumentsHelper;
 
 import java.net.InetSocketAddress;
 import java.util.Scanner;
@@ -59,7 +58,37 @@ public class Client {
 
     public static void main(String[] args) {
 
-        Options options = ProgramArgumentsHelper.getOptions();
+        Options options = new Options();
+
+        Option hostAddress = new Option("HOST",true, "Server host");
+        Option portNumber = new Option("PORT", true, "Server port");
+        Option ALOSemantics = new Option("ALO", false, "Configures the request-reply protocol to use least once semantics invocation");
+        Option AMOSemantics = new Option("AMO", false, "Configures the request-reply protocol to use at most once semantics invocation");
+        Option failureRate = new Option("FRATE", true, "Failure rate of the simulated UDP environment (0-1)");
+        Option timeout = new Option("TIMEOUT", true, "Timeout duration in request-reply protocol");
+        Option maxRetransmissions = new Option("MR", true, "Maximum number of retries in request-reply protocol");
+        Option verbose = new Option("V", false, "Set debugging statements");
+
+        // required args
+        hostAddress.setRequired(true);
+        portNumber.setRequired(true);
+
+        // non string args
+        portNumber.setType(Integer.TYPE);
+        failureRate.setType(Double.TYPE);
+        timeout.setType(Integer.TYPE);
+        maxRetransmissions.setType(Integer.TYPE);
+
+        // set up
+        options.addOption(portNumber);
+        options.addOption(hostAddress);
+        options.addOption(ALOSemantics);
+        options.addOption(AMOSemantics);
+        options.addOption(failureRate);
+        options.addOption(timeout);
+        options.addOption(maxRetransmissions);
+        options.addOption(verbose);
+
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd;
@@ -67,19 +96,19 @@ public class Client {
         String host;
         int port;
 
-        double failureRate = Constants.DEFAULT_FAILURE_RATE;
+        double fr = Constants.DEFAULT_FAILURE_RATE;
 
         // parse program arguments
         try {
             cmd = parser.parse(options, args);
-            host = cmd.getOptionValue("host");
-            port = Integer.parseInt(cmd.getOptionValue("port"));
+            host = cmd.getOptionValue("HOST");
+            port = Integer.parseInt(cmd.getOptionValue("PORT"));
 
-            cmd.hasOption("atleast");
-            cmd.hasOption("atmost");
+            cmd.hasOption("ALO");
+            cmd.hasOption("AMO");
 
-            if (cmd.hasOption("failurerate")) {
-                failureRate = Double.parseDouble(cmd.getOptionValue("failurerate"));
+            if (cmd.hasOption("FRATE")) {
+                fr = Double.parseDouble(cmd.getOptionValue("FRATE"));
             }
         } catch (ParseException e) {
             System.out.println(e.getMessage());
@@ -93,7 +122,7 @@ public class Client {
         try {
             Client client;
             InetSocketAddress socketAddress = new InetSocketAddress(host, port);
-            UdpAgent communicator = new UdpAgentWithFailures(socketAddress, failureRate);
+            UdpAgent communicator = new UdpAgentWithFailures(socketAddress, fr);
 
             System.out.print(ClientUI.LINE_SEPARATOR);
             System.out.println(ClientUI.STARTING_MESSAGE);

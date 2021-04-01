@@ -6,6 +6,7 @@ import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
 import database.database;
+import server.ServerUI;
 import utils.VacancyChecker;
 
 import java.net.InetSocketAddress;
@@ -51,5 +52,6 @@ public class FacilityBooking {
             response = new ServerResponse(query.getId(), 404, confirmedBooking);
         }
         semInvo.replyClient(response, origin);
+        ServerUI.printServerResponse(query, response);
     }
 }

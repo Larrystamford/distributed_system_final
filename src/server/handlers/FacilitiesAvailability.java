@@ -9,6 +9,10 @@ import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
 
+import database.database;
+import server.ServerUI;
+import utils.DateUtils;
+
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,7 @@ public class FacilitiesAvailability {
         }
 
         semInvo.replyClient(response, origin);
+        ServerUI.printServerResponse(query, response);
     }
 
     public static List<Booking> confineToEachDay(List<Booking> unavailableBookingSlots, int queriedDay) {
