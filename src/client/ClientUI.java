@@ -119,7 +119,7 @@ public class ClientUI {
 
 
     // client handlers
-    public static void listFacilitiesResponse(ServerResponse response) {
+    public static void showFacilityAvailabilityResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("Facilities Available for Booking:");
@@ -192,7 +192,7 @@ public class ClientUI {
     }
 
 
-    public static void viewAllFacilityAvailabilitiesResponse(ServerResponse response) {
+    public static void listFacilitiesResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
         System.out.println("Facilities Availability:");
         for (int i = 0; i < response.getBookings().size(); i++) {

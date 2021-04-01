@@ -6,6 +6,7 @@ import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
 import database.database;
+import server.ServerUI;
 import utils.DateUtils;
 
 import java.net.InetSocketAddress;
@@ -40,6 +41,7 @@ public class ShortenBooking {
         }
 
         semInvo.replyClient(response, origin);
+        ServerUI.printServerResponse(query, response);
     }
 
 
