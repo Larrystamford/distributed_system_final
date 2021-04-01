@@ -1,9 +1,9 @@
 package semantics;
 
+import remote_objects.Client.ClientRequest;
 import remote_objects.Common.AddressAndData;
 import remote_objects.Common.Marshal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import remote_objects.Server.ServerResponse;
 
 import java.io.IOException;
 import java.net.*;
@@ -14,7 +14,6 @@ import java.net.*;
 public class UdpAgent {
     private DatagramSocket dSocket;
     private InetSocketAddress serverSocket;
-    private static final Logger logger = LoggerFactory.getLogger(UdpAgent.class);
 
     /**
      * for client to create communicator with server
@@ -52,7 +51,7 @@ public class UdpAgent {
     }
 
     public void send(Marshal data, InetSocketAddress dest) {
-        logger.info("Send: {}", data);
+        System.out.printf("PACKET SENT\t\t\tID: %s\tTYPE: %s\n", data.getId(), getPacketType(data));
         byte[] byteArray = data.marshal();
         DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, dest);
 
@@ -70,7 +69,7 @@ public class UdpAgent {
         try {
             dSocket.receive(p);
             AddressAndData resp = new AddressAndData((InetSocketAddress) p.getSocketAddress(), Marshal.unmarshal(p.getData()));
-            logger.info("Recv: {}", resp);
+            System.out.printf("PACKET RECEIVED\t\tID: %s\tTYPE: %s\n", resp.getData().getId(), getPacketType(resp.getData()));
             return resp;
         } catch (SocketTimeoutException s) {
             throw new SocketTimeoutException();
@@ -78,6 +77,15 @@ public class UdpAgent {
             e.printStackTrace();
             return null;
         }
+    }
+
+    protected String getPacketType (Marshal data) {
+        String payload = "ACK";
+        if (data instanceof ClientRequest)
+            payload = "CLIENT REQUEST";
+        else if (data instanceof ServerResponse)
+            payload = "SERVER RESPONSE";
+        return payload;
     }
 
     InetSocketAddress getServerSocket() {
