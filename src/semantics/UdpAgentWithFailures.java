@@ -1,8 +1,6 @@
 package semantics;
 
 import remote_objects.Common.Marshal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.Random;
@@ -10,7 +8,6 @@ import java.util.Random;
 public class UdpAgentWithFailures extends UdpAgent {
 
     private double failProb;
-    private static final Logger logger = LoggerFactory.getLogger(UdpAgentWithFailures.class);
 
     private Random random = new Random(System.currentTimeMillis());
 
@@ -29,7 +26,7 @@ public class UdpAgentWithFailures extends UdpAgent {
         if (limit >= failProb) {
             super.send(data, dest);
         } else {
-            logger.info("Sending failure simulated for {}", data);
+            System.out.printf("%s WAS INTENTIONALLY FAILED TO SEND ID: %s", getPacketType(data).toUpperCase(), data.getId());;
         }
     }
 }

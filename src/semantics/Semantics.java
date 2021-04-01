@@ -1,7 +1,5 @@
 package semantics;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import remote_objects.Client.ClientRequest;
 import remote_objects.Common.Ack;
 import remote_objects.Common.AddressAndData;
@@ -12,7 +10,7 @@ import utils.LRUCache;
 
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
-import java.util.*;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -24,7 +22,6 @@ import java.util.function.Consumer;
 public abstract class Semantics {
     UdpAgent communicator;
     private final IdGenerator idGen = new IdGenerator();
-    private static final Logger logger = LoggerFactory.getLogger(Semantics.class);
 
     Map<String, ServerResponse> generatedResponses = new LRUCache<>(50); // server side
     Map<Integer, AddressAndData> storedResponses = new LRUCache<>(50); // client side
@@ -77,7 +74,7 @@ public abstract class Semantics {
         // retrieve response and perform the promise on the stored response
         if (storedResponses.containsKey(id)) {
             AddressAndData storedResp = storedResponses.get(id);
-            System.out.println("Server response was stored with response id" + storedResp.getData().getId());
+            System.out.println("SERVER RESPONSE STORED WITH RESPONSE ID: " + storedResp.getData().getId());
             sendAck(storedResp.getData().getId(), storedResp.getOrigin());
             callback.accept((ServerResponse) storedResp.getData());
             communicator.setSocketTimeout(0); // unset socket timeout
@@ -95,7 +92,7 @@ public abstract class Semantics {
 
             } catch (SocketTimeoutException ignored) {
                 // timeout
-                System.out.println("Failed to receive server response on client " + i);
+//                System.out.println("Failed to receive server response on client " + i);
                 continue;
             }
 
@@ -112,7 +109,7 @@ public abstract class Semantics {
 
         // if time out
         if (!continuous) {
-            logger.error("Failed to retrieve results. Internal Server error and time out.");
+            System.out.println("\nFAILED TO RETRIEVE RESULTS. INTERNAL SERVER ERROR AND TIME OUT.\n");
             callback.accept(new ServerResponse(id, 500, null));
         }
     }
@@ -168,7 +165,6 @@ public abstract class Semantics {
             // filter duplicates and resend stored responses data
             // only used in at most once semantics
             if (filterDuplicate(clientRequest)) {
-                System.out.println("duplicates handle");
                 InetSocketAddress origin = clientRequest.getOrigin();
                 int clientId = clientRequest.getData().getId();
 
@@ -282,7 +278,6 @@ public abstract class Semantics {
 
             // if ack received, stop sending
             if (data instanceof Ack && data.getId() == id) {
-                System.out.println("client received acknowledgement from the server");
                 break;
             } else if (data instanceof ServerResponse) {
                 // if client expected an ack but received a ServerResponse, stop sending

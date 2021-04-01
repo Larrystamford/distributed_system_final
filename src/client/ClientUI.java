@@ -5,6 +5,7 @@ import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import utils.Constants;
+import utils.DateUtils;
 import utils.UserInputValidator;
 
 import java.util.List;
@@ -118,7 +119,7 @@ public class ClientUI {
 
 
     // client handlers
-    public static void listFacilitiesResponse(ServerResponse response) {
+    public static void showFacilityAvailabilityResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("Facilities Available for Booking:");
@@ -191,7 +192,7 @@ public class ClientUI {
     }
 
 
-    public static void viewAllFacilityAvailabilitiesResponse(ServerResponse response) {
+    public static void listFacilitiesResponse(ServerResponse response) {
         ClientUI.ServerSuccessStatus();
         System.out.println("Facilities Availability:");
         for (int i = 0; i < response.getBookings().size(); i++) {
@@ -374,5 +375,223 @@ public class ClientUI {
         query.setMonitoringDuration(Integer.parseInt(duration));
         booking.setName(name.toUpperCase());
         bookings.add(booking);
+    }
+
+    public static void getBookOnVacancyInput(Scanner scanner, List<Booking> bookings, ClientRequest query) {
+        System.out.println(ClientUI.LINE_SEPARATOR);
+        System.out.println(ClientUI.BOOK_ON_VACANCY_HEADER);
+        System.out.println(ClientUI.LINE_SEPARATOR);
+
+        // Enter Facility Name
+        System.out.println(ClientUI.ENTER_FACILITIES_NAME);
+
+        String name = scanner.nextLine();
+        while (name.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_FACILITIES_NAME);
+            System.out.println();
+
+            name = scanner.nextLine().toUpperCase();
+        }
+
+        // Enter Start Day
+        System.out.println(ClientUI.ENTER_START_DAY);
+
+        String startDay = scanner.nextLine();
+        while (startDay.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_START_DAY);
+            System.out.println();
+
+            startDay = scanner.nextLine();
+        }
+
+        // Enter Start Time
+        System.out.println(ClientUI.ENTER_START_TIME);
+
+        String startTime = scanner.nextLine();
+        while (startTime.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_START_TIME);
+            System.out.println();
+
+            startTime = scanner.nextLine();
+        }
+
+        // Enter End Day
+        System.out.println(ClientUI.ENTER_END_DAY);
+
+        String endDay = scanner.nextLine();
+        while (endDay.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_END_DAY);
+            System.out.println();
+
+            endDay = scanner.nextLine();
+        }
+
+        // Enter End Time
+        System.out.println(ClientUI.ENTER_END_TIME);
+
+        String endTime = scanner.nextLine();
+        while (endTime.length() == 0) {
+            System.out.println(ClientUI.INVALID_INPUT);
+            System.out.println();
+            System.out.print(ClientUI.ENTER_END_TIME);
+            System.out.println();
+
+            endTime = scanner.nextLine();
+        }
+
+        // Enter Monitor Duration
+        System.out.println(ClientUI.ENTER_MONITOR_DURATION);
+
+        String duration = scanner.nextLine();
+        while (!UserInputValidator.isNumericAndWithinRange(duration, 0, (int) Double.POSITIVE_INFINITY)) {
+            System.out.println("invalid input");
+            duration = scanner.nextLine();
+        }
+        // Create Potential Booking And Set Monitor Duration
+        System.out.println();
+        DayAndTime d1 = new DayAndTime(Integer.parseInt(startDay), Integer.parseInt(startTime.substring(0, 2)), Integer.parseInt(startTime.substring(2, 4)));
+        DayAndTime d2 = new DayAndTime(Integer.parseInt(endDay), Integer.parseInt(endTime.substring(0, 2)), Integer.parseInt(endTime.substring(2, 4)));
+        Booking booking = new Booking(name.toUpperCase(), d1, d2);
+        bookings.add(booking);
+        query.setMonitoringDuration(Integer.parseInt(duration));
+    }
+
+    public static Booking getUserInputs(Scanner scanner) {
+        System.out.println(ClientUI.LINE_SEPARATOR);
+        System.out.println(ClientUI.CHANGE_BOOKING_HEADER);
+        System.out.println(ClientUI.LINE_SEPARATOR);
+
+        // Enter booking id
+        System.out.println(ClientUI.ENTER_UUID);
+        String UUID = scanner.nextLine();
+
+        // Enter advance or postpone choice
+        System.out.println(ClientUI.ADVANCE_OR_POSTPONE);
+        String choice = scanner.nextLine();
+        if (!UserInputValidator.isNumericAndWithinRange(choice, 1, 2)) {
+            while (!UserInputValidator.isNumericAndWithinRange(choice, 1, 2)) {
+                System.out.println("Invalid input, choice can only be 1 or 2");
+                choice = scanner.nextLine();
+            }
+        }
+
+        // Enter offset
+        System.out.println(ClientUI.ENTER_OFFSET);
+        String[] date = scanner.nextLine().split(" ");
+
+        if (date.length != 3 || !DateUtils.isValidDateTimeFormat(date[0], date[1], date[2])) {
+            while (date.length != 3 || !DateUtils.isValidDateTimeFormat(date[0], date[1], date[2])) {
+                System.out.println("Invalid date format");
+                date = scanner.nextLine().split(" ");
+            }
+        }
+
+        DayAndTime offset;
+        if (choice.equals("2")) {
+            offset = new DayAndTime(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
+        } else {
+            offset = new DayAndTime(-Integer.parseInt(date[0]), -Integer.parseInt(date[1]), -Integer.parseInt(date[2]));
+        }
+
+        System.out.println("your information is as follows");
+        System.out.println("Booking id: " + UUID);
+        System.out.println("Choice: " + choice);
+        System.out.println("Offset: " + offset.toNiceString());
+
+        Booking payload = new Booking();
+        payload.setUuid(UUID);
+        payload.setOffset(offset);
+
+        return payload;
+    }
+    public static Booking getOffsetBookingInput(Scanner scanner) {
+        System.out.println(ClientUI.LINE_SEPARATOR);
+        System.out.println(ClientUI.CHANGE_BOOKING_HEADER);
+        System.out.println(ClientUI.LINE_SEPARATOR);
+
+        // Enter booking id
+        System.out.println(ClientUI.ENTER_UUID);
+        String UUID = scanner.nextLine();
+
+        // Enter advance or postpone choice
+        System.out.println(ClientUI.ADVANCE_OR_POSTPONE);
+        String choice = scanner.nextLine();
+        if (!UserInputValidator.isNumericAndWithinRange(choice, 1, 2)) {
+            while (!UserInputValidator.isNumericAndWithinRange(choice, 1, 2)) {
+                System.out.println("Invalid input, choice can only be 1 or 2");
+                choice = scanner.nextLine();
+            }
+        }
+
+        // Enter offset
+        System.out.println(ClientUI.ENTER_OFFSET);
+        String[] date = scanner.nextLine().split(" ");
+
+        if (date.length != 3 || !DateUtils.isValidDateTimeFormat(date[0], date[1], date[2])) {
+            while (date.length != 3 || !DateUtils.isValidDateTimeFormat(date[0], date[1], date[2])) {
+                System.out.println("Invalid date format");
+                date = scanner.nextLine().split(" ");
+            }
+        }
+
+        DayAndTime offset;
+        if (choice.equals("2")) {
+            offset = new DayAndTime(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
+        } else {
+            offset = new DayAndTime(-Integer.parseInt(date[0]), -Integer.parseInt(date[1]), -Integer.parseInt(date[2]));
+        }
+
+        System.out.println("your information is as follows");
+        System.out.println("Booking id: " + UUID);
+        System.out.println("Choice: " + choice);
+        System.out.println("Offset: " + offset.toNiceString());
+
+        Booking payload = new Booking();
+        payload.setUuid(UUID);
+        payload.setOffset(offset);
+
+        return payload;
+    }
+
+    public static Booking getShortenBookingInput(Scanner scanner) {
+        System.out.println(ClientUI.LINE_SEPARATOR);
+        System.out.println(ClientUI.SHORTEN_BOOKING_HEADER);
+        System.out.println(ClientUI.LINE_SEPARATOR);
+
+        // Enter booking id
+        System.out.println(ClientUI.ENTER_UUID);
+        String UUID = scanner.nextLine();
+
+        // Enter offset
+        System.out.println(ClientUI.SHORTEN_BOOKING_PROMPT);
+        System.out.println(ClientUI.ENTER_OFFSET);
+        String[] date = scanner.nextLine().split(" ");
+
+        if (date.length != 3 || !DateUtils.isValidDateTimeFormat(date[0], date[1], date[2])) {
+            while (date.length != 3 || !DateUtils.isValidDateTimeFormat(date[0], date[1], date[2])) {
+                System.out.println("Invalid date format");
+                date = scanner.nextLine().split(" ");
+            }
+        }
+
+        DayAndTime offset = new DayAndTime(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
+
+        System.out.println("your information is as follows");
+        System.out.println("Booking id: " + UUID);
+        System.out.println("Offset: " + offset.toNiceString());
+
+        Booking payload = new Booking();
+        payload.setUuid(UUID);
+        payload.setOffset(offset);
+
+        return payload;
     }
 }

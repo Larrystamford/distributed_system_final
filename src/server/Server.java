@@ -43,49 +43,48 @@ public class Server {
     public static void main(String[] args) {
         Options options = new Options();
 
-        Option opPort = new Option("p", "port", true, "Server port");
-        opPort.setRequired(true);
-        opPort.setType(Integer.TYPE);
-        options.addOption(opPort);
+        Option portNumber = new Option("PORT", true, "Server port");
+        Option ALOSemantics = new Option("ALO", false, "Configures the request-reply protocol to use least once semantics invocation");
+        Option AMOSemantics = new Option("AMO", false, "Configures the request-reply protocol to use at most once semantics invocation");
+        Option failureRate = new Option("FRATE", true, "Failure rate of the simulated UDP environment (0-1)");
+        Option timeout = new Option("TIMEOUT", true, "Timeout duration in request-reply protocol");
+        Option maxRetransmissions = new Option("MR", true, "Maximum number of retries in request-reply protocol");
+        Option verbose = new Option("V", false, "Set debugging statements");
 
-        Option opAtLeastOnce = new Option("al", "atleast", false, "Enable at least once invocation semantic");
-        options.addOption(opAtLeastOnce);
+        // required args
+        portNumber.setRequired(true);
 
-        Option opAtMostOnce = new Option("am", "atmost", false, "Enable at most once invocation semantic");
-        options.addOption(opAtMostOnce);
+        // non string args
+        portNumber.setType(Integer.TYPE);
+        failureRate.setType(Double.TYPE);
+        timeout.setType(Integer.TYPE);
+        maxRetransmissions.setType(Integer.TYPE);
 
-        Option opFailureRate = new Option("fr", "failurerate", true, "Set failure rate (float)");
-        opFailureRate.setType(Double.TYPE);
-        options.addOption(opFailureRate);
-
-        Option opTimeout = new Option("to", "timeout", true, "Set timeout in millisecond");
-        opTimeout.setType(Integer.TYPE);
-        options.addOption(opTimeout);
-
-        Option opTimeoutCount = new Option("mt", "maxtimeout", true, "Set timeout max count");
-        opTimeoutCount.setType(Integer.TYPE);
-        options.addOption(opTimeoutCount);
-
-        Option opDebug = new Option("v", "verbose", false, "Enable verbose print for debugging");
-        options.addOption(opDebug);
+        // set up
+        options.addOption(portNumber);
+        options.addOption(ALOSemantics);
+        options.addOption(AMOSemantics);
+        options.addOption(failureRate);
+        options.addOption(timeout);
+        options.addOption(maxRetransmissions);
+        options.addOption(verbose);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd;
 
 
-        double failureRate = Constants.DEFAULT_FAILURE_RATE;
+        double fr = Constants.DEFAULT_FAILURE_RATE;
 //        failureRate = 0.5;
 
         int port;
-        boolean atMostOnce, atLeastOnce;
+        boolean atLeastOnce;
         try {
             cmd = parser.parse(options, args);
-            port = Integer.parseInt(cmd.getOptionValue("port"));
-            if (cmd.hasOption("failurerate")) {
-                failureRate = Double.parseDouble(cmd.getOptionValue("failurerate"));
+            port = Integer.parseInt(cmd.getOptionValue("PORT"));
+            if (cmd.hasOption("FRATE")) {
+                fr = Double.parseDouble(cmd.getOptionValue("FRATE"));
             }
-            atLeastOnce = cmd.hasOption("atleast");
-            atMostOnce = cmd.hasOption("atmost");
+            atLeastOnce = cmd.hasOption("ALO");
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -95,7 +94,7 @@ public class Server {
 
         try {
             Server server;
-            UdpAgent communicator = new UdpAgentWithFailures(port, failureRate);
+            UdpAgent communicator = new UdpAgentWithFailures(port, fr);
 
             if (atLeastOnce) {
                 server = new Server(new AtLeastOnceSemantics(communicator));
@@ -107,7 +106,5 @@ public class Server {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 }

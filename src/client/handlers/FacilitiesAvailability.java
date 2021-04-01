@@ -4,7 +4,6 @@ import client.ClientUI;
 import utils.Constants;
 import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
-import remote_objects.Common.DayAndTime;
 import semantics.Semantics;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class FacilitiesAvailability {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                ClientUI.listFacilitiesResponse(response);
+                ClientUI.showFacilityAvailabilityResponse(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }

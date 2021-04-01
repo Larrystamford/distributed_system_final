@@ -5,6 +5,7 @@ import remote_objects.Client.ClientRequest;
 import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
 import database.database;
+import server.ServerUI;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -22,5 +23,6 @@ public class ViewAllFacilities {
             response = new ServerResponse(query.getId(), 200, bookings);
         }
         semInvo.replyClient(response, origin);
+        ServerUI.printServerResponse(query, response);
     }
 }

@@ -15,7 +15,7 @@ public class ViewAllFacilities {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                ClientUI.viewAllFacilityAvailabilitiesResponse(response);
+                ClientUI.listFacilitiesResponse(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
