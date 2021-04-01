@@ -8,7 +8,7 @@ import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import database.database;
-import utils.VacancyChecker;
+import utils.BookingManager;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -27,7 +27,8 @@ public class MonitorAndBookOnVacancy {
         DayAndTime start = booking.getStartTime();
         DayAndTime end = booking.getEndTime();
 
-        if (VacancyChecker.isVacant(database.getBookings(name), start, end)) {
+        if (BookingManager.hasVacancy(database.getBookings(name), start, end)) {
+
             server.handlers.FacilityBooking.handleRequest(semInvo, origin, database, query);
             return;
         }
@@ -39,7 +40,7 @@ public class MonitorAndBookOnVacancy {
 
     public static void informRegisteredClients(Semantics semInvo, ServerResponse response, database database) {
         String facilityName = response.getBookings().get(0).getName();
-        List<Pair<ClientCallback, ClientRequest>> addresses = database.getValidBookOnVacancyRequest(facilityName);
+        List<Pair<ClientCallback, ClientRequest>> addresses = database.getBookOnVacancyRequest(facilityName);
         if (addresses == null || addresses.isEmpty()) {
             return;
         }

@@ -1,12 +1,12 @@
 package server;
 
 import database.database;
-import utils.Constants;
+import org.apache.commons.cli.*;
 import remote_objects.Client.ClientCallback;
 import remote_objects.Server.ServerResponse;
 import semantics.*;
-import org.apache.commons.cli.*;
 import server.handlers.*;
+import utils.Constants;
 
 public class Server {
     private Semantics semInvo;
@@ -19,6 +19,9 @@ public class Server {
     public void run() {
         database database = new database();
         System.out.println("Database Initialised ...");
+        System.out.println("Server running ...");
+        System.out.println("");
+
 
         semInvo.receiveClientRequest((origin, query) -> {
             switch (query.getRequestChoice()) {
@@ -28,7 +31,7 @@ public class Server {
                 case Constants.OFFSET_BOOKING -> OffsetBooking.handleRequest(semInvo, origin, database, query);
                 case Constants.FACILITY_MONITORING -> {
                     ClientCallback cInfo = new ClientCallback(query.getId(), origin, query.getMonitoringDuration() * 1000);
-                    database.registerMonitoring(query.getBookings().get(0).getName(), cInfo);
+                    database.registerMonitorCallback(query.getBookings().get(0).getName(), cInfo);
                 }
                 case Constants.SHORTEN_BOOKING -> ShortenBooking.handleRequest(semInvo, origin, database, query);
                 case Constants.MONITOR_AND_BOOK_ON_AVAILABLE -> MonitorAndBookOnVacancy.handleRequest(semInvo, origin, database, query);

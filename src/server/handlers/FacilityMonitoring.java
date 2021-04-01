@@ -15,7 +15,7 @@ public class FacilityMonitoring {
 
     public static void informRegisteredClients(Semantics semInvo, ServerResponse res, int responseType) {
         String facilityName = res.getBookings().get(0).getName();
-        List<ClientCallback> addresses = database.getValidMonitorFacilityRequests(facilityName);
+        List<ClientCallback> addresses = database.getMonitorCallbacks(facilityName);
         if (addresses == null) {
             return;
         }

@@ -4,9 +4,7 @@ import client.ClientUI;
 import utils.Constants;
 import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
-import remote_objects.Common.DayAndTime;
 import semantics.Semantics;
-import utils.UserInputValidator;
 
 import java.util.ArrayList;
 import java.util.List;

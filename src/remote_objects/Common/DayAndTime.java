@@ -46,7 +46,16 @@ public class DayAndTime {
         return equivalentSeconds;
     }
 
-    public int convSecs() {
+
+    public int getEquivalentSecondsWithoutDays() {
+        int secsHour = 3600;
+        int secsOneDay = 24 * secsHour;
+
+        return equivalentSeconds % secsOneDay;
+    }
+
+
+    public int convertDateIntoSeconds() {
         return equivalentSeconds;
     }
 
@@ -68,7 +77,7 @@ public class DayAndTime {
         return "SUNDAY";
     }
 
-    public String toNiceString() {
+    public String getReadableFormat() {
         return String.format(convertIntDayToWeekNaming() + ", %02d:%02d", hour, minute);
     }
 }

@@ -7,7 +7,7 @@ import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
 import database.database;
 import server.ServerUI;
-import utils.VacancyChecker;
+import utils.BookingManager;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -25,8 +25,10 @@ public class FacilityBooking {
         List<Booking> confirmedBooking = new ArrayList<>();
 
         bookings = query.getBookings();
-        boolean facilityNameExist = database.facilityNameExist(bookings.get(0).getName());
+
+        boolean facilityNameExist = database.hasFacility(bookings.get(0).getName());
         List<Booking> bookingsFilteredByName = database.getBookings(bookings.get(0).getName());
+
 
         if (facilityNameExist) {
             for (Booking info : bookings) {
@@ -41,7 +43,7 @@ public class FacilityBooking {
                 DayAndTime startTime = new DayAndTime(startDay, startHour, startMinute);
                 DayAndTime endTime = new DayAndTime(endDay, endHour, endMinute);
 
-                if (VacancyChecker.isVacant(bookingsFilteredByName, startTime, endTime)) {
+                if (BookingManager.hasVacancy(bookingsFilteredByName, startTime, endTime)) {
                     Booking newBooking = database.createBooking(bookingName, startTime, endTime);
                     confirmedBooking.add(newBooking);
                     response = new ServerResponse(query.getId(), 200, confirmedBooking);
