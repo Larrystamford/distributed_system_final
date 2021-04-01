@@ -1,7 +1,6 @@
 package semantics;
 
 import client.ClientUI;
-import client.handlers.OffsetBooking;
 import database.database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +51,7 @@ class SemanticsTest {
             int id = client.requestServer(cReq);
             client.receiveResponse(id, (response) -> {
                 if (response.getServerStatus() == 200) {
-                    ClientUI.printChangeBookingSuccess(cReq, response);
+                    ClientUI.changeBookingResponse(cReq, response);
                 } else {
                     ClientUI.ServerErrorUI(response);
                 }
