@@ -2,7 +2,9 @@ package remote_objects.Common;
 
 import java.util.UUID;
 
-
+/**
+ * All booking related data is stored in this object
+ */
 public class Booking implements Cloneable {
     String name;
     String uuid;

@@ -2,7 +2,9 @@ package remote_objects.Client;
 
 import java.net.SocketAddress;
 
-// Client Info objects are used for server callbacks
+/**
+ * The object that is used to send a callback to the client
+ */
 public class ClientCallback {
     int requestId;
     SocketAddress socket;

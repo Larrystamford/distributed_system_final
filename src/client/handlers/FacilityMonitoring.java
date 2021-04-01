@@ -11,13 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Allows user to monitor an interested facility via its name
+ */
 public class FacilityMonitoring {
 
     public static void createAndSendMessage(Semantics semInvo, Scanner scanner) {
         ClientRequest query;
         List<Booking> bookings = new ArrayList<Booking>();
 
-        // get monitor duration
         query = new ClientRequest();
         ClientUI.getMonitorFacilityInput(scanner, bookings, query);
 

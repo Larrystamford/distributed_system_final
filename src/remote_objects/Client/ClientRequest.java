@@ -6,6 +6,9 @@ import remote_objects.Common.Booking;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The object that the client sends to the server
+ */
 public class ClientRequest extends Marshal {
     int requestChoice;
     int monitoringDuration;

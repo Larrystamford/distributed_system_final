@@ -5,6 +5,9 @@ import remote_objects.Common.Booking;
 
 import java.util.List;
 
+/**
+ * The object that the server sends to the client
+ */
 public class ServerResponse extends Marshal implements Cloneable {
     int requestId;
     int serverStatus;

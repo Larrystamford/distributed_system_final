@@ -14,6 +14,9 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Allows user to offset their existing booking via their unique booking ID
+ */
 public class OffsetBooking {
     private static DayAndTime newDayAndTimeEnd;
     private static DayAndTime newDayAndTimeStart;
@@ -50,7 +53,8 @@ public class OffsetBooking {
 
 
     public static Booking changeBooking(Booking booking, DayAndTime offset, database database) {
-        // remove current booking to check if new booking would cause conflicts
+
+        // exclude the current booking to make sure our offset booking timing does not clash with it
         List<Booking> bookings = database.getBookings(booking.getName());
         for (int i = 0; i < bookings.size(); i++) {
             Booking bInfo = bookings.get(i);
@@ -60,15 +64,15 @@ public class OffsetBooking {
             }
         }
 
-        // to be returned to client
-        booking.setStartTime(newDayAndTimeStart);
-        booking.setEndTime(newDayAndTimeEnd);
-
-        // check for vacancy with selected timings and update db if changes are valid
+        // ensure new booking slot is available before updating the Database
         if (VacancyChecker.isVacant(bookings, newDayAndTimeStart, newDayAndTimeEnd)) {
             database.updateBooking(booking.getUuid(), newDayAndTimeStart, newDayAndTimeEnd);
             return booking;
         }
+
+        booking.setStartTime(newDayAndTimeStart);
+        booking.setEndTime(newDayAndTimeEnd);
+
         return null;
     }
 

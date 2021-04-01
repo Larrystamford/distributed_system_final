@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * NON-IDEMPOTENT EXAMPLE
+ * Allows user to shorten their existing booking via their unique booking ID
+ */
 public class ShortenBooking {
     private static ClientRequest query;
 

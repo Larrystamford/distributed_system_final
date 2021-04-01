@@ -1,10 +1,13 @@
 package client.handlers;
 
 import client.ClientUI;
-import semantics.Semantics;
 import remote_objects.Client.ClientRequest;
+import semantics.Semantics;
 import utils.Constants;
 
+/**
+ * Additional query that allows user to view all the facilities names that are available for booking
+ */
 public class ViewAllFacilities {
     private static ClientRequest query;
 

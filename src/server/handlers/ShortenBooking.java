@@ -1,11 +1,11 @@
 package server.handlers;
 
-import remote_objects.Common.Booking;
+import database.database;
 import remote_objects.Client.ClientRequest;
+import remote_objects.Common.Booking;
 import remote_objects.Common.DayAndTime;
 import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
-import database.database;
 import server.ServerUI;
 import utils.DateUtils;
 
@@ -13,6 +13,10 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * NON-IDEMPOTENT EXAMPLE
+ * Allows user to shorten their existing booking via their unique booking ID
+ */
 public class ShortenBooking {
     private static DayAndTime newDayAndTimeEnd;
     private static DayAndTime newDayAndTimeStart;
@@ -45,13 +49,11 @@ public class ShortenBooking {
     }
 
 
-
     public static Booking changeBooking(Booking booking, database database) {
-        // to be returned to client
+        // database updated
+        database.updateBooking(booking.getUuid(), booking.getStartTime(), newDayAndTimeEnd);
         booking.setEndTime(newDayAndTimeEnd);
 
-        // update database
-        database.updateBooking(booking.getUuid(), booking.getStartTime(), newDayAndTimeEnd);
         return booking;
     }
 

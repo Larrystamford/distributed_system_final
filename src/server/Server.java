@@ -51,16 +51,13 @@ public class Server {
         Option maxRetransmissions = new Option("MR", true, "Maximum number of retries in request-reply protocol");
         Option verbose = new Option("V", false, "Set debugging statements");
 
-        // required args
         portNumber.setRequired(true);
 
-        // non string args
         portNumber.setType(Integer.TYPE);
         failureRate.setType(Double.TYPE);
         timeout.setType(Integer.TYPE);
         maxRetransmissions.setType(Integer.TYPE);
 
-        // set up
         options.addOption(portNumber);
         options.addOption(ALOSemantics);
         options.addOption(AMOSemantics);
@@ -74,8 +71,6 @@ public class Server {
 
 
         double fr = Constants.DEFAULT_FAILURE_RATE;
-//        failureRate = 0.5;
-
         int port;
         boolean atLeastOnce;
         try {

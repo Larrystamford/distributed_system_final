@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Contains all the necessary handlers to marshal the different data types
+ */
 public class MarshalHandler {
 
     public static byte[] marshal(Marshal object) {

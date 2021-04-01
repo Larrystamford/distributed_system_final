@@ -12,13 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * IDEMPOTENT EXAMPLE
+ * Allows user to indicate their interest for a booking slot that is currently unavailable
+ * If the unavailable booking slot opens up, the callback will automatically book it for the user
+ */
 public class MonitorAndBookOnVacancy {
 
     public static void createAndSendMessage(Semantics semInvo, Scanner scanner) {
         ClientRequest query;
         List<Booking> bookings = new ArrayList<Booking>();
 
-        // get monitor duration
         query = new ClientRequest();
         ClientUI.getBookOnVacancyInput(scanner, bookings, query);
 

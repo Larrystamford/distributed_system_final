@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Allows user to book a facility
+ */
 public class FacilityBooking {
     private static ServerResponse response;
 
     public static void handleRequest(Semantics semInvo, InetSocketAddress origin, database database, ClientRequest query) {
         List<Booking> bookings;
-        List<Booking> bookingsFiltered;
         List<Booking> confirmedBooking = new ArrayList<>();
 
         bookings = query.getBookings();

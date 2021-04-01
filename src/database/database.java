@@ -10,6 +10,9 @@ import javacutils.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Database for storing booking information
+ */
 public class database {
     private static final ArrayList<Booking> bookingData = new ArrayList<Booking>();
     private static final Set<String> facilityNames = new HashSet();
@@ -104,12 +107,6 @@ public class database {
     }
 
 
-    /**
-     * registers a client for monitoring a facility's availability over the week
-     *
-     * @param facilityName   - name of facility client is interested in monitoring
-     * @param clientCallback - client's socket information
-     */
     public void registerMonitoring(String facilityName, ClientCallback clientCallback) {
         if (!monitorFacilityList.containsKey(facilityName)) {
             monitorFacilityList.put(facilityName, new ArrayList<>());
@@ -147,7 +144,7 @@ public class database {
     }
 
     /**
-     * removes expired callbacks from the callback lists
+     * this removes expired callbacks from the the callbacks lists
      */
     public static void filterCallBackAddresses() {
         monitorFacilityList.forEach((facility, registeredCallbacks) -> {
