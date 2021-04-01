@@ -71,6 +71,7 @@ public class Server {
 
 
         double fr = Constants.DEFAULT_FAILURE_RATE;
+
         int port;
         boolean atLeastOnce;
         try {

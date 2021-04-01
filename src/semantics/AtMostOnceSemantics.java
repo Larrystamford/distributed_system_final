@@ -27,7 +27,7 @@ public class AtMostOnceSemantics extends Semantics {
             received.put(clientKey, System.currentTimeMillis());
             return false;
         } else {
-            System.out.print("Repeated Request " + clientKey + " is ignored.");
+            System.out.print("REPEATED REQUEST ID: " + clientId + " REPLYING WITH STORED RESPONSE");
             return true;
         }
     }
@@ -36,7 +36,7 @@ public class AtMostOnceSemantics extends Semantics {
     public void registerResponse(ServerResponse resp, InetSocketAddress socketAddress) {
         int clientQueryId = resp.getRequestId();
         String uniqueClientIdData = genClientKey(socketAddress.toString(), clientQueryId);
-        System.out.println("response registered");
+//        System.out.println("response registered");
        generatedResponses.put(uniqueClientIdData, resp);
     }
 
