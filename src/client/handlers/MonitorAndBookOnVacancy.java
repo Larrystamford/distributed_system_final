@@ -58,52 +58,52 @@ public class MonitorAndBookOnVacancy {
         }
 
         // Enter Start Day
-        System.out.println(ClientUI.ENTER_START_DAY);
+        System.out.println(ClientUI.ENTER_START_DAY_BOOKING);
 
         String startDay = scanner.nextLine();
         while (startDay.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_START_DAY);
+            System.out.print(ClientUI.ENTER_START_DAY_BOOKING);
             System.out.println();
 
             startDay = scanner.nextLine();
         }
 
         // Enter Start Time
-        System.out.println(ClientUI.ENTER_START_TIME);
+        System.out.println(ClientUI.ENTER_START_TIME_BOOKING);
 
         String startTime = scanner.nextLine();
         while (startTime.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_START_TIME);
+            System.out.print(ClientUI.ENTER_START_TIME_BOOKING);
             System.out.println();
 
             startTime = scanner.nextLine();
         }
 
         // Enter End Day
-        System.out.println(ClientUI.ENTER_END_DAY);
+        System.out.println(ClientUI.ENTER_END_DAY_BOOKING);
 
         String endDay = scanner.nextLine();
         while (endDay.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_END_DAY);
+            System.out.print(ClientUI.ENTER_END_DAY_BOOKING);
             System.out.println();
 
             endDay = scanner.nextLine();
         }
 
         // Enter End Time
-        System.out.println(ClientUI.ENTER_END_TIME);
+        System.out.println(ClientUI.ENTER_END_TIME_BOOKING);
 
         String endTime = scanner.nextLine();
         while (endTime.length() == 0) {
             System.out.println(ClientUI.INVALID_INPUT);
             System.out.println();
-            System.out.print(ClientUI.ENTER_END_TIME);
+            System.out.print(ClientUI.ENTER_END_TIME_BOOKING);
             System.out.println();
 
             endTime = scanner.nextLine();
