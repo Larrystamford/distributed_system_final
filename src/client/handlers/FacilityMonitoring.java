@@ -5,7 +5,6 @@ import utils.Constants;
 import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
 import semantics.Semantics;
-import utils.UserInputValidator;
 
 import java.util.ArrayList;
 import java.util.List;

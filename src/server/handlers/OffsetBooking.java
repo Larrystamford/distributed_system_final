@@ -8,7 +8,7 @@ import semantics.Semantics;
 import database.database;
 import server.ServerUI;
 import utils.DateUtils;
-import utils.VacancyChecker;
+import utils.BookingManager;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class OffsetBooking {
 
     public static Booking changeBooking(Booking booking, DayAndTime offset, database database) {
         // remove current booking to check if new booking would cause conflicts
-        List<Booking> bookings = database.getBookingsByName(booking.getName());
+        List<Booking> bookings = database.getBookingsForFacility(booking.getName());
         for (int i = 0; i < bookings.size(); i++) {
             Booking bInfo = bookings.get(i);
             if (bInfo.getUuid().equals(booking.getUuid())) {
@@ -65,7 +65,7 @@ public class OffsetBooking {
         booking.setEndTime(newDayAndTimeEnd);
 
         // check for vacancy with selected timings and update db if changes are valid
-        if (VacancyChecker.isVacant(bookings, newDayAndTimeStart, newDayAndTimeEnd)) {
+        if (BookingManager.hasVacancy(bookings, newDayAndTimeStart, newDayAndTimeEnd)) {
             database.updateBooking(booking.getUuid(), newDayAndTimeStart, newDayAndTimeEnd);
             return booking;
         }
@@ -85,8 +85,8 @@ public class OffsetBooking {
         int newStartSecs = booking.getStartTime().getEquivalentSeconds() + offset.getEquivalentSeconds();
         int newEndSecs = booking.getEndTime().getEquivalentSeconds() + offset.getEquivalentSeconds();
 
-        newDayAndTimeStart = DateUtils.convSecondsToDateTime(newStartSecs);
-        newDayAndTimeEnd = DateUtils.convSecondsToDateTime(newEndSecs);
+        newDayAndTimeStart = DateUtils.convertSecondsToDate(newStartSecs);
+        newDayAndTimeEnd = DateUtils.convertSecondsToDate(newEndSecs);
 
         return newDayAndTimeStart != null && newDayAndTimeEnd != null;
     }

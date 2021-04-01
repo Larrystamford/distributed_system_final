@@ -1,8 +1,8 @@
 package utils;
 
-public class UserInputValidator {
+public class EntryChecker {
 
-    public static boolean isNumeric(String str) {
+    public static boolean validInteger(String str) {
         if (str == null) {
             return false;
         }
@@ -14,8 +14,8 @@ public class UserInputValidator {
         return true;
     }
 
-    public static boolean isNumericAndWithinRange(String str, int start, int end) {
-        if (!isNumeric(str)){
+    public static boolean isAppropriateInteger(String str, int start, int end) {
+        if (!validInteger(str)){
             return false;
         }
         int val = Integer.parseInt(str);

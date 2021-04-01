@@ -1,6 +1,5 @@
 package database;
 
-import client.ClientUI;
 import remote_objects.Common.Booking;
 import remote_objects.Client.ClientCallback;
 import remote_objects.Client.ClientRequest;
@@ -65,7 +64,7 @@ public class database {
         return null;
     }
 
-    public List<Booking> getBookingsByName(String name) {
+    public List<Booking> getBookingsForFacility(String name) {
         List<Booking> res = new ArrayList<>();
         for (Booking booking : bookingData) {
             if (booking.getName().equals(name)) {
@@ -94,22 +93,20 @@ public class database {
         }
     }
 
-    public boolean facilityNameExist(String name) {
-        if (facilityNames.contains(name)) {
-            return true;
-        }
-
-        return false;
+    public boolean hasFacility(String name) {
+        return facilityNames.contains(name);
     }
 
+    public static void removeExpiredCallbacks() {
+        monitorFacilityList.forEach((facility, registeredCallbacks) -> {
+            monitorFacilityList.put(facility, registeredCallbacks.stream().filter((c) -> c.getExpire() > System.currentTimeMillis()).collect(Collectors.toList()));
+        });
+        bookOnVacancyList.forEach((facility, registeredCallbacks) -> {
+            bookOnVacancyList.put(facility, registeredCallbacks.stream().filter((c) -> c.first.getExpire() > System.currentTimeMillis()).collect(Collectors.toList()));
+        });
+    }
 
-    /**
-     * registers a client for monitoring a facility's availability over the week
-     *
-     * @param facilityName   - name of facility client is interested in monitoring
-     * @param clientCallback - client's socket information
-     */
-    public void registerMonitoring(String facilityName, ClientCallback clientCallback) {
+    public void registerMonitorCallback(String facilityName, ClientCallback clientCallback) {
         if (!monitorFacilityList.containsKey(facilityName)) {
             monitorFacilityList.put(facilityName, new ArrayList<>());
         }
@@ -118,18 +115,11 @@ public class database {
         monitorFacilityList.put(facilityName, addresses);
     }
 
-    public static List<ClientCallback> getValidMonitorFacilityRequests(String facilityName) {
-        filterCallBackAddresses();
+    public static List<ClientCallback> getMonitorCallbacks(String facilityName) {
+        removeExpiredCallbacks();
         return monitorFacilityList.get(facilityName);
     }
 
-    /**
-     * registers a client for monitoring a facility's availability for an occupied slot
-     * and booking it should it become vacant
-     *
-     * @param facilityName   - name of facility client is interested in monitoring
-     * @param clientCallback - client's socket information
-     */
     public void registerBookOnVacancy(String facilityName, ClientCallback clientCallback, ClientRequest query) {
         if (!bookOnVacancyList.containsKey(facilityName)) {
             bookOnVacancyList.put(facilityName, new ArrayList<>());
@@ -140,20 +130,8 @@ public class database {
         bookOnVacancyList.put(facilityName, addresses);
     }
 
-    public static List<Pair<ClientCallback, ClientRequest>> getValidBookOnVacancyRequest(String facilityName) {
-        filterCallBackAddresses();
+    public static List<Pair<ClientCallback, ClientRequest>> getBookOnVacancyRequest(String facilityName) {
+        removeExpiredCallbacks();
         return bookOnVacancyList.get(facilityName);
-    }
-
-    /**
-     * removes expired callbacks from the callback lists
-     */
-    public static void filterCallBackAddresses() {
-        monitorFacilityList.forEach((facility, registeredCallbacks) -> {
-            monitorFacilityList.put(facility, registeredCallbacks.stream().filter((c) -> c.getExpire() > System.currentTimeMillis()).collect(Collectors.toList()));
-        });
-        bookOnVacancyList.forEach((facility, registeredCallbacks) -> {
-            bookOnVacancyList.put(facility, registeredCallbacks.stream().filter((c) -> c.first.getExpire() > System.currentTimeMillis()).collect(Collectors.toList()));
-        });
     }
 }

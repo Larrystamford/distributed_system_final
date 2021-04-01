@@ -57,7 +57,7 @@ public class ShortenBooking {
 
     public static boolean validOffset(Booking booking, DayAndTime offset) {
         int newEndSecs = booking.getEndTime().getEquivalentSeconds() - offset.getEquivalentSeconds();
-        newDayAndTimeEnd = DateUtils.convSecondsToDateTime(newEndSecs);
-        return newDayAndTimeEnd != null && newDayAndTimeEnd.convSecs() > booking.getStartTime().convSecs();
+        newDayAndTimeEnd = DateUtils.convertSecondsToDate(newEndSecs);
+        return newDayAndTimeEnd != null && newDayAndTimeEnd.convertDateIntoSeconds() > booking.getStartTime().convertDateIntoSeconds();
     }
 }

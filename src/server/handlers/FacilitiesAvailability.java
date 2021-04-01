@@ -26,7 +26,7 @@ public class FacilitiesAvailability {
         List<Booking> availableBookings = new ArrayList<Booking>();
 
         bookings = query.getBookings();
-        boolean facilityNameExist = database.facilityNameExist(bookings.get(0).getName());
+        boolean facilityNameExist = database.hasFacility(bookings.get(0).getName());
 
         if (facilityNameExist) {
             for (Booking info : bookings) {
@@ -113,10 +113,10 @@ public class FacilitiesAvailability {
                     // when the next second is booked, save the current free slot
                     freeEnd = x;
 
-                    int freeStartHour = DateUtils.getHourWithSeconds(freeStart);
-                    int freeStartMinutes = DateUtils.getMinuteWithSeconds(freeStart);
-                    int freeEndHour = DateUtils.getHourWithSeconds(freeEnd);
-                    int freeEndMinutes = DateUtils.getMinuteWithSeconds(freeEnd);
+                    int freeStartHour = DateUtils.convertSecondsToHour(freeStart);
+                    int freeStartMinutes = DateUtils.convertSecondsToMinutes(freeStart);
+                    int freeEndHour = DateUtils.convertSecondsToHour(freeEnd);
+                    int freeEndMinutes = DateUtils.convertSecondsToMinutes(freeEnd);
 
                     // avoid cases like start 23:59 end 23:59
                     if (!(freeStartHour == freeEndHour && freeStartMinutes == freeEndMinutes)) {
