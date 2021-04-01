@@ -5,7 +5,6 @@ import utils.Constants;
 import remote_objects.Common.Booking;
 import remote_objects.Client.ClientRequest;
 import remote_objects.Common.DayAndTime;
-import remote_objects.Server.ServerResponse;
 import semantics.Semantics;
 import utils.UserInputValidator;
 
@@ -29,7 +28,7 @@ public class MonitorAndBookOnVacancy {
         int id = semInvo.requestServer(query);
         semInvo.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
-                ClientUI.printBookOnVacancy(response);
+                ClientUI.bookingIfVacancyAppearsResponse(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }

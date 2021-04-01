@@ -3,7 +3,6 @@ package client.handlers;
 import client.ClientUI;
 import semantics.Semantics;
 import remote_objects.Client.ClientRequest;
-import remote_objects.Server.ServerResponse;
 import utils.Constants;
 
 public class ViewAllFacilities {
@@ -16,7 +15,7 @@ public class ViewAllFacilities {
         int id = semInvo.requestServer(query);
         semInvo.receiveResponse(id, (response) -> {
             if (response.getServerStatus() == 200) {
-                ClientUI.printFaciliiesAvailability(response);
+                ClientUI.viewAllFacilityAvailabilitiesResponse(response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
