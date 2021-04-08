@@ -13,7 +13,7 @@ public class ServerUI {
             case Constants.FACILITY_BOOKING -> ClientUI.bookingResponse(response);
             case Constants.OFFSET_BOOKING, Constants.SHORTEN_BOOKING -> ClientUI.changeBookingResponse(response);
             case Constants.FACILITY_MONITORING -> ClientUI.monitoringResponse(response);
-            case Constants.MONITOR_AND_BOOK_ON_AVAILABLE -> ClientUI.bookingIfVacancyAppearsResponse(response);
+            case Constants.MONITOR_AND_BOOK_ON_AVAILABLE -> ClientUI.bookingIfVacancyAppearsResponse(request, response);
             default -> {
             }
         }

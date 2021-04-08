@@ -155,13 +155,13 @@ public class ClientUI {
         System.out.println("=================================================");
     }
 
-    public static void bookingIfVacancyAppearsResponse(ServerResponse response) {
+    public static void bookingIfVacancyAppearsResponse(ClientRequest request, ServerResponse response) {
         ClientUI.ServerSuccessStatus();
 
         System.out.println("=================================================");
         System.out.println("VACANCY FOUND");
         System.out.println("BOOKING MADE:");
-        System.out.println(response.getBookings().get(0).getName() + ": " + response.getBookings().get(0).getStartTime().getReadableFormat() + " - " + response.getBookings().get(0).getEndTime().getReadableFormat());
+        System.out.println(request.getBookings().get(0).getName() + ": " + request.getBookings().get(0).getStartTime().getReadableFormat() + " - " + request.getBookings().get(0).getEndTime().getReadableFormat());
         System.out.println("Booking ID: " + response.getBookings().get(0).getUuid());
         System.out.println("=================================================\n");
     }

@@ -30,7 +30,7 @@ public class MonitorAndBookOnVacancy {
         int id = semInvo.requestServer(query);
         semInvo.monitorServer((response) -> {
             if (response.getServerStatus() == 200) {
-                ClientUI.bookingIfVacancyAppearsResponse(response);
+                ClientUI.bookingIfVacancyAppearsResponse(query, response);
             } else {
                 ClientUI.ServerErrorUI(response);
             }
